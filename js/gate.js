@@ -10,6 +10,7 @@
   overlay.className = 'gate-overlay';
   overlay.innerHTML =
     '<div class="gate-box">' +
+      '<img src="/assets/moxie-mascot-small.png" alt="MOXIE" style="width:100px;height:100px;margin:0 auto 12px;display:block;">' +
       '<h1>MOXIE AI Insights</h1>' +
       '<p>Enter your access code to continue</p>' +
       '<input type="password" id="gate-input" placeholder="Access Code" maxlength="10" autocomplete="off">' +
