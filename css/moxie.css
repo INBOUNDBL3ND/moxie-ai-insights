@@ -297,3 +297,69 @@ a:hover { text-decoration: underline; }
   display: inline-block; font-weight: 600; font-size: 0.9rem;
   color: var(--blue);
 }
+
+/* ── Bar Charts ── */
+.bar-chart {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 40px;
+}
+.bar-chart .bar-row {
+  display: flex; align-items: center; gap: 12px;
+}
+.bar-chart .bar-row .bar-label {
+  min-width: 100px; font-size: 0.8rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--text-muted); text-align: right;
+}
+.bar-chart .bar-row .bar-track {
+  flex: 1; height: 32px; background: var(--bg-card);
+  border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
+}
+.bar-chart .bar-row .bar-fill {
+  height: 100%; border-radius: 6px 0 0 6px;
+  display: flex; align-items: center; padding-left: 12px;
+  font-size: 0.85rem; font-weight: 700; color: var(--white);
+  transition: width 0.6s ease;
+}
+.bar-chart .bar-row .bar-fill.blue { background: var(--blue); }
+.bar-chart .bar-row .bar-fill.green { background: var(--green); }
+.bar-chart .bar-row .bar-fill.orange { background: var(--orange); }
+@media (max-width: 768px) {
+  .bar-chart .bar-row .bar-label { min-width: 70px; font-size: 0.7rem; }
+  .bar-chart .bar-row .bar-track { height: 26px; }
+  .bar-chart .bar-row .bar-fill { font-size: 0.75rem; padding-left: 8px; }
+}
+
+/* ── Trend Indicators ── */
+.trend {
+  font-size: 0.75rem; font-weight: 600; margin-top: 4px;
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 8px; border-radius: 10px;
+}
+.trend.up {
+  color: var(--green); background: var(--green-light);
+}
+.trend.down {
+  color: var(--orange); background: var(--orange-light);
+}
+.trend .arrow { font-size: 0.9rem; }
+
+/* ── Budget Utilization Bar ── */
+.budget-util {
+  display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+  border-top: 1px solid var(--border);
+}
+.budget-util .util-label {
+  font-size: 0.8rem; color: var(--text-muted); min-width: 60px;
+}
+.budget-util .util-track {
+  flex: 1; height: 10px; background: #E8ECF0;
+  border-radius: 5px; overflow: hidden;
+}
+.budget-util .util-fill {
+  height: 100%; border-radius: 5px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+}
+.budget-util .util-pct {
+  font-size: 0.8rem; font-weight: 700; color: var(--text); min-width: 40px;
+}
