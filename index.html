@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOXIE AI Insights</title>
+  <link rel="stylesheet" href="/css/moxie.css">
+  <script src="/js/gate.js" defer></script>
+</head>
+<body>
+  <div class="landing">
+    <div class="landing-box">
+      <div class="brand">MOXIE AI Insights</div>
+      <p class="tagline">Your Monthly Marketing Performance Dashboard</p>
+      <form id="client-form" onsubmit="return false;">
+        <input type="text" id="client-input" placeholder="Enter your 7-digit client number" maxlength="7" inputmode="numeric" pattern="[0-9]{7}" autocomplete="off">
+        <button type="submit" id="go-btn">View My Dashboard</button>
+        <div class="error-msg" id="error-msg">Client number not found. Please check your number and try again.</div>
+      </form>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var input = document.getElementById('client-input');
+      var btn = document.getElementById('go-btn');
+      var err = document.getElementById('error-msg');
+
+      fetch('/data/clients.json')
+        .then(function (r) { return r.json(); })
+        .then(function (clients) {
+          btn.addEventListener('click', function () {
+            var num = input.value.trim();
+            err.style.display = 'none';
+            if (clients[num]) {
+              window.location.href = '/clients/' + num + '/';
+            } else {
+              err.style.display = 'block';
+              input.focus();
+            }
+          });
+          input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') btn.click();
+          });
+        })
+        .catch(function () {
+          btn.addEventListener('click', function () {
+            err.textContent = 'Dashboard data is loading. Please try again in a moment.';
+            err.style.display = 'block';
+          });
+        });
+    })();
+  </script>
+</body>
+</html>
