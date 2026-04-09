@@ -1,0 +1,287 @@
+{
+  "1602401": [
+    "Email Newsletter",
+    "Facebook Ads",
+    "GeoFencing Ads",
+    "Google Display Ads",
+    "Google Search Ads",
+    "Microsoft Ads",
+    "Social Media Posts",
+    "TikTok Ads",
+    "Website Remarketing Ads"
+  ],
+  "1708001": [
+    "AdRoll",
+    "Facebook Ads",
+    "Google Display Ads",
+    "Google Search / P-Max",
+    "LinkedIn Ads",
+    "Microsoft Ads",
+    "Social Media Posts",
+    "Website Management",
+    "YouTube Ads"
+  ],
+  "1712001": [
+    "Hosting"
+  ],
+  "1801001": [
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "1801002": [
+    "Hosting"
+  ],
+  "1808002": [
+    "Website Management"
+  ],
+  "1808004": [
+    "Google P-Max",
+    "Google Search Ads",
+    "SEO"
+  ],
+  "1903001": [
+    "Website Management"
+  ],
+  "1907001": [
+    "Google Search Ads",
+    "SEO",
+    "Website Management",
+    "YouTube Ads"
+  ],
+  "1908001": [
+    "GeoFencing Ad Management",
+    "Google Ad Management (Display)",
+    "Google Ad Management (Search)",
+    "Graphic Design",
+    "SEO",
+    "Social Media Ad Management (Facebook)",
+    "Website Management",
+    "Website Remarketing"
+  ],
+  "1910002": [
+    "Facebook Ads",
+    "Google Ads",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "1910003": [
+    "Hosting"
+  ],
+  "2009002": [
+    "Website Management"
+  ],
+  "2009003": [
+    "Email Newsletter",
+    "SEO",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2010001": [
+    "Hosting",
+    "Website Management"
+  ],
+  "2012001": [
+    "Hosting"
+  ],
+  "2103001": [
+    "Website Management"
+  ],
+  "2105002": [
+    "Hosting"
+  ],
+  "2105003": [
+    "Hosting"
+  ],
+  "2106002": [
+    "Social Media Posts",
+    "TikTok Ads"
+  ],
+  "2108001": [
+    "Hosting"
+  ],
+  "2201001": [
+    "Hosting"
+  ],
+  "2201002": [
+    "Hosting"
+  ],
+  "2201003": [
+    "Hosting"
+  ],
+  "2203003": [
+    "Hosting"
+  ],
+  "2203005": [
+    "Social Media Posts"
+  ],
+  "2205001": [
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2205004": [
+    "Website Management"
+  ],
+  "2206001": [
+    "Hosting"
+  ],
+  "2207001": [
+    "Hosting"
+  ],
+  "2208001": [
+    "Website Management"
+  ],
+  "2301001": [
+    "GeoFencing Ads",
+    "Google Search Ads"
+  ],
+  "2306001": [
+    "Digital Billboards",
+    "Facebook Ads",
+    "GeoFencing Ads"
+  ],
+  "2308001": [
+    "Blog Posts",
+    "SEO",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2311001": [
+    "Hosting"
+  ],
+  "2312002": [
+    "Website Management"
+  ],
+  "2312004": [
+    "Website Management"
+  ],
+  "2312005": [
+    "Website Management"
+  ],
+  "2401006": [
+    "SEO",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2404002": [
+    "Billboards",
+    "Facebook Ads",
+    "SEO",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2404003": [
+    "SEO",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2405002": [
+    "Google Ads",
+    "SEO",
+    "Website Management"
+  ],
+  "2407003": [
+    "Google Search Ads",
+    "SEO",
+    "Website Management"
+  ],
+  "2407004": [
+    "Facebook Ads",
+    "Google Search Ads",
+    "Website Management"
+  ],
+  "2408002": [
+    "Social Media Ad Management (Facebook)"
+  ],
+  "2412001": [
+    "Google Search Ads (Indepak)",
+    "Google Search Ads (VisiPak)",
+    "Google Search Ads PMax (Indepak)",
+    "Google Search Ads PMax (VisiPak)",
+    "Google Shopping Ads (VisiPak)",
+    "Microsoft Ads (Indepak)",
+    "Microsoft Ads (VisiPak)",
+    "Social Media Posts (Indepak)",
+    "Social Media Posts (Sinclair & Rush)",
+    "Social Media Posts (VisiPak)",
+    "Website Design & Management (Clamshell Packaging)",
+    "Website Design & Management (Indepak)",
+    "Website Design & Management (VisiPak)"
+  ],
+  "2412002": [
+    "Google P-Max",
+    "Google Remarketing",
+    "Google Search Ads",
+    "Google Shopping Ads",
+    "LinkedIn Ads",
+    "Microsoft Ads"
+  ],
+  "2412003": [
+    "Google P-Max",
+    "Google Search Ads",
+    "Microsoft Ads"
+  ],
+  "2412004": [
+    "Website Management"
+  ],
+  "2501001": [
+    "Hosting"
+  ],
+  "2504002": [
+    "Facebook Ads",
+    "SEO",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2504004": [
+    "Website Management"
+  ],
+  "2505002": [
+    "Website Management"
+  ],
+  "2508005": [
+    "Google Search Ads",
+    "SEO"
+  ],
+  "2509002": [
+    "Graphic Design",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2509003": [
+    "Blog Posts",
+    "Google Ads",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2509004": [
+    "Digital Billboards",
+    "Social Media Posts",
+    "Website Management"
+  ],
+  "2510002": [
+    "Social Media Ads (LinkedIn)",
+    "Social Media Posts"
+  ],
+  "2512001": [
+    "Social Media Ads (Facebook)"
+  ],
+  "2601001": [
+    "Email Newsletter",
+    "Flex Block (Graphic Design or Website Management)",
+    "Social Media Ads (Facebook)",
+    "Social Media Posts"
+  ],
+  "2601002": [
+    "SEO",
+    "Social Media Posts"
+  ],
+  "2602001": [
+    "Website Management"
+  ],
+  "2602002": [
+    "Flex Block (Website Management, Content Writing or Email Newsletter)",
+    "SEO",
+    "Social Media Ads (LinkedIn)",
+    "Social Media Posts"
+  ]
+}
