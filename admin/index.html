@@ -343,6 +343,129 @@
     }
     .edit-btn-save:hover { background: #1668B8; }
     .edit-btn-cancel:hover { background: var(--bg-card); }
+
+    /* Website Build section (inside edit modal) */
+    .wb-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .wb-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 12px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+    }
+    .wb-toggle input { width: 16px; height: 16px; accent-color: var(--blue); cursor: pointer; }
+    .wb-toggle.on { background: rgba(39, 174, 96, 0.08); border-color: var(--green); color: var(--green); }
+
+    .wb-editor {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1.5px dashed var(--border);
+    }
+    .wb-editor h4 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin: 18px 0 8px;
+      font-weight: 700;
+    }
+    .wb-editor h4:first-child { margin-top: 0; }
+
+    .wb-step-row {
+      display: grid;
+      grid-template-columns: 1fr 130px auto auto auto;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .wb-step-row input[type=text],
+    .wb-step-row select {
+      padding: 7px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      color: var(--text);
+      background: #fff;
+    }
+    .wb-step-row input[type=text]:focus,
+    .wb-step-row select:focus { outline: none; border-color: var(--blue); }
+    .wb-step-row select.status-complete { background: rgba(39, 174, 96, 0.1); color: var(--green); font-weight: 700; }
+    .wb-step-row select.status-in_progress { background: rgba(223, 98, 41, 0.1); color: var(--orange); font-weight: 700; }
+    .wb-step-row button {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 5px 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      min-width: 28px;
+      line-height: 1;
+    }
+    .wb-step-row button:hover { background: var(--bg-card); border-color: var(--blue); }
+    .wb-step-row button.del { color: #b91c1c; }
+    .wb-step-row button.del:hover { background: #fee2e2; border-color: #fca5a5; }
+
+    .wb-step-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .wb-step-buttons .edit-btn-add { flex: 1; margin-top: 0; }
+    .wb-step-buttons .btn-secondary {
+      background: var(--white);
+      color: var(--text);
+      border: 1.5px dashed var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .wb-step-buttons .btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+
+    .wb-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .wb-field label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .wb-field input,
+    .wb-field textarea {
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+    .wb-field input:focus,
+    .wb-field textarea:focus { outline: none; border-color: var(--blue); }
+    .wb-field textarea { min-height: 72px; resize: vertical; }
+
+    @media (max-width: 560px) {
+      .wb-step-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -397,6 +520,38 @@
           <p class="hint">Live campaigns / creative shown to the client below their monthly reports. Each row: image or video, a note, and a link button.</p>
           <div id="edit-rows-list"></div>
           <button class="edit-btn-add" onclick="addRow()">+ Add Current Work Row</button>
+        </div>
+
+        <div class="edit-section">
+          <div class="wb-section-head">
+            <h3>Website Build</h3>
+            <label class="wb-toggle" id="wb-toggle-label">
+              <input type="checkbox" id="wb-enabled-input" onchange="toggleWebsiteBuild(this.checked)">
+              <span>Show tracker on dashboard</span>
+            </label>
+          </div>
+          <p class="hint">Off by default. Turn on only for clients with an active website build. The tracker renders above Current Work on every dashboard page for that client.</p>
+          <div id="wb-editor" class="wb-editor" style="display:none;">
+            <h4>Steps</h4>
+            <div id="wb-steps-list"></div>
+            <div class="wb-step-buttons">
+              <button class="edit-btn-add" onclick="addWbStep()">+ Add Step</button>
+              <button class="btn-secondary" onclick="resetWbSteps()">Reset to Default (14 steps)</button>
+            </div>
+            <h4>Links</h4>
+            <div class="wb-field">
+              <label for="wb-preview-url-input">Preview Site URL (optional)</label>
+              <input type="url" id="wb-preview-url-input" placeholder="https://…" oninput="editState.websiteBuild.previewUrl = this.value">
+            </div>
+            <div class="wb-field">
+              <label for="wb-markup-url-input">Markup / Feedback URL (optional)</label>
+              <input type="url" id="wb-markup-url-input" placeholder="https://…" oninput="editState.websiteBuild.markupUrl = this.value">
+            </div>
+            <h4>Notes from the Team</h4>
+            <div class="wb-field">
+              <textarea id="wb-team-notes-input" placeholder="Short note from the team — renders as a styled callout on the dashboard" oninput="editState.websiteBuild.teamNotes = this.value"></textarea>
+            </div>
+          </div>
         </div>
       </div>
       <div class="edit-modal-footer">
@@ -725,7 +880,21 @@
     });
 
     // ─── Edit modal (Client Content) ───────────────────────────────────────
-    var editState = { client: null, name: '', pills: [], currentWork: [] };
+    var DEFAULT_WB_STEPS = [
+      'Signed Proposal', 'Payment', 'Discovery', 'Brand Kit', 'Messaging',
+      'Draft 1', 'Revisions Round 1', 'Draft 2', 'Revisions Round 2',
+      'Draft 3', 'Revisions Round 3', 'Final Approval', 'DNS Access', 'Go Live'
+    ];
+    function emptyWebsiteBuild() {
+      return { enabled: false, steps: [], previewUrl: '', markupUrl: '', teamNotes: '' };
+    }
+    var editState = {
+      client: null,
+      name: '',
+      pills: [],
+      currentWork: [],
+      websiteBuild: emptyWebsiteBuild(),
+    };
 
     function escapeHtml(s) {
       return String(s == null ? '' : s)
@@ -747,6 +916,7 @@
       editState.name = name || num;
       editState.pills = [];
       editState.currentWork = [];
+      editState.websiteBuild = emptyWebsiteBuild();
 
       document.getElementById('edit-modal-title').textContent = 'Edit: ' + editState.name;
       document.getElementById('edit-modal-subtitle').textContent = '#' + num;
@@ -758,6 +928,23 @@
         .then(function(data) {
           editState.pills = Array.isArray(data.pills) ? data.pills.slice() : [];
           editState.currentWork = Array.isArray(data.currentWork) ? data.currentWork.slice() : [];
+          if (data.websiteBuild && typeof data.websiteBuild === 'object') {
+            editState.websiteBuild = {
+              enabled: Boolean(data.websiteBuild.enabled),
+              steps: Array.isArray(data.websiteBuild.steps)
+                ? data.websiteBuild.steps.map(function(s) {
+                    return {
+                      label: String(s.label || ''),
+                      status: ['not_started', 'in_progress', 'complete'].indexOf(s.status) >= 0 ? s.status : 'not_started',
+                      note: String(s.note || ''),
+                    };
+                  })
+                : [],
+              previewUrl: String(data.websiteBuild.previewUrl || ''),
+              markupUrl: String(data.websiteBuild.markupUrl || ''),
+              teamNotes: String(data.websiteBuild.teamNotes || ''),
+            };
+          }
           // If no pills override saved, seed the editor with the current HTML-baked pills
           if (editState.pills.length === 0) {
             return fetchBakedPills(num).then(function(pills) { editState.pills = pills; });
@@ -827,6 +1014,86 @@
           '</div>';
       }).join('');
       document.getElementById('edit-rows-list').innerHTML = rowsHtml || '<p class="hint" style="text-align:center;padding:20px 0;">No rows yet. Click + below to add one.</p>';
+
+      // Website Build section
+      var wb = editState.websiteBuild;
+      var enabledInput = document.getElementById('wb-enabled-input');
+      var toggleLabel = document.getElementById('wb-toggle-label');
+      var editor = document.getElementById('wb-editor');
+      if (enabledInput) enabledInput.checked = !!wb.enabled;
+      if (toggleLabel) toggleLabel.classList.toggle('on', !!wb.enabled);
+      if (editor) editor.style.display = wb.enabled ? '' : 'none';
+
+      var statusOpts = [
+        { v: 'not_started', l: 'Not Started' },
+        { v: 'in_progress', l: 'In Progress' },
+        { v: 'complete', l: 'Complete' },
+      ];
+      var stepsHtml = wb.steps.map(function(step, i) {
+        var opts = statusOpts.map(function(o) {
+          return '<option value="' + o.v + '"' + (step.status === o.v ? ' selected' : '') + '>' + o.l + '</option>';
+        }).join('');
+        var statusClass = 'status-' + (step.status || 'not_started');
+        return '<div class="wb-step-row">' +
+          '<input type="text" value="' + escapeHtml(step.label) + '" placeholder="Step name" ' +
+            'oninput="editState.websiteBuild.steps[' + i + '].label = this.value">' +
+          '<select class="' + statusClass + '" onchange="setWbStepStatus(' + i + ', this.value)">' + opts + '</select>' +
+          '<button onclick="moveWbStep(' + i + ', -1)" title="Move up">&uarr;</button>' +
+          '<button onclick="moveWbStep(' + i + ', 1)" title="Move down">&darr;</button>' +
+          '<button class="del" onclick="removeWbStep(' + i + ')" title="Remove">×</button>' +
+          '</div>';
+      }).join('');
+      var stepsList = document.getElementById('wb-steps-list');
+      if (stepsList) stepsList.innerHTML = stepsHtml || '<p class="hint" style="text-align:center;padding:14px 0;">No steps yet. Click “Reset to Default” for the standard 14-step build.</p>';
+
+      var pEl = document.getElementById('wb-preview-url-input');
+      if (pEl) pEl.value = wb.previewUrl || '';
+      var mEl = document.getElementById('wb-markup-url-input');
+      if (mEl) mEl.value = wb.markupUrl || '';
+      var tEl = document.getElementById('wb-team-notes-input');
+      if (tEl) tEl.value = wb.teamNotes || '';
+    }
+
+    function toggleWebsiteBuild(enabled) {
+      editState.websiteBuild.enabled = !!enabled;
+      // First time turning on with no steps? Seed with defaults as a convenience.
+      if (enabled && editState.websiteBuild.steps.length === 0) {
+        editState.websiteBuild.steps = DEFAULT_WB_STEPS.map(function(label) {
+          return { label: label, status: 'not_started', note: '' };
+        });
+      }
+      renderEditModal();
+    }
+    function resetWbSteps() {
+      if (editState.websiteBuild.steps.length > 0) {
+        if (!confirm('Replace the current steps with the default 14-step build? This cannot be undone until you reload.')) return;
+      }
+      editState.websiteBuild.steps = DEFAULT_WB_STEPS.map(function(label) {
+        return { label: label, status: 'not_started', note: '' };
+      });
+      renderEditModal();
+    }
+    function addWbStep() {
+      editState.websiteBuild.steps.push({ label: '', status: 'not_started', note: '' });
+      renderEditModal();
+    }
+    function removeWbStep(i) {
+      if (!confirm('Delete this step?')) return;
+      editState.websiteBuild.steps.splice(i, 1);
+      renderEditModal();
+    }
+    function moveWbStep(i, dir) {
+      var j = i + dir;
+      var arr = editState.websiteBuild.steps;
+      if (j < 0 || j >= arr.length) return;
+      var tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+      renderEditModal();
+    }
+    function setWbStepStatus(i, status) {
+      editState.websiteBuild.steps[i].status = status;
+      renderEditModal();
     }
 
     function addPill() {
@@ -886,7 +1153,8 @@
     function saveContent() {
       var payload = {
         pills: editState.pills.map(function(p) { return String(p || '').trim(); }).filter(Boolean),
-        currentWork: editState.currentWork
+        currentWork: editState.currentWork,
+        websiteBuild: editState.websiteBuild
       };
       setEditStatus('Saving…');
       fetch('/.netlify/functions/client-content?client=' + encodeURIComponent(editState.client), {
@@ -905,7 +1173,11 @@
 
     function closeEditModal() {
       document.getElementById('edit-modal').classList.remove('open');
-      editState = { client: null, name: '', pills: [], currentWork: [] };
+      editState.client = null;
+      editState.name = '';
+      editState.pills = [];
+      editState.currentWork = [];
+      editState.websiteBuild = emptyWebsiteBuild();
       setEditStatus('');
     }
 
@@ -927,6 +1199,12 @@
     window.moveRow = moveRow;
     window.uploadRowMedia = uploadRowMedia;
     window.saveContent = saveContent;
+    window.toggleWebsiteBuild = toggleWebsiteBuild;
+    window.resetWbSteps = resetWbSteps;
+    window.addWbStep = addWbStep;
+    window.removeWbStep = removeWbStep;
+    window.moveWbStep = moveWbStep;
+    window.setWbStepStatus = setWbStepStatus;
     window.editState = editState; // for inline handlers that reference editState.X
 
     function dismissHealth(num, checkbox) {

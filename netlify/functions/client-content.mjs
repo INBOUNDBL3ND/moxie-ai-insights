@@ -1,8 +1,9 @@
-// Per-client editable content (pills override + Current Work rows).
-// Persisted in Netlify Blobs. GET is public (used by client dashboards
-// to fetch override content). POST is expected to come from the admin
-// page which is already gated by the admin password — no extra auth
-// needed, same security model as invites.mjs / health.mjs.
+// Per-client editable content (pills override + Current Work rows
+// + optional Website Build tracker). Persisted in Netlify Blobs.
+// GET is public (used by client dashboards to fetch override
+// content). POST is expected to come from the admin page which is
+// already gated by the admin password — no extra auth needed, same
+// security model as invites.mjs / health.mjs.
 //
 // Schema:
 //   {
@@ -16,7 +17,20 @@
 //         linkUrl:    string,
 //         linkLabel:  string
 //       }
-//     ]
+//     ],
+//     websiteBuild: {
+//       enabled:    boolean,     // master toggle; section is hidden when false
+//       steps: [
+//         {
+//           label:  string,
+//           status: "not_started" | "in_progress" | "complete",
+//           note:   string          // optional; shown on hover
+//         }
+//       ],
+//       previewUrl: string,      // optional — renders a CTA button
+//       markupUrl:  string,      // optional — renders a second CTA button
+//       teamNotes:  string       // optional — renders as a callout card
+//     }
 //   }
 //
 // URL shape:
@@ -39,7 +53,39 @@ function store() {
 }
 
 function emptyContent() {
-  return { pills: null, currentWork: [] };
+  return {
+    pills: null,
+    currentWork: [],
+    websiteBuild: {
+      enabled: false,
+      steps: [],
+      previewUrl: "",
+      markupUrl: "",
+      teamNotes: "",
+    },
+  };
+}
+
+const VALID_STATUS = new Set(["not_started", "in_progress", "complete"]);
+
+function sanitizeWebsiteBuild(wb) {
+  if (!wb || typeof wb !== "object") return emptyContent().websiteBuild;
+  const steps = Array.isArray(wb.steps)
+    ? wb.steps
+        .filter((s) => s && typeof s === "object")
+        .map((s) => ({
+          label: String(s.label || "").slice(0, 120),
+          status: VALID_STATUS.has(s.status) ? s.status : "not_started",
+          note: String(s.note || "").slice(0, 500),
+        }))
+    : [];
+  return {
+    enabled: Boolean(wb.enabled),
+    steps,
+    previewUrl: String(wb.previewUrl || "").slice(0, 500),
+    markupUrl: String(wb.markupUrl || "").slice(0, 500),
+    teamNotes: String(wb.teamNotes || "").slice(0, 2000),
+  };
 }
 
 export default async (req) => {
@@ -84,6 +130,9 @@ export default async (req) => {
             linkUrl: String(r.linkUrl || ""),
             linkLabel: String(r.linkLabel || ""),
           }));
+      }
+      if (body.websiteBuild !== undefined) {
+        out.websiteBuild = sanitizeWebsiteBuild(body.websiteBuild);
       }
       await s.setJSON(client, out);
       return Response.json(out, { headers: corsHeaders });

@@ -141,3 +141,131 @@ curl -X POST https://sandbox--moxie-ai-insights.netlify.app/.netlify/functions/c
 - `package.json` — `@netlify/blobs` was already there from the invite-state fix
 - `js/gate.js` — admin users bypass the client password gate automatically
 - `js/moxie-chat.js` — untouched, still loads before client-content.js
+
+---
+
+# Build Notes — Website Build Progress tracker
+
+Build date: 2026-04-10
+Branch: `sandbox` (same branch, second autonomous build of the day)
+
+## What was built
+
+Extends the admin edit modal and the public client-content renderer
+with an optional "Website Build Progress" tracker. Off by default per
+client; when enabled, renders a horizontal 3-state stepper above the
+Current Work section on every page for that client.
+
+1. **Schema extension** in `netlify/functions/client-content.mjs`
+   - Added `websiteBuild: { enabled, steps:[{label,status,note}],
+     previewUrl, markupUrl, teamNotes }` to the per-client JSON blob
+   - `sanitizeWebsiteBuild()` clamps string lengths, validates status
+     enum (not_started / in_progress / complete), and coerces
+     enabled to boolean
+   - Default empty shape returned on GET for clients with no saved
+     content, so the admin modal always has a safe object to bind to
+
+2. **Admin modal** — new third section in the edit modal:
+   - Master toggle pill: "Show tracker on dashboard" (off by default).
+     First time toggled ON for a client with no steps yet, the editor
+     auto-seeds the 14 default steps as a convenience.
+   - Steps editor: label text input, status dropdown (colored when
+     active — orange for in_progress, green for complete), up/down
+     reorder arrows, delete button.
+   - "Reset to Default (14 steps)" button — replaces current steps
+     after a confirm prompt.
+   - Preview Site URL, Markup/Feedback URL, Team Notes textarea.
+   - Saves via the existing `POST /client-content` endpoint — no new
+     function needed.
+
+3. **Public tracker** in `js/client-content.js`
+   - `buildWebsiteBuildNode()` returns a detached DOM node; the
+     existing render pipeline was refactored to `insertSections()`
+     so both Website Build and Current Work are placed in the right
+     order in a single DOM insertion.
+   - Order on the page: Website Build first, then Current Work.
+   - Rendering:
+     - Gradient-background card with a thin rainbow bar across the
+       top (blue → orange → green).
+     - Horizontal stepper with a filled progress line from start to
+       the last active step's center.
+     - 3 dot states — gray/numbered (not started), orange pulsing
+       with ripple ring (in progress), green with checkmark (complete).
+     - Labels under each dot, tooltip on hover if the step has a note.
+     - Optional CTA buttons: blue "Preview Site" + orange outline
+       "Share Feedback".
+     - Optional "Notes from the Team" callout card (amber accent,
+       friendly tone).
+   - Horizontally scrollable on narrow screens (min-width 720px on
+     the tracker).
+   - Pulse + ripple animations via CSS keyframes — respects the
+     brand palette, no cheese.
+
+## Judgment calls I made
+
+1. **Default 14 steps are seeded on first toggle ON** — the spec said
+   "Reset to default steps" button, and the steps should be editable
+   "later". First-time toggle with empty steps would give a useless
+   blank editor, so I pre-populate. Admin can still reset or delete
+   individual steps.
+
+2. **Progress bar semantics** — the line fill extends from start to
+   the center of the last "complete or in_progress" dot. Counting
+   completed-only steps would leave the in_progress dot visually
+   disconnected. The percentage text in the header ("X% Complete")
+   counts *only* complete steps, not in_progress, so the header
+   reflects strict progress.
+
+3. **Tooltip note** uses `.wb-tooltip` span + `data-note` attribute
+   as a gate. CSS does the show/hide so no JS listeners are needed.
+   The text wraps up to 220px so longer notes don't overflow off-screen.
+
+4. **Insertion order refactor** — the previous build had
+   `renderCurrentWork` inserting directly. I refactored to
+   `buildCurrentWorkNode` + `insertSections([wb, cw])` so both
+   sections land in one DOM insertion with the right order. Cleaner
+   than per-section anchor logic.
+
+5. **`closeEditModal` no longer reassigns editState** — now mutates the
+   existing object so references stay stable. Avoids any repeat of
+   the scope bug that bit us earlier today.
+
+6. **Status dropdown coloring** — each `<select>` gets a status class
+   that tints its background (green for complete, orange for
+   in_progress). Gives the admin a quick visual sense of where each
+   step is without hunting through the labels.
+
+7. **Horizontal scroll on mobile** — 14 steps is too many to fit on
+   a phone screen without squishing. Tracker has `min-width: 720px`
+   inside an overflow-x container. Standard scrollbar, no fade
+   edges (can add if needed).
+
+8. **No icons for preview/markup buttons on the admin side** — the
+   public-facing buttons have eye + pencil SVG icons, but the admin
+   editor just shows plain URL fields. Keeps the admin UI simple.
+
+## Test data currently in the sandbox store
+
+- **2601002 Jeff Baker & Sons Landscaping** — `websiteBuild.enabled =
+  true`, 14 steps (6 complete, 1 in_progress, 7 not_started), preview
+  URL, markup URL, and team notes populated. Shows the full tracker
+  with active state.
+- **2010001 Epoxy Stone** — `websiteBuild.enabled = false`. Used to
+  verify the toggle OFF path hides the section. Still has the Current
+  Work row from the previous build.
+
+## File inventory (delta from last build)
+
+**Modified:**
+- `netlify/functions/client-content.mjs` — schema extension + sanitizer
+- `admin/index.html` — new Website Build section (CSS + HTML + JS
+  handlers + exposed window globals)
+- `js/client-content.js` — new `buildWebsiteBuildNode()` + scoped CSS +
+  refactored `insertSections()` pipeline
+- `BUILD_NOTES.md` — this section
+
+**Not touched:**
+- Client HTML files — no script tag change needed, the existing
+  `/js/client-content.js` picks up the new data automatically
+- `netlify/functions/client-media.mjs` — no change
+- `js/moxie-chat.js`, `js/gate.js`, `css/moxie.css` — untouched
