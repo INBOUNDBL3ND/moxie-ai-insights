@@ -310,12 +310,12 @@
                 '</div>';
             }
 
-            // Invite checkbox
+            // Invite checkbox — mirrors the health-row pattern:
+            // once clicked the row disappears for everyone. No un-invite.
             var isInvited = clientInvited[num] || false;
-            var inviteHtml = '<div style="display:flex;align-items:center;gap:6px;margin-top:6px;" class="invite-row">' +
-              '<label onclick="event.preventDefault();event.stopPropagation();" style="display:flex;align-items:center;gap:5px;font-size:0.7rem;color:' + (isInvited ? '#27AE60' : 'var(--text-muted)') + ';cursor:pointer;font-weight:600;">' +
-              '<input type="checkbox" ' + (isInvited ? 'checked' : '') + ' onclick="event.stopPropagation();toggleInvite(\'' + num + '\',this)" style="cursor:pointer;accent-color:#27AE60;">' +
-              (isInvited ? '✓ Invited' : 'Invited to Dashboard') +
+            var inviteHtml = '<div style="display:flex;align-items:center;gap:6px;margin-top:6px;' + (isInvited ? 'display:none;' : '') + '" class="invite-row" data-num="' + num + '">' +
+              '<label onclick="event.preventDefault();event.stopPropagation();" style="display:flex;align-items:center;gap:5px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;font-weight:600;">' +
+              '<input type="checkbox" onclick="event.stopPropagation();markInvited(\'' + num + '\',this)" style="cursor:pointer;accent-color:#27AE60;"> Invited to Dashboard' +
               '</label></div>';
 
             a.innerHTML =
@@ -377,51 +377,31 @@
       applyFilter();
     }
 
-    function toggleInvite(num, checkbox) {
-      var isChecked = checkbox.checked;
-      var label = checkbox.parentElement;
-      // Optimistic in-memory update so the next poll diff doesn't revert
-      clientInvited[num] = isChecked;
+    function markInvited(num, checkbox) {
+      // Hide immediately (mirrors dismissHealth)
+      var row = checkbox.closest('.invite-row');
+      if (row) row.style.display = 'none';
+      clientInvited[num] = true;
       pendingInvites[num] = true;
-      if (isChecked) {
-        label.style.color = '#27AE60';
-        label.innerHTML = '<input type="checkbox" checked onclick="event.stopPropagation();toggleInvite(\'' + num + '\',this)" style="cursor:pointer;accent-color:#27AE60;"> ✓ Invited';
-      } else {
-        label.style.color = 'var(--text-muted)';
-        label.innerHTML = '<input type="checkbox" onclick="event.stopPropagation();toggleInvite(\'' + num + '\',this)" style="cursor:pointer;accent-color:#27AE60;"> Invited to Dashboard';
-      }
       fetch('/.netlify/functions/invites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ client: num, invited: isChecked })
+        body: JSON.stringify({ client: num, invited: true })
       }).catch(function() {}).then(function() {
         delete pendingInvites[num];
       });
     }
 
-    // Poll server-side invite state and reconcile the UI for other users' changes.
-    // Runs every 8s. Skips any client with an in-flight toggle from this tab.
+    // Poll server-side invite state and hide the row on any tile that's
+    // been marked invited by another user. Skips any client with an
+    // in-flight toggle from this tab.
     function applyInviteState(newState) {
-      var allNums = {};
-      Object.keys(clientInvited).forEach(function(k) { allNums[k] = true; });
-      Object.keys(newState).forEach(function(k) { allNums[k] = true; });
-      Object.keys(allNums).forEach(function(num) {
-        if (pendingInvites[num]) return; // user just toggled — don't stomp
-        var was = !!clientInvited[num];
-        var is = !!newState[num];
-        if (was === is) return;
-        clientInvited[num] = is;
-        var tile = document.querySelector('.client-tile[data-num="' + num + '"]');
-        if (!tile) return;
-        var row = tile.querySelector('.invite-row');
-        if (!row) return;
-        var label = row.querySelector('label');
-        if (!label) return;
-        label.style.color = is ? '#27AE60' : 'var(--text-muted)';
-        label.innerHTML = '<input type="checkbox" ' + (is ? 'checked' : '') +
-          ' onclick="event.stopPropagation();toggleInvite(\'' + num + '\',this)"' +
-          ' style="cursor:pointer;accent-color:#27AE60;"> ' +
-          (is ? '✓ Invited' : 'Invited to Dashboard');
+      Object.keys(newState).forEach(function(num) {
+        if (pendingInvites[num]) return; // user just clicked — don't stomp
+        if (clientInvited[num]) return;   // already hidden locally
+        clientInvited[num] = true;
+        var row = document.querySelector('.invite-row[data-num="' + num + '"]');
+        if (row) row.style.display = 'none';
       });
     }
 
