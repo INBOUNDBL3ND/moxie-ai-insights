@@ -124,6 +124,7 @@
         var adBreakEl = document.getElementById('admin-ad-breakdown');
         // clientFlags and activeFilter declared at top scope
         var clientInvited = {};
+        var pendingInvites = {}; // client#s with an in-flight POST — skipped during poll sync
 
         function getFlags(blocks) {
           var f = {};
@@ -379,6 +380,9 @@
     function toggleInvite(num, checkbox) {
       var isChecked = checkbox.checked;
       var label = checkbox.parentElement;
+      // Optimistic in-memory update so the next poll diff doesn't revert
+      clientInvited[num] = isChecked;
+      pendingInvites[num] = true;
       if (isChecked) {
         label.style.color = '#27AE60';
         label.innerHTML = '<input type="checkbox" checked onclick="event.stopPropagation();toggleInvite(\'' + num + '\',this)" style="cursor:pointer;accent-color:#27AE60;"> ✓ Invited';
@@ -390,8 +394,49 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ client: num, invited: isChecked })
+      }).catch(function() {}).then(function() {
+        delete pendingInvites[num];
       });
     }
+
+    // Poll server-side invite state and reconcile the UI for other users' changes.
+    // Runs every 8s. Skips any client with an in-flight toggle from this tab.
+    function applyInviteState(newState) {
+      var allNums = {};
+      Object.keys(clientInvited).forEach(function(k) { allNums[k] = true; });
+      Object.keys(newState).forEach(function(k) { allNums[k] = true; });
+      Object.keys(allNums).forEach(function(num) {
+        if (pendingInvites[num]) return; // user just toggled — don't stomp
+        var was = !!clientInvited[num];
+        var is = !!newState[num];
+        if (was === is) return;
+        clientInvited[num] = is;
+        var tile = document.querySelector('.client-tile[data-num="' + num + '"]');
+        if (!tile) return;
+        var row = tile.querySelector('.invite-row');
+        if (!row) return;
+        var label = row.querySelector('label');
+        if (!label) return;
+        label.style.color = is ? '#27AE60' : 'var(--text-muted)';
+        label.innerHTML = '<input type="checkbox" ' + (is ? 'checked' : '') +
+          ' onclick="event.stopPropagation();toggleInvite(\'' + num + '\',this)"' +
+          ' style="cursor:pointer;accent-color:#27AE60;"> ' +
+          (is ? '✓ Invited' : 'Invited to Dashboard');
+      });
+    }
+
+    function pollAdminState() {
+      fetch('/.netlify/functions/invites', { cache: 'no-store' })
+        .then(function(r) { return r.json(); })
+        .then(applyInviteState)
+        .catch(function() {});
+    }
+
+    setInterval(pollAdminState, 8000);
+    // Also re-sync as soon as the tab regains focus — faster feedback than waiting for the next tick
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) pollAdminState();
+    });
 
     function dismissHealth(num, checkbox) {
       // Hide immediately
