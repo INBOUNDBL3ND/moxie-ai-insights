@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — MOXIE AI Insights</title>
+  <link rel="stylesheet" href="/css/moxie.css">
+  <style>
+    .admin-header {
+      border-top: 4px solid var(--blue);
+      padding: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .admin-header img { width: 80px; height: 80px; }
+    .admin-header .admin-title { flex: 1; }
+    .admin-header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 2rem; margin: 0; color: var(--text); }
+    .admin-header p { margin: 4px 0 0; color: var(--text-muted); font-size: 0.9rem; }
+    .admin-stats {
+      display: flex; gap: 16px; margin: 24px 0; flex-wrap: wrap;
+    }
+    .admin-stat {
+      background: var(--blue-light); border: 1px solid var(--blue-border);
+      border-radius: 10px; padding: 14px 16px; text-align: center; flex: 1; min-width: 100px;
+    }
+    .admin-stat .stat-num { font-size: 1.8rem; font-weight: 800; color: var(--blue); font-family: 'Barlow Condensed', sans-serif; }
+    .admin-stat .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .search-bar {
+      width: 100%; padding: 14px 18px; font-size: 1rem;
+      border: 2px solid var(--border); border-radius: 10px;
+      font-family: 'Barlow', sans-serif; transition: border-color 0.2s;
+      margin-bottom: 24px; box-sizing: border-box;
+    }
+    .search-bar:focus { outline: none; border-color: var(--blue); }
+    .search-bar::placeholder { color: #aaa; }
+    .client-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .client-tile {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px;
+      cursor: pointer; transition: all 0.2s ease;
+      text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .client-tile:hover {
+      border-color: var(--blue); box-shadow: 0 4px 16px rgba(29, 128, 222, 0.12);
+      transform: translateY(-2px);
+    }
+    .client-tile .tile-name {
+      font-size: 1.1rem; font-weight: 700; color: var(--text);
+      font-family: 'Barlow Condensed', sans-serif;
+    }
+    .client-tile .tile-number {
+      font-size: 0.85rem; color: var(--text-muted);
+      font-family: 'Barlow', sans-serif; letter-spacing: 0.5px;
+    }
+    .client-tile .tile-arrow {
+      margin-top: 10px; display: inline-flex; align-items: center; gap: 6px;
+      background: var(--orange); color: #fff; padding: 8px 14px; border-radius: 8px;
+      font-size: 0.8rem; font-weight: 600; text-align: center; justify-content: center;
+    }
+    .no-results {
+      text-align: center; padding: 40px; color: var(--text-muted); font-size: 1rem;
+      display: none;
+    }
+    @media (max-width: 600px) {
+      .client-grid { grid-template-columns: 1fr; }
+      .admin-header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" style="max-width:1100px;margin:0 auto;padding:0 20px;">
+
+    <div class="admin-header">
+      <img src="/assets/moxie-mascot-xs.png" alt="MOXIE">
+      <div class="admin-title">
+        <h1>Admin Dashboard</h1>
+        <p>Inbound Blend — All Clients</p>
+      </div>
+      <a href="/" style="font-size:0.85rem;color:var(--blue);text-decoration:none;font-weight:600;">← Back to Home</a>
+    </div>
+
+    <div class="admin-stats" id="admin-stats"></div>
+
+    <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:6px;">Ad Platform Breakdown</div>
+    <div class="admin-stats" id="admin-ad-breakdown" style="margin-top:0;"></div>
+
+    <input type="text" class="search-bar" id="search" placeholder="Search by client name or number..." autocomplete="off">
+
+    <div class="client-grid" id="client-grid"></div>
+    <div class="no-results" id="no-results">No clients match your search.</div>
+
+    <div class="report-footer">
+      <span class="powered-by">Powered by:</span>
+      <a href="https://inboundblend.com" target="_blank" rel="noopener noreferrer"><img src="/assets/inbound-blend-logo.png" alt="Inbound Blend" class="footer-logo"></a>
+      MOXIE AI Insights
+    </div>
+  </div>
+
+  <script>
+    var tiles = [];
+    var activeFilter = null;
+    var clientFlags = {};
+
+    fetch('/data/clients.json')
+      .then(function (r) { return r.json(); })
+      .then(function (clients) {
+        var keys = Object.keys(clients).sort(function (a, b) {
+          return clients[a].name.localeCompare(clients[b].name);
+        });
+
+        // Stats — load service data and build filters
+        var statsEl = document.getElementById('admin-stats');
+        var adBreakEl = document.getElementById('admin-ad-breakdown');
+        // clientFlags and activeFilter declared at top scope
+        var clientInvited = {};
+
+        function getFlags(blocks) {
+          var f = {};
+          blocks.forEach(function(b) {
+            var bl = b.toLowerCase();
+            if (bl.indexOf('google') > -1) f.google = true;
+            if (bl.indexOf('facebook') > -1 || bl.indexOf('meta') > -1) f.facebook = true;
+            if (bl.indexOf('linkedin') > -1) f.linkedin = true;
+            if (bl.indexOf('tiktok') > -1) f.tiktok = true;
+            if (bl.indexOf('microsoft') > -1 || bl.indexOf('bing') > -1) f.microsoft = true;
+            if (bl.indexOf('youtube') > -1) f.youtube = true;
+            if (bl.indexOf('billboard') > -1) f.billboard = true;
+            if (bl.indexOf('geofenc') > -1 || bl.indexOf('targeted') > -1) f.geofence = true;
+            if (bl.indexOf('seo') > -1) f.seo = true;
+            if (bl.indexOf('social media post') > -1) f.social = true;
+            if (bl.indexOf('website') > -1 && bl.indexOf('remarketing') === -1) f.web = true;
+            if (bl === 'hosting' || (blocks.length === 1 && bl.indexOf('hosting') > -1)) f.hosting = true;
+            if (bl.indexOf('email') > -1 || bl.indexOf('newsletter') > -1) f.email = true;
+          });
+          return f;
+        }
+
+        function buildStat(count, label, filterKey) {
+          return '<div class="admin-stat" data-filter="' + filterKey + '" onclick="toggleFilter(\'' + filterKey + '\',this)" style="cursor:pointer;">' +
+            '<div class="stat-num">' + count + '</div><div class="stat-label">' + label + '</div></div>';
+        }
+
+        // applyFilter defined globally below
+
+        fetch('/data/service_blocks.json')
+          .then(function(r) { return r.json(); })
+          .then(function(svc) {
+            var counts = {all:keys.length, hosting:0, social:0, seo:0, web:0, email:0,
+                         google:0, facebook:0, linkedin:0, microsoft:0, tiktok:0, youtube:0, billboard:0, geofence:0};
+            Object.keys(svc).forEach(function(num) {
+              var f = getFlags(svc[num]);
+              clientFlags[num] = f;
+              if (f.hosting) counts.hosting++;
+              if (f.social) counts.social++;
+              if (f.seo) counts.seo++;
+              if (f.web) counts.web++;
+              if (f.email) counts.email++;
+              if (f.google) counts.google++;
+              if (f.facebook) counts.facebook++;
+              if (f.linkedin) counts.linkedin++;
+              if (f.microsoft) counts.microsoft++;
+              if (f.tiktok) counts.tiktok++;
+              if (f.youtube) counts.youtube++;
+              if (f.billboard) counts.billboard++;
+              if (f.geofence) counts.geofence++;
+            });
+            statsEl.innerHTML =
+              buildStat(counts.all, 'Total Clients', 'all') +
+              buildStat(counts.hosting, 'Hosting Only', 'hosting') +
+              buildStat(counts.social, 'Social Media', 'social') +
+              buildStat(counts.seo, 'SEO', 'seo') +
+              buildStat(counts.web, 'Website Mgt.', 'web') +
+              buildStat(counts.email, 'Email', 'email');
+            adBreakEl.innerHTML =
+              buildStat(counts.google, 'Google Ads', 'google') +
+              buildStat(counts.facebook, 'Facebook Ads', 'facebook') +
+              buildStat(counts.linkedin, 'LinkedIn Ads', 'linkedin') +
+              buildStat(counts.microsoft, 'Microsoft Ads', 'microsoft') +
+              buildStat(counts.tiktok, 'TikTok Ads', 'tiktok') +
+              buildStat(counts.youtube, 'YouTube Ads', 'youtube') +
+              buildStat(counts.billboard, 'Billboards', 'billboard') +
+              buildStat(counts.geofence, 'GeoFencing', 'geofence');
+          })
+          .catch(function() {
+            statsEl.innerHTML =
+              '<div class="admin-stat"><div class="stat-num">' + keys.length + '</div><div class="stat-label">Total Clients</div></div>';
+          });
+
+        // Client links (Dropbox + Legacy Reports)
+        var clientLinks = {
+          "1602401": {dropbox:"https://www.dropbox.com/scl/fo/6fmea6rentp70sqr19olr/AKdgfeWgnEC13w6wDGniMNQ?rlkey=uz4f1yiswk298y9q2tqb399de&st=b1l6c60c&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1-WnIFlaT43PzMrTOel7BorKrGEYMzNL3GaIh88f-MLk/edit?usp=sharing"},
+          "1708001": {legacy:"https://docs.google.com/spreadsheets/d/1xwo-mIA8jsiUNYdx0rA-Fg_OCTaN-1BKFuQr76A0KaA/edit?usp=sharing"},
+          "1801001": {dropbox:"https://www.dropbox.com/scl/fo/k8o35zidsr7be3l1xli8u/AKc9l2RfUZ9kerX0G5Dc2dI?rlkey=utydlb9ugimv90luiycm3q54g&st=azsy16rw&dl=0",legacy:"https://docs.google.com/spreadsheets/d/18ZOiRHZ-J5wvv-3CTvzOQCckEe3eN6Hd/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "1808001": {legacy:"https://docs.google.com/spreadsheets/d/1aOh8YgEykDobLsjup42oKBD0PDjCtxoUD_-Fo75WRxc/edit?usp=sharing"},
+          "1808002": {legacy:"https://docs.google.com/spreadsheets/d/1vXzzIRr8v2yuTBdB_SLi9EOYI2e3JXyd/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "1808003": {dropbox:"https://www.dropbox.com/scl/fo/sf7jfzgvo3wqyeqy9r1mq/AC8RPXc9mozCPPNUZy8OMKM?rlkey=wok0726altu94bha7g6xqnf7t&st=y84bhr7p&dl=0"},
+          "1808004": {legacy:"https://docs.google.com/spreadsheets/d/1mS4uRc0K_08GRstEu6u3by7vdvdszFQR/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "1903001": {legacy:"https://docs.google.com/spreadsheets/d/1ci5ZQROY0O04mM_vCAxvKXHaP4pNhF08/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "1907001": {dropbox:"https://www.dropbox.com/scl/fo/jj8rvsnd4doyofbdvfe6v/AJfkC2O257Y809x5YCHJaXs?rlkey=x12qokfn7yevlvcmr2mzb941j&st=p9o8uyu8&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1J94Jan-VaEFTRByQuFL4bYY0-ypRuHBd/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "1908001": {dropbox:"https://www.dropbox.com/scl/fo/ref5toch5g2kdam03uw3t/ADV3KVqjWQEmKJSoRecNmZ8?rlkey=wm5jc8ve39886jhv8cgufscqr&st=8zg49fis&dl=0",legacy:"https://docs.google.com/spreadsheets/d/19sSIiGkbNDquYqR1FsZEPwCUevLqutMIV9el_zAgjkE/edit?usp=sharing"},
+          "1910002": {dropbox:"https://www.dropbox.com/scl/fo/17de4cf0l1m274tos99n3/AF6i5lZkAcfYDwJ0SVm0D8A?rlkey=tffy3vviatqtrfdcsu8szbyad&st=jn75o8mv&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1r-gLLRggIL0eGRtNe1ziSgi9zVTKHzIu/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2001002": {legacy:"https://docs.google.com/spreadsheets/d/1UXMAELkiwLbPoDPO1WSDP0v-0m7gfMmyTs5YVVT45cI/edit?usp=sharing"},
+          "2009003": {dropbox:"https://www.dropbox.com/scl/fo/86mjsb42jrb6lsi9q6iv1/AAJ9n2eiVJzFoioLZ1lD8N0?rlkey=q4o47xbm9md1s1ozutxkzn22f&st=wksoyzue&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1c7_N_mFEndAUDUtyRN9XMFkKAteIQSkYCAPAo6cR614/edit?usp=sharing"},
+          "2010001": {dropbox:"https://www.dropbox.com/scl/fo/27199vq42dp5qbaejr65j/AB2HHx3Uakegzyi-HPzguvI?rlkey=q75lmejl8x51ygnbvuo198ede&st=xabrp5vl&dl=00",legacy:"https://docs.google.com/spreadsheets/d/15EKSolzVB1Ylog-qEMxsAPCZ76-ZzvFw/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2012001": {dropbox:"https://www.dropbox.com/scl/fo/i8z6gwfxsgpgt2jfwunm0/AABHxAc5Z-_LZ0ThJ7ehUCM?rlkey=v94odhpenzbyt1kr5dsl1h658&st=bai8m7w1&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1hNhxB6QBYoN8z5swdzDVQ92rDN5Ti_-O/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2103001": {legacy:"https://docs.google.com/spreadsheets/d/1xXCgHrsgntDdkqEeNheUntwuNfD-ItvA/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2105003": {dropbox:"https://www.dropbox.com/scl/fo/od6499yr5jlkxe9okw46b/AH5AviSTG8qv9JW4kfmgU14?rlkey=9je03fr5j6nha1wrg2og44f4r&st=iln21eo1&dl=0"},
+          "2106002": {dropbox:"https://www.dropbox.com/scl/fo/3srvqael35wqabas6iloi/ALhLqGm8_YVzWDMzpWWQ_rQ?rlkey=uvprbvbygnlvq9v8yd0kj9pvb&st=dvuazon1&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1_S6RPxeyCfzNwIc27OVp0DlZnjgmJuif/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2201001": {dropbox:"https://www.dropbox.com/scl/fo/lnii61bf9tdd8rvs610bt/AOheadpIpuGZvyV-CtuSQfk?rlkey=30fgk8653dq7m88qezu8m053r&st=tm8yn9rr&dl=0"},
+          "2201002": {dropbox:"https://www.dropbox.com/scl/fo/ymehf7lemubaesr205mll/AGBLk3WjrXaqDqazO-fIc9Y?rlkey=fgd2ujg1qg4e6b0cvraxz76b4&st=h16iyl2t&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1QLI4AJfUMWxY4WChtcMMOemWVsFd88-2/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2201003": {dropbox:"https://www.dropbox.com/scl/fo/r1ijlrlou1w7ve8m16yqx/AFPM10HCIKXq5KiHiy3rZp4?rlkey=c6nznbyzsmk7se7t551vqdh61&st=9yb7gv8a&dl=0"},
+          "2203005": {dropbox:"https://www.dropbox.com/scl/fo/xzkcnt18xs5wm2oi95nsb/ADcrFDlH4-uAAHN9eR1TFCg?rlkey=expscsccaxhambcwsepxvf78i&st=uqp40ck8&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1x1-szuYsEZfyevWpq5GzUcW9biBGdd5s/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2205001": {legacy:"https://docs.google.com/spreadsheets/d/1adHXb4cfckx7bkoXCVsq2zQLzDNsLtTK/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2205004": {dropbox:"https://www.dropbox.com/scl/fo/oz0yrus7ergbsgow6lbwf/AG3YOT5h5vV19QGBGWJRCbs?rlkey=2lrnzjwd24guw0zzx1lcf5qjc&st=i3uumsza&dl=0"},
+          "2206001": {dropbox:"https://www.dropbox.com/scl/fo/d0tcex551c6hcuj0gax3b/h?rlkey=j7q9at08fx7m660qkwfymb7io&st=s734ldei&dl=0"},
+          "2207001": {dropbox:"https://www.dropbox.com/scl/fo/3vpig9303pi25132xmy5u/ANNgD8ZYAArevI5hMkttTY0?rlkey=01ir2569zcpfli3kk8cx8t6fj&st=5tx4i2pc&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1Bwj27o1ro-WtxpSPR6NtjvwGN3evLb2H/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2208001": {legacy:"https://docs.google.com/spreadsheets/d/1NtjUEMDEiEtY2bc823E2rCbZEKzj6pxN/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2301001": {legacy:"https://docs.google.com/spreadsheets/d/1UJ7Vo-cJ_BGlIwHa48hH9SINK1n1zQehKer1tIRXzcY/edit?usp=sharing"},
+          "2305002": {dropbox:"https://www.dropbox.com/scl/fo/ioglq2h4pax1kr0ml1ahc/ADyaYfRg0sMg6np_FDJ2N9Q?rlkey=idfwcgrsi4hr2ntc2dubljcz9&st=t1l9noqn&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1H9sGzLgjViU8IP9fy7SX-5yfuuCc0i42/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2306001": {dropbox:"https://www.dropbox.com/scl/fo/owez68nrcuzdjksv0ynv1/AC_cuETJ9692C9zEif1ABAM?rlkey=qqx3wao94psh7ulgblz4te8et&st=4apgres1&dl=0"},
+          "2308001": {dropbox:"https://www.dropbox.com/scl/fo/siiibd4jt2txlkkm8v2t7/AEdlxXPABWqIWdLpOw-THOY?rlkey=er6tuvzfnkgnl7eq1zdu6a6h5&st=xfbihdqb&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1gfDYn5PH-bxiTl3eaFblWzwY7rlOIo_3/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2312002": {dropbox:"https://www.dropbox.com/scl/fo/70hy7limlfxjxeesct3g3/AMnilszt4-g_2AtBCGkVkdc?rlkey=jnucr1043ums5l5ijykt52n83&st=ww1qqk8u&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1DIx1_g-hJZOhlop_75ZcwCWZpcrRf_beDR5smiSo_ZM/edit?usp=sharing"},
+          "2312004": {dropbox:"https://www.dropbox.com/scl/fo/itaxzs248t2axsv70hy59/AC3Cq4DpCmFezkyOV3bj77A?rlkey=5srozv7ozk4284xuzojlovxbg&st=8sl9fk52&dl=0"},
+          "2312005": {dropbox:"https://www.dropbox.com/scl/fo/1uhwb3wdckx9na3351gxb/h?rlkey=3xaoluo01jnnvnf1dny612u1c&st=50gnvsry&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1KBQCVXDoRMsWAb-2rMDo5uNuhEsV4FEo/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2401006": {dropbox:"https://www.dropbox.com/scl/fo/hohq403dohc9etlc88qux/AC8dr8a_ilkt-ckVjkqdUhU?rlkey=w3b25njhlr64h7o665amckj2d&st=2f79i6o3&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1O3BLX_YmGH2QHF8oGqyqbUIKocZgj8yO7LYoj5k43yc/edit?usp=sharing"},
+          "2402001": {dropbox:"https://www.dropbox.com/scl/fo/cjrah65ez6swubuo3hjzz/AMq0R04WsmRzYheszVLWl9A?rlkey=bifp0w153ujm34za56opoag94&st=zunn23vl&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1JcUtopjh2m-5PRogYV0HtdNDtyVzoS3S/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2404002": {dropbox:"https://www.dropbox.com/scl/fo/i7t38hrzr2nf3yqorga2e/ADHdf9J2WAV-RGPpiVi0Tas?rlkey=4feneolq961y9hahiiyfbigm5&st=3hz6owqi&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1qwVc-Vts3Q4IkzkyjJdb2Ek9cxpu9801/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2404003": {dropbox:"https://www.dropbox.com/scl/fo/52r4k6fjy8n4kntrihl0k/ANWrrAwGYHZxY_PlPYz8aqs?rlkey=yvhu5fr7wmral7y4udm01r0g3&st=v868j8sw&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1o6bhcu51RYcaga6GfGu8RVn_-4VUsaip/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2405002": {dropbox:"https://www.dropbox.com/scl/fo/fj8a43bdlfn52kr55jam5/AFMFi_So9uhwpKfDFC_x0d8?rlkey=mefw80pqgtocp21wrtwpat6e3&st=hd6ril0j&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1JVniBhrqlVmBN3_qi2CPpaYwGL2IInFH/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2407003": {dropbox:"https://www.dropbox.com/scl/fo/wsmh0wyitk2uxgj5o1eup/ACGWX9nUdfbi9LL9zJZALH4?rlkey=peawvzvvhrspghhylswtif3wv&st=a1920xjs&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1QSNoAYp_Ffirc2dswJG3X-d0YGJxdSQw/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2407004": {legacy:"https://docs.google.com/spreadsheets/d/1mP_DTIQM6u_Jxk0fHTsLfKT8vUFyUpS-/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2408002": {dropbox:"https://www.dropbox.com/scl/fo/j6iedto8rn7b6mtvrg51a/ANdbYJ0XCnO3XkW4PRDCFvM?rlkey=cvlz0ls73ald1n8mevgxd9830&st=tjuh5x7h&dl=0"},
+          "2412001": {dropbox:"https://www.dropbox.com/scl/fo/7p0xuclo25085gojyd2sm/AMlbS7i-E_lRJKYTfOwa2iY?rlkey=v0v9xp5bw1l50dg19xs6ggih0&st=8y7ytgku&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1ZfrNf4Y6iaH7nHLIAFi_fEqlDpPCf4meAg7JvEoPwCI/edit?usp=sharing"},
+          "2412002": {legacy:"https://docs.google.com/spreadsheets/d/1lKS8urIS6XcmkB4WjQMeUWcL5zIjviKGAnXPKVR0Wvs/edit?usp=sharing"},
+          "2412003": {legacy:"https://docs.google.com/spreadsheets/d/13irJn6NplbQ-Xqk_xeDQdgpwqfCyo5rpVq6yC6cm764/edit?usp=sharing"},
+          "2504002": {dropbox:"https://www.dropbox.com/scl/fo/0msm5r665w8g98bz5jur4/AGDForKDsnhAIlcmvxHNi30?rlkey=p0nsyb9bwupwoh1ii07rno8ix&st=57ffcetx&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1QNIX4JCzCYjSEm0OCRFNhNGsjA6QJhcp8qIQlT7yElk/edit?usp=sharing"},
+          "2504004": {dropbox:"https://www.dropbox.com/scl/fo/xt133wqesjb0mq1h3hsel/AAQ2bE_5NKPG9dnNo9pGhxY?rlkey=eaxu60a38w8qgwvev1gigbtxr&st=i1l5u9bc&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1l2AB4Wy8sUFisGosLtEgq3e4UHd6B_HUYIF4GBGdPto/edit?usp=sharing"},
+          "2505002": {dropbox:"https://www.dropbox.com/scl/fo/6n4weo3rsfmzgxcsf8g6x/AAiNmOyRs1ee30W1t6k4bmI?rlkey=c7q34mahwdg9xkzwqc66o9fcq&st=x2hvge6q&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1pkPjNpHRnps5XCb8XE5-o9-3xCha_Aw5/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2508001": {dropbox:"https://www.dropbox.com/scl/fo/h3blja595yzi3nzlsqo61/AHYucxbsCdt4zDiqcHKXzbI?rlkey=76w0z296e9jfrrb7om7xcisga&st=xec90pqg&dl=0"},
+          "2508002": {dropbox:"https://www.dropbox.com/scl/fo/n4tih80r34ndp5y8awhf3/ACr-veoYuc6r1hs9_QR8qFQ?rlkey=h0yxnpfeeyj3pv0xwew9r78n3&st=pz6qgalu&dl=0"},
+          "2508005": {legacy:"https://docs.google.com/spreadsheets/d/1H0yJemodnpDktpV5qDb6onpInLHj7Pv8/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2509002": {legacy:"https://docs.google.com/spreadsheets/d/1tjG2ZmQAnvKIDmz-Cpnh8BC1JMlD9UMX/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2509003": {dropbox:"https://www.dropbox.com/scl/fo/oty39xwdkh3nxyqhdtr0i/AAjxu7AFkfH4kjrAxD7IiOE?rlkey=0d6s8uxj5kba5vodrvu06v8jx&st=o3my472b&dl=0",legacy:"https://docs.google.com/spreadsheets/d/15TeDXQRS8ikOtPMmU8_PwxatXI24zdLw/edit?usp=sharing&ouid=108785917182714821668&rtpof=true&sd=true"},
+          "2510002": {dropbox:"https://www.dropbox.com/scl/fo/uvc8ek2mqlrqxi2xyx3s0/AFBj6V7l3wBR3uysX7yQPl8?rlkey=96fws4ioowrcfo7zvvz9i7b9a&st=qg1fo6du&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1Ub0cowqmUn-pgH5o9KyGNwhncI_wYcx7SxreP-bXj7o/edit?usp=sharing"},
+          "2512001": {legacy:"https://docs.google.com/spreadsheets/d/1bY1jJvS0_QBok78Piq_vtrf9I3RyRbMsXfEERnR9QkA/edit?usp=sharing"},
+          "2601001": {dropbox:"https://www.dropbox.com/scl/fo/n7u0ise2sglwq0x67o26y/ADEPyJdFAPRdreL2dNP4hVE?rlkey=syidwujqg4jinthx11g7s2p8j&st=49k1upii&dl=0",legacy:"https://docs.google.com/spreadsheets/d/1awKQ9yQ0TDPY0lbcyRH7uvM-gCYCWUlfB1F45ev6Cfc/edit?usp=sharing"},
+          "2601002": {dropbox:"https://www.dropbox.com/scl/fo/52cbpzcm6fmyczwl4tk8c/AM_CxqSwM1HTeT0iIcO4OjY?rlkey=j36ma4xvat49nuckbyrawy405&st=zyd2xs9m&dl=0"},
+          "2601003": {dropbox:"https://www.dropbox.com/scl/fo/9oj0a05gq5v14zsx1v72h/ACS9guD7bOF38_rAqOgk84c?rlkey=ubh9v8u8vzvb1ze4opic7z27b&st=ep8jtiat&dl=0"},
+          "2602002": {dropbox:"https://www.dropbox.com/scl/fo/mzor1e6ri6yc95ptulg9r/ALBCNj7KY6VlQdGDVDHJxl8?rlkey=uuyktqshbwgh2ztcrtx034emz&st=lsnihfnr&dl=0"},
+          "2603003": {dropbox:"https://www.dropbox.com/scl/fo/n508rawvw7inl8kafa65m/AJ4GaiIDQ8ujDgzXso2tMXo?rlkey=nrl9u5c3dfl7frj50q3olam0k&st=s5abcqk3&dl=0"}
+        };
+        var dbSvg = '<svg width="12" height="12" viewBox="0 0 43 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 0L0 8.1l8.7 7 12.8-8.1L12.5 0zM0 22.1l12.5 8.1 9-7-12.8-8.1L0 22.1zM21.5 23.2l9 7 12.5-8.1-8.7-7-12.8 8.1zM43 8.1L30.5 0l-9 7 12.8 8.1L43 8.1zM21.5 25l-9 7.1-3.5-2.3v2.6l12.5 7.5 12.5-7.5v-2.6l-3.5 2.3-9-7.1z" fill="#fff"/></svg>';
+        var chartSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1D80DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>';
+
+        // Client health data
+        var clientHealth = {};
+        var dismissed = {};
+        var healthPromise = Promise.all([
+          fetch('/data/client_health.json').then(function(r) { return r.json(); }).then(function(h) { clientHealth = h; }),
+          fetch('/.netlify/functions/health').then(function(r) { return r.json(); }).then(function(d) { dismissed = d; }).catch(function() {}),
+          fetch('/.netlify/functions/invites').then(function(r) { return r.json(); }).then(function(d) { clientInvited = d; }).catch(function() {})
+        ]).catch(function() {});
+
+        healthPromise.then(function() {
+          // Build tiles
+          var grid = document.getElementById('client-grid');
+          tiles = [];
+
+          keys.forEach(function (num) {
+            var name = clients[num].name;
+            var a = document.createElement('a');
+            a.className = 'client-tile';
+            a.href = '/clients/' + num + '/';
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            a.setAttribute('data-name', name.toLowerCase());
+            a.setAttribute('data-num', num);
+            var cl = clientLinks[num] || {};
+            var icons = '';
+            if (cl.dropbox) {
+              icons += '<a href="' + cl.dropbox + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" style="display:inline-flex;align-items:center;gap:3px;background:#0061FE;color:#fff;padding:3px 8px;border-radius:5px;font-size:0.65rem;font-weight:600;text-decoration:none;">' + dbSvg + ' Dropbox</a>';
+            }
+            if (cl.legacy) {
+              icons += '<a href="' + cl.legacy + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" style="display:inline-flex;align-items:center;gap:3px;background:#fff;color:#1D80DE;padding:3px 8px;border-radius:5px;font-size:0.65rem;font-weight:600;text-decoration:none;border:1.5px solid #1D80DE;">' + chartSvg + ' Legacy</a>';
+            }
+
+            // Health indicator
+            var health = clientHealth[num] || 'neutral';
+            var healthHtml = '';
+            if (health !== 'neutral' && !dismissed[num]) {
+              var thumbUp = '<svg width="18" height="18" viewBox="0 0 24 24" fill="#27AE60"><path d="M2 20h2V10H2v10zm20-9a2 2 0 0 0-2-2h-6.31l.95-4.57.03-.32a1.5 1.5 0 0 0-.44-1.06L13.17 2 7.59 7.59C7.22 7.95 7 8.45 7 9v10a2 2 0 0 0 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>';
+              var thumbDown = '<svg width="18" height="18" viewBox="0 0 24 24" fill="#E74C3C"><path d="M22 4h-2v10h2V4zM2 13a2 2 0 0 0 2 2h6.31l-.95 4.57-.03.32c0 .4.17.77.44 1.06L10.83 22l5.58-5.59c.37-.36.59-.86.59-1.41V5a2 2 0 0 0-2-2H6c-.83 0-1.54.5-1.84 1.22L1.14 11.27c-.09.23-.14.47-.14.73v2z"/></svg>';
+              var thumb = health === 'good' ? thumbUp : thumbDown;
+              healthHtml = '<div style="display:flex;align-items:center;gap:6px;margin-top:6px;" class="health-row" data-num="' + num + '">' +
+                thumb +
+                '<label onclick="event.preventDefault();event.stopPropagation();" style="display:flex;align-items:center;gap:4px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;">' +
+                '<input type="checkbox" onclick="event.stopPropagation();dismissHealth(\'' + num + '\',this)" style="cursor:pointer;"> Clear</label>' +
+                '</div>';
+            }
+
+            // Invite checkbox
+            var isInvited = clientInvited[num] || false;
+            var inviteHtml = '<div style="display:flex;align-items:center;gap:6px;margin-top:6px;" class="invite-row">' +
+              '<label onclick="event.preventDefault();event.stopPropagation();" style="display:flex;align-items:center;gap:5px;font-size:0.7rem;color:' + (isInvited ? '#27AE60' : 'var(--text-muted)') + ';cursor:pointer;font-weight:600;">' +
+              '<input type="checkbox" ' + (isInvited ? 'checked' : '') + ' onclick="event.stopPropagation();toggleInvite(\'' + num + '\',this)" style="cursor:pointer;accent-color:#27AE60;">' +
+              (isInvited ? '✓ Invited' : 'Invited to Dashboard') +
+              '</label></div>';
+
+            a.innerHTML =
+              '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                '<div class="tile-name">' + name + '</div>' +
+              '</div>' +
+              '<div class="tile-number">#' + num + '</div>' +
+              healthHtml +
+              inviteHtml +
+              (icons ? '<div style="display:flex;gap:6px;margin-top:6px;">' + icons + '</div>' : '') +
+              '<div class="tile-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> View Dashboard</div>';
+            grid.appendChild(a);
+            tiles.push(a);
+          });
+
+        // Search
+        var search = document.getElementById('search');
+        var noResults = document.getElementById('no-results');
+
+        search.addEventListener('input', function () { applyFilter(); });
+        }); // end healthPromise.then
+      });
+
+    function applyFilter() {
+      var noResults = document.getElementById('no-results');
+      var visible = 0;
+      tiles.forEach(function(tile) {
+        var num = tile.getAttribute('data-num');
+        var searchQ = document.getElementById('search').value.toLowerCase().trim();
+        var matchSearch = !searchQ || tile.getAttribute('data-name').indexOf(searchQ) > -1 || num.indexOf(searchQ) > -1;
+        var matchFilter = !activeFilter || (clientFlags[num] && clientFlags[num][activeFilter]);
+        tile.style.display = (matchSearch && matchFilter) ? '' : 'none';
+        if (matchSearch && matchFilter) visible++;
+      });
+      noResults.style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    function toggleFilter(key, el) {
+      // Toggle active filter
+      if (activeFilter === key || key === 'all') {
+        activeFilter = null;
+      } else {
+        activeFilter = key;
+      }
+      // Update active styling on all stat cards
+      document.querySelectorAll('.admin-stat').forEach(function(s) {
+        if (s.getAttribute('data-filter') === activeFilter) {
+          s.style.background = '#1D80DE';
+          s.style.borderColor = '#1D80DE';
+          s.querySelector('.stat-num').style.color = '#fff';
+          s.querySelector('.stat-label').style.color = 'rgba(255,255,255,0.8)';
+        } else {
+          s.style.background = '';
+          s.style.borderColor = '';
+          s.querySelector('.stat-num').style.color = '';
+          s.querySelector('.stat-label').style.color = '';
+        }
+      });
+      applyFilter();
+    }
+
+    function toggleInvite(num, checkbox) {
+      var isChecked = checkbox.checked;
+      var label = checkbox.parentElement;
+      if (isChecked) {
+        label.style.color = '#27AE60';
+        label.innerHTML = '<input type="checkbox" checked onclick="event.stopPropagation();toggleInvite(\'' + num + '\',this)" style="cursor:pointer;accent-color:#27AE60;"> ✓ Invited';
+      } else {
+        label.style.color = 'var(--text-muted)';
+        label.innerHTML = '<input type="checkbox" onclick="event.stopPropagation();toggleInvite(\'' + num + '\',this)" style="cursor:pointer;accent-color:#27AE60;"> Invited to Dashboard';
+      }
+      fetch('/.netlify/functions/invites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client: num, invited: isChecked })
+      });
+    }
+
+    function dismissHealth(num, checkbox) {
+      // Hide immediately
+      var row = checkbox.closest('.health-row');
+      if (row) row.style.display = 'none';
+      // Save to server so it's cleared for everyone
+      fetch('/.netlify/functions/health', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client: num, clear: true })
+      });
+    }
+
+  </script>
+  <script>
+    /* Admin gate — PIN 080317 */
+    (function () {
+      var KEY = 'moxie_admin';
+      var HASH = 'MDgwMzE3';
+      if (localStorage.getItem(KEY) === HASH) return;
+      var overlay = document.createElement('div');
+      overlay.className = 'gate-overlay';
+      overlay.innerHTML =
+        '<div class="gate-box">' +
+          '<img src="/assets/moxie-mascot-small.png" alt="MOXIE" style="width:100px;height:100px;margin:0 auto 12px;display:block;">' +
+          '<h1>Admin Dashboard</h1>' +
+          '<p>Enter admin access code</p>' +
+          '<input type="password" id="admin-gate-input" placeholder="Admin Code" maxlength="10" autocomplete="off">' +
+          '<button id="admin-gate-btn" style="display:block;width:100%;margin-top:12px;padding:12px;background:#DF6229;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0.5px;">Enter</button>' +
+          '<div class="gate-error" id="admin-gate-error">Incorrect code. Please try again.</div>' +
+        '</div>';
+      document.body.appendChild(overlay);
+      var input = document.getElementById('admin-gate-input');
+      var btn = document.getElementById('admin-gate-btn');
+      var error = document.getElementById('admin-gate-error');
+      function tryAuth() {
+        if (btoa(input.value) === HASH) {
+          localStorage.setItem(KEY, HASH);
+          overlay.remove();
+        } else {
+          error.style.display = 'block';
+          input.value = '';
+          input.focus();
+        }
+      }
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryAuth(); });
+      btn.addEventListener('click', tryAuth);
+      setTimeout(function () { input.focus(); }, 100);
+    })();
+  </script>
+</body>
+</html>

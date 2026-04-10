@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MOXIE AI Insights</title>
   <link rel="stylesheet" href="/css/moxie.css">
-  <script src="/js/gate.js" defer></script>
 </head>
 <body>
   <div class="landing">
@@ -13,34 +15,96 @@
       <img src="/assets/moxie-mascot-small.png" alt="MOXIE" style="width:300px;height:300px;margin:0 auto 16px;display:block;">
       <div class="brand">MOXIE AI Insights</div>
       <p class="tagline">Your Monthly Marketing Performance Dashboard</p>
+      <div style="text-align:center;margin-bottom:12px;">
+        <button onclick="document.getElementById('video-lightbox').style.display='flex';document.getElementById('explainer-video').play();" style="background:none;border:2px solid #1D80DE;color:#1D80DE;padding:10px 24px;border-radius:8px;font-size:1.1rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Barlow',sans-serif;margin:0 auto;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#1D80DE"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          How it works in 60 seconds
+        </button>
+      </div>
       <form id="client-form" onsubmit="return false;">
-        <input type="text" id="client-input" placeholder="Enter your 7-digit client number" maxlength="7" inputmode="numeric" pattern="[0-9]{7}" autocomplete="off">
-        <button type="submit" id="go-btn">View My Dashboard</button>
-        <div class="error-msg" id="error-msg">Client number not found. Please check your number and try again.</div>
+        <input type="text" id="client-input" placeholder="Client Number" maxlength="7" inputmode="numeric" pattern="[0-9]{7}" autocomplete="off">
+        <input type="tel" id="code-input" placeholder="Access Code" maxlength="10" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="margin-top:10px;-webkit-text-security:disc;">
+        <button type="submit" id="go-btn" style="margin-top:12px;">View My Dashboard</button>
+        <div class="error-msg" id="error-msg"></div>
       </form>
+    </div>
+  </div>
+
+  <!-- Video Lightbox -->
+  <div id="video-lightbox" onclick="this.style.display='none';this.querySelector('video').pause();" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;cursor:pointer;">
+    <div onclick="event.stopPropagation()" style="position:relative;width:90%;max-width:900px;border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5);cursor:default;">
+      <button onclick="document.getElementById('video-lightbox').style.display='none';document.getElementById('video-lightbox').querySelector('video').pause();" style="position:absolute;top:10px;right:14px;background:rgba(0,0,0,0.5);border:none;color:white;font-size:24px;cursor:pointer;z-index:1;width:36px;height:36px;border-radius:50;display:flex;align-items:center;justify-content:center;">&times;</button>
+      <video id="explainer-video" controls style="width:100%;display:block;" src="/assets/moxie-explainer-60s.mp4"></video>
     </div>
   </div>
   <script>
     (function () {
-      var input = document.getElementById('client-input');
+      var clientInput = document.getElementById('client-input');
+      var codeInput = document.getElementById('code-input');
       var btn = document.getElementById('go-btn');
       var err = document.getElementById('error-msg');
+      var CLIENT_HASH = 'ODY3NQ==';
+      var ADMIN_HASH = 'MDgwMzE3';
 
       fetch('/data/clients.json')
         .then(function (r) { return r.json(); })
         .then(function (clients) {
-          btn.addEventListener('click', function () {
-            var num = input.value.trim();
+          function doLogin() {
+            var num = clientInput.value.trim();
+            var code = codeInput.value;
             err.style.display = 'none';
-            if (clients[num]) {
-              window.location.href = '/clients/' + num + '/';
-            } else {
+
+            if (!num) {
+              err.textContent = 'Please enter your client number.';
               err.style.display = 'block';
-              input.focus();
+              clientInput.focus();
+              return;
             }
+            if (!code) {
+              err.textContent = 'Please enter your access code.';
+              err.style.display = 'block';
+              codeInput.focus();
+              return;
+            }
+
+            // Admin path
+            if (num === '1008071') {
+              if (btoa(code) === ADMIN_HASH) {
+                localStorage.setItem('moxie_admin', ADMIN_HASH);
+                window.location.href = '/admin/';
+              } else {
+                err.textContent = 'Incorrect access code.';
+                err.style.display = 'block';
+                codeInput.value = '';
+                codeInput.focus();
+              }
+              return;
+            }
+
+            // Client path
+            if (clients[num]) {
+              if (btoa(code) === CLIENT_HASH) {
+                localStorage.setItem('moxie_auth', CLIENT_HASH);
+                window.location.href = '/clients/' + num + '/';
+              } else {
+                err.textContent = 'Incorrect access code.';
+                err.style.display = 'block';
+                codeInput.value = '';
+                codeInput.focus();
+              }
+            } else {
+              err.textContent = 'Client number not found. Please check and try again.';
+              err.style.display = 'block';
+              clientInput.focus();
+            }
+          }
+
+          btn.addEventListener('click', doLogin);
+          codeInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') doLogin();
           });
-          input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') btn.click();
+          clientInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') codeInput.focus();
           });
         })
         .catch(function () {
@@ -51,5 +115,10 @@
         });
     })();
   </script>
+  <div class="report-footer" style="margin-top:40px;">
+    <span class="powered-by">Powered by:</span>
+    <a href="https://inboundblend.com" target="_blank" rel="noopener noreferrer"><img src="/assets/inbound-blend-logo.png" alt="Inbound Blend" class="footer-logo"></a>
+    MOXIE AI Insights
+  </div>
 </body>
 </html>

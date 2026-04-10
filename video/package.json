@@ -1,0 +1,24 @@
+{
+  "name": "video",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@remotion/bundler": "^4.0.443",
+    "@remotion/cli": "^4.0.443",
+    "@remotion/media-utils": "^4.0.443",
+    "@remotion/player": "^4.0.443",
+    "@remotion/renderer": "^4.0.443",
+    "puppeteer": "^24.40.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "^4.0.443"
+  }
+}

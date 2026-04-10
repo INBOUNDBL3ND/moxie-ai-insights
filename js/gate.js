@@ -3,7 +3,8 @@
   var KEY = 'moxie_auth';
   var HASH = 'ODY3NQ=='; // base64 of "8675"
 
-  if (sessionStorage.getItem(KEY) === HASH) return;
+  if (localStorage.getItem(KEY) === HASH) return;
+  if (localStorage.getItem('moxie_admin') === 'MDgwMzE3') return;
 
   // Build overlay
   var overlay = document.createElement('div');
@@ -14,26 +15,32 @@
       '<h1>MOXIE AI Insights</h1>' +
       '<p>Enter your access code to continue</p>' +
       '<input type="password" id="gate-input" placeholder="Access Code" maxlength="10" autocomplete="off">' +
+      '<button id="gate-btn" style="display:block;width:100%;margin-top:12px;padding:12px;background:#DF6229;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0.5px;">Enter</button>' +
       '<div class="gate-error" id="gate-error">Incorrect code. Please try again.</div>' +
     '</div>';
 
   document.body.appendChild(overlay);
 
   var input = document.getElementById('gate-input');
+  var btn = document.getElementById('gate-btn');
   var error = document.getElementById('gate-error');
 
-  input.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') {
-      if (btoa(input.value) === HASH) {
-        sessionStorage.setItem(KEY, HASH);
-        overlay.remove();
-      } else {
-        error.style.display = 'block';
-        input.value = '';
-        input.focus();
-      }
+  function tryAuth() {
+    if (btoa(input.value) === HASH) {
+      localStorage.setItem(KEY, HASH);
+      overlay.remove();
+    } else {
+      error.style.display = 'block';
+      input.value = '';
+      input.focus();
     }
+  }
+
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') tryAuth();
   });
+
+  btn.addEventListener('click', tryAuth);
 
   setTimeout(function () { input.focus(); }, 100);
 })();

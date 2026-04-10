@@ -1,7 +1,43 @@
-.DS_Store
+# Dependencies
 node_modules/
-.env
-*.log
+video/node_modules/
 
-# Local Netlify folder
-.netlify
+# Netlify state (per-checkout, should not be shared)
+.netlify/
+
+# macOS junk
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env files
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sandbox session log (not meant to be committed)
+SANDBOX_LOG.md
+
+# Build output
+dist/
+build/
+.next/
+out/
