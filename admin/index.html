@@ -111,6 +111,8 @@
     var tiles = [];
     var activeFilter = null;
     var clientFlags = {};
+    var clientInvited = {};
+    var pendingInvites = {}; // client#s with an in-flight POST — skipped during poll sync
 
     fetch('/data/clients.json')
       .then(function (r) { return r.json(); })
@@ -122,9 +124,7 @@
         // Stats — load service data and build filters
         var statsEl = document.getElementById('admin-stats');
         var adBreakEl = document.getElementById('admin-ad-breakdown');
-        // clientFlags and activeFilter declared at top scope
-        var clientInvited = {};
-        var pendingInvites = {}; // client#s with an in-flight POST — skipped during poll sync
+        // clientFlags, activeFilter, clientInvited, pendingInvites declared at top scope
 
         function getFlags(blocks) {
           var f = {};
