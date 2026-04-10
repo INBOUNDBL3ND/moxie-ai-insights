@@ -76,6 +76,273 @@
       .client-grid { grid-template-columns: 1fr; }
       .admin-header h1 { font-size: 1.5rem; }
     }
+
+    /* Edit icon on tiles */
+    .client-tile { position: relative; }
+    .pencil-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--blue);
+      z-index: 2;
+      transition: all 0.15s;
+      padding: 0;
+    }
+    .pencil-btn:hover {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+      transform: scale(1.05);
+    }
+
+    /* Edit modal */
+    .edit-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .edit-modal.open { display: flex; }
+    .edit-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 20, 40, 0.55);
+    }
+    .edit-modal-content {
+      position: relative;
+      background: var(--white);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 720px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+    }
+    .edit-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    .edit-modal-header h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.4rem;
+      margin: 0;
+      color: var(--text);
+    }
+    .edit-modal-header .client-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .edit-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .edit-close-btn:hover { background: var(--border); color: var(--text); }
+
+    .edit-modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .edit-section {
+      margin-bottom: 24px;
+    }
+    .edit-section h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 10px;
+    }
+    .edit-section p.hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: -4px 0 12px;
+    }
+
+    .pill-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    .pill-input-row input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+    .pill-input-row input:focus { outline: none; border-color: var(--blue); }
+    .pill-input-row button {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+    .pill-input-row button:hover { background: #fca5a5; }
+
+    .row-editor {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: var(--bg-card);
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 12px;
+    }
+    .row-media {
+      width: 140px;
+      height: 100px;
+      border-radius: 8px;
+      background: #eef2f6;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      border: 1px dashed var(--border);
+      position: relative;
+    }
+    .row-media img, .row-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .row-media input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .row-media .upload-hint {
+      pointer-events: none;
+      text-align: center;
+      line-height: 1.3;
+      padding: 0 10px;
+    }
+    .row-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .row-fields textarea,
+    .row-fields input {
+      padding: 8px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: var(--font);
+      font-size: 0.87rem;
+      color: var(--text);
+      resize: vertical;
+    }
+    .row-fields textarea { min-height: 48px; }
+    .row-fields textarea:focus,
+    .row-fields input:focus { outline: none; border-color: var(--blue); }
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+      grid-column: 1 / -1;
+      justify-content: flex-end;
+    }
+    .row-actions button {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-family: var(--font);
+      font-weight: 600;
+      color: var(--text);
+    }
+    .row-actions button:hover { background: var(--bg-card); border-color: var(--blue); color: var(--blue); }
+    .row-actions .del-btn:hover { background: #fee2e2; border-color: #fca5a5; color: #b91c1c; }
+
+    .edit-btn-add {
+      background: var(--blue-light);
+      color: var(--blue);
+      border: 1.5px dashed var(--blue-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+    }
+    .edit-btn-add:hover { background: rgba(29, 128, 222, 0.12); }
+
+    .edit-modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-card);
+    }
+    .edit-status {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      flex: 1;
+    }
+    .edit-status.success { color: var(--green); font-weight: 600; }
+    .edit-status.error { color: #dc2626; font-weight: 600; }
+    .edit-btn-cancel, .edit-btn-save {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+    }
+    .edit-btn-save {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+    .edit-btn-save:hover { background: #1668B8; }
+    .edit-btn-cancel:hover { background: var(--bg-card); }
   </style>
 </head>
 <body>
@@ -104,6 +371,39 @@
       <span class="powered-by">Powered by:</span>
       <a href="https://inboundblend.com" target="_blank" rel="noopener noreferrer"><img src="/assets/inbound-blend-logo.png" alt="Inbound Blend" class="footer-logo"></a>
       MOXIE AI Insights
+    </div>
+  </div>
+
+  <!-- Edit client content modal -->
+  <div id="edit-modal" class="edit-modal">
+    <div class="edit-modal-backdrop" onclick="closeEditModal()"></div>
+    <div class="edit-modal-content" onclick="event.stopPropagation()">
+      <div class="edit-modal-header">
+        <div>
+          <h2 id="edit-modal-title">Edit Client</h2>
+          <div class="client-sub" id="edit-modal-subtitle">&nbsp;</div>
+        </div>
+        <button class="edit-close-btn" onclick="closeEditModal()" title="Close">×</button>
+      </div>
+      <div class="edit-modal-body">
+        <div class="edit-section">
+          <h3>Your Active Marketing Services</h3>
+          <p class="hint">Pills shown on the client dashboard and monthly reports. Leave empty to use the defaults baked into the HTML.</p>
+          <div id="edit-pills-list"></div>
+          <button class="edit-btn-add" onclick="addPill()">+ Add Service</button>
+        </div>
+        <div class="edit-section">
+          <h3>Current Work</h3>
+          <p class="hint">Live campaigns / creative shown to the client below their monthly reports. Each row: image or video, a note, and a link button.</p>
+          <div id="edit-rows-list"></div>
+          <button class="edit-btn-add" onclick="addRow()">+ Add Current Work Row</button>
+        </div>
+      </div>
+      <div class="edit-modal-footer">
+        <div class="edit-status" id="edit-status">&nbsp;</div>
+        <button class="edit-btn-cancel" onclick="closeEditModal()">Cancel</button>
+        <button class="edit-btn-save" onclick="saveContent()">Save Changes</button>
+      </div>
     </div>
   </div>
 
@@ -318,8 +618,14 @@
               '<input type="checkbox" onclick="event.stopPropagation();markInvited(\'' + num + '\',this)" style="cursor:pointer;accent-color:#27AE60;"> Invited to Dashboard' +
               '</label></div>';
 
+            var pencilBtn = '<button class="pencil-btn" title="Edit client content"' +
+              ' onclick="event.preventDefault();event.stopPropagation();openEditModalFromTile(this)">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>' +
+              '</button>';
+
             a.innerHTML =
-              '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+              pencilBtn +
+              '<div style="display:flex;justify-content:space-between;align-items:center;padding-right:36px;">' +
                 '<div class="tile-name">' + name + '</div>' +
               '</div>' +
               '<div class="tile-number">#' + num + '</div>' +
@@ -417,6 +723,211 @@
     document.addEventListener('visibilitychange', function() {
       if (!document.hidden) pollAdminState();
     });
+
+    // ─── Edit modal (Client Content) ───────────────────────────────────────
+    var editState = { client: null, name: '', pills: [], currentWork: [] };
+
+    function escapeHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function openEditModalFromTile(btn) {
+      var tile = btn.closest('.client-tile');
+      if (!tile) return;
+      var num = tile.getAttribute('data-num');
+      var nameEl = tile.querySelector('.tile-name');
+      var name = nameEl ? nameEl.textContent : num;
+      openEditModal(num, name);
+    }
+
+    function openEditModal(num, name) {
+      editState.client = num;
+      editState.name = name || num;
+      editState.pills = [];
+      editState.currentWork = [];
+
+      document.getElementById('edit-modal-title').textContent = 'Edit: ' + editState.name;
+      document.getElementById('edit-modal-subtitle').textContent = '#' + num;
+      document.getElementById('edit-modal').classList.add('open');
+      setEditStatus('Loading…');
+
+      fetch('/.netlify/functions/client-content?client=' + encodeURIComponent(num) + '&cb=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          editState.pills = Array.isArray(data.pills) ? data.pills.slice() : [];
+          editState.currentWork = Array.isArray(data.currentWork) ? data.currentWork.slice() : [];
+          // If no pills override saved, seed the editor with the current HTML-baked pills
+          if (editState.pills.length === 0) {
+            return fetchBakedPills(num).then(function(pills) { editState.pills = pills; });
+          }
+        })
+        .then(function() {
+          renderEditModal();
+          setEditStatus('');
+        })
+        .catch(function(e) {
+          renderEditModal();
+          setEditStatus('Load error: ' + e.message, 'error');
+        });
+    }
+
+    function fetchBakedPills(num) {
+      return fetch('/clients/' + num + '/index.html?cb=' + Date.now())
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+          var grid = html.match(/<div class="services-grid">([\s\S]*?)<\/div>/);
+          if (!grid) return [];
+          var out = [];
+          var re = /<span class="service-pill">([^<]+)<\/span>/g;
+          var m;
+          while ((m = re.exec(grid[1])) !== null) out.push(m[1].trim());
+          return out;
+        })
+        .catch(function() { return []; });
+    }
+
+    function renderEditModal() {
+      var pillsHtml = editState.pills.map(function(p, i) {
+        return '<div class="pill-input-row">' +
+          '<input type="text" value="' + escapeHtml(p) + '" placeholder="Service name" ' +
+          'oninput="editState.pills[' + i + '] = this.value">' +
+          '<button onclick="removePill(' + i + ')" title="Remove">×</button>' +
+          '</div>';
+      }).join('');
+      document.getElementById('edit-pills-list').innerHTML = pillsHtml;
+
+      var rowsHtml = editState.currentWork.map(function(row, i) {
+        var mediaInner;
+        if (row.mediaId) {
+          if (row.mediaType === 'video') {
+            mediaInner = '<video src="/.netlify/functions/client-media?id=' + encodeURIComponent(row.mediaId) + '" muted playsinline></video>';
+          } else {
+            mediaInner = '<img src="/.netlify/functions/client-media?id=' + encodeURIComponent(row.mediaId) + '" alt="">';
+          }
+        } else {
+          mediaInner = '<span class="upload-hint">Click to upload<br>image or video</span>';
+        }
+        return '<div class="row-editor">' +
+          '<label class="row-media">' +
+            mediaInner +
+            '<input type="file" accept="image/*,video/*" onchange="uploadRowMedia(' + i + ', this.files[0])">' +
+          '</label>' +
+          '<div class="row-fields">' +
+            '<textarea placeholder="Note / description" oninput="editState.currentWork[' + i + '].note = this.value">' + escapeHtml(row.note) + '</textarea>' +
+            '<input type="url" placeholder="Link URL (https://…)" value="' + escapeHtml(row.linkUrl) + '" oninput="editState.currentWork[' + i + '].linkUrl = this.value">' +
+            '<input type="text" placeholder="Button label (e.g. View Landing Page)" value="' + escapeHtml(row.linkLabel) + '" oninput="editState.currentWork[' + i + '].linkLabel = this.value">' +
+          '</div>' +
+          '<div class="row-actions">' +
+            '<button onclick="moveRow(' + i + ', -1)" title="Move up">&uarr;</button>' +
+            '<button onclick="moveRow(' + i + ', 1)" title="Move down">&darr;</button>' +
+            '<button class="del-btn" onclick="removeRow(' + i + ')">Delete</button>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+      document.getElementById('edit-rows-list').innerHTML = rowsHtml || '<p class="hint" style="text-align:center;padding:20px 0;">No rows yet. Click + below to add one.</p>';
+    }
+
+    function addPill() {
+      editState.pills.push('');
+      renderEditModal();
+      // Focus the new field
+      var inputs = document.querySelectorAll('#edit-pills-list input');
+      if (inputs.length) inputs[inputs.length - 1].focus();
+    }
+    function removePill(i) {
+      editState.pills.splice(i, 1);
+      renderEditModal();
+    }
+
+    function addRow() {
+      editState.currentWork.push({
+        id: 'row-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+        mediaId: '',
+        mediaType: 'image',
+        note: '',
+        linkUrl: '',
+        linkLabel: ''
+      });
+      renderEditModal();
+    }
+    function removeRow(i) {
+      if (!confirm('Delete this row?')) return;
+      editState.currentWork.splice(i, 1);
+      renderEditModal();
+    }
+    function moveRow(i, dir) {
+      var j = i + dir;
+      if (j < 0 || j >= editState.currentWork.length) return;
+      var tmp = editState.currentWork[i];
+      editState.currentWork[i] = editState.currentWork[j];
+      editState.currentWork[j] = tmp;
+      renderEditModal();
+    }
+
+    function uploadRowMedia(i, file) {
+      if (!file) return;
+      setEditStatus('Uploading ' + file.name + '…');
+      var fd = new FormData();
+      fd.append('file', file);
+      fetch('/.netlify/functions/client-media', { method: 'POST', body: fd })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.error) { setEditStatus('Upload failed: ' + data.error, 'error'); return; }
+          editState.currentWork[i].mediaId = data.id;
+          editState.currentWork[i].mediaType = data.mediaType;
+          setEditStatus('Uploaded ✓', 'success');
+          renderEditModal();
+        })
+        .catch(function(e) { setEditStatus('Upload failed: ' + e.message, 'error'); });
+    }
+
+    function saveContent() {
+      var payload = {
+        pills: editState.pills.map(function(p) { return String(p || '').trim(); }).filter(Boolean),
+        currentWork: editState.currentWork
+      };
+      setEditStatus('Saving…');
+      fetch('/.netlify/functions/client-content?client=' + encodeURIComponent(editState.client), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.error) { setEditStatus('Save failed: ' + data.error, 'error'); return; }
+          setEditStatus('Saved ✓', 'success');
+          setTimeout(closeEditModal, 700);
+        })
+        .catch(function(e) { setEditStatus('Save failed: ' + e.message, 'error'); });
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.remove('open');
+      editState = { client: null, name: '', pills: [], currentWork: [] };
+      setEditStatus('');
+    }
+
+    function setEditStatus(msg, kind) {
+      var el = document.getElementById('edit-status');
+      if (!el) return;
+      el.textContent = msg || '\u00A0';
+      el.className = 'edit-status' + (kind ? ' ' + kind : '');
+    }
+
+    // Expose for inline onclick handlers
+    window.openEditModalFromTile = openEditModalFromTile;
+    window.openEditModal = openEditModal;
+    window.closeEditModal = closeEditModal;
+    window.addPill = addPill;
+    window.removePill = removePill;
+    window.addRow = addRow;
+    window.removeRow = removeRow;
+    window.moveRow = moveRow;
+    window.uploadRowMedia = uploadRowMedia;
+    window.saveContent = saveContent;
+    window.editState = editState; // for inline handlers that reference editState.X
 
     function dismissHealth(num, checkbox) {
       // Hide immediately
