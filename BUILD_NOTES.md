@@ -1,511 +1,59 @@
-# Build Notes — Admin Control Panel + Current Work section
+# BUILD_NOTES.md
 
-Build date: 2026-04-10
-Branch: `sandbox`
-Shipped to: `https://sandbox--moxie-ai-insights.netlify.app`
+## Permanent Rules
 
-## What was built
+**The production site is the design bible.** When adding new UI to admin/index.html, first inspect the existing HTML in the file to find the CSS classes and patterns already in use. Reuse them. Never create new CSS classes when existing ones would work. Never use raw browser-default form elements — every input, button, select, and textarea must use the existing styled classes.
 
-1. **Two new Netlify Functions (v2 `.mjs`)**
-   - `netlify/functions/client-content.mjs` — GET/POST per-client JSON
-     (pills override + Current Work rows), persisted in Netlify Blobs
-     store `client-content`, keyed by client number.
-   - `netlify/functions/client-media.mjs` — GET/POST/DELETE for binary
-     media (images + videos), persisted in Netlify Blobs store
-     `client-media`, keyed by random hex ID. Content-Type preserved
-     via blob metadata so `GET ?id=…` returns a proper image/video
-     response the browser can render directly.
-
-2. **Public renderer `js/client-content.js`**
-   - Runs on every client dashboard page via a `<script src>` tag
-     injected into all 250 client HTML files (index + monthly reports).
-   - Detects client number from URL path.
-   - Fetches `client-content?client=NNNNNN`. If a pills override
-     exists it replaces the `.services-grid` contents. If there are
-     `currentWork` rows it builds a new "Current Work" section
-     and inserts it (after `.reports-grid` on index pages, before
-     `.report-footer` on monthly reports).
-   - Silent no-op when there's no content for a client (page
-     renders exactly as before).
-   - Self-contained styles (injected `<style id="cw-styles">`) so
-     `css/moxie.css` didn't need to change.
-
-3. **Admin edit UI in `admin/index.html`**
-   - Small pencil button in the top-right of each client tile.
-     Click stops propagation so the tile's dashboard link isn't
-     followed.
-   - Clicking opens a modal with two sections:
-     - **Your Active Marketing Services** — text-input list, add / remove / rename.
-     - **Current Work** — row editor (image/video upload, note textarea,
-       link URL, button label, move up / move down / delete).
-   - On open, the modal loads the saved content from
-     `client-content`. If the client has no pills override yet, the
-     editor is *seeded* from the current HTML-baked pills by fetching
-     `/clients/NNNNNN/index.html` and parsing out `<span class="service-pill">`
-     entries, so the admin starts with the existing state and edits from there.
-   - Save POSTs JSON back to `client-content`. Media upload POSTs
-     multipart/form-data to `client-media` and stores the returned
-     `id` in the row.
-   - Reuses the existing admin gate (PIN `080317`) — no new auth.
-
-## Judgment calls I made (no user asked)
-
-1. **Data model** — a single JSON blob per client with `{ pills, currentWork[] }`.
-   Could have split into separate blobs (one for pills, one for rows) but that
-   doubles the read/write cost for no benefit; they're always edited together.
-
-2. **Pills override vs replacement** — Pills stay hardcoded in the HTML as the
-   default. The blob override is optional — if empty/null, the HTML pills render.
-   This means you don't have to edit every client just to keep the existing
-   pills working. The admin editor *seeds* itself from the HTML so changes are
-   additive, not destructive.
-
-3. **Media storage** — Netlify Blobs (separate `client-media` store) rather
-   than base64 in the content JSON. Cleaner for real-size images, and the
-   `getWithMetadata` pattern lets us serve the right Content-Type from the
-   function.
-
-4. **Max upload size** — 10 MB per file, enforced in `client-media.mjs`. Netlify
-   functions have a body size limit around 6 MB for JSON responses, but
-   multipart upload + blob storage avoids that; 10 MB feels right for ad creative.
-
-5. **Section title** — Used **"Current Work"** per Todd's first suggested name.
-   Kept the h2 `section-label` styling consistent with other sections.
-
-6. **Insertion point on monthly reports** — Inserted *before* `.report-footer`
-   (so it sits between opportunity and footer). On index pages, inserted *after*
-   `.reports-grid` (explicit ask). Script prefers reports-grid if present, falls
-   back to report-footer otherwise.
-
-7. **Row delete UX** — A `confirm()` prompt on delete (matches the tone of
-   other destructive actions in the admin), no confirm on move or uncheck.
-
-8. **Video display** — `<video controls muted playsinline>`. `muted` is needed
-   for iOS to allow inline play without user interaction; `controls` gives them
-   a way to hear audio if needed.
-
-9. **Cache-busting on admin fetch** — `?cb=Date.now()` on the admin-side GET
-   of client-content so edits taken from another tab show up immediately.
-   Public render uses the same cache-bust to avoid stale reads.
-
-10. **Mobile layout** — 16:10 aspect ratio cards, single-column at <560px.
-    Edit modal is max 720px wide with scrollable body so it works on phones too.
-
-## Things that are NOT done (flagged for later if needed)
-
-- **Reordering via drag-and-drop** — used simple ↑ / ↓ arrow buttons.
-  Drag-and-drop would be nicer UX but needs a library or ~100 lines of
-  DOM code; arrows work fine for a small number of rows.
-- **Image cropping / resizing on upload** — uploads are stored as-is.
-  Large hero images render fine due to `object-fit: cover`.
-- **Deleted media cleanup** — if you remove a row or replace its media,
-  the old blob entry in `client-media` is orphaned. Not a problem at
-  this scale, but a periodic cleanup job could be added later.
-- **Per-page overrides** — pills override applies to the index *and* every
-  monthly report for that client. There's no way to have different pills
-  on different months via this UI (which matches current design anyway).
-- **Admin audit log** — no "who edited what when". Can be added by
-  stamping `updatedAt` + a user identifier in the blob if needed.
-
-## Test data currently in the sandbox store
-
-The sandbox store has 2 test clients populated so you can see the feature
-end-to-end right now:
-
-- **2601002 Jeff Baker & Sons Landscaping** — pills override set, 2 Current
-  Work rows with real images (Facebook header + Inbound Blend logo) and
-  link buttons. The 4th pill "Featured Service" was added as an override
-  demo so you can see the override in action.
-- **2010001 Epoxy Stone** — 1 Current Work row with the Inbound Blend logo
-  and a link to epoxystone.com.
-
-Both are easy to clear by opening the pencil and deleting the rows, or via
-the API:
-```bash
-curl -X POST https://sandbox--moxie-ai-insights.netlify.app/.netlify/functions/client-content?client=2601002 -H 'Content-Type: application/json' -d '{}'
-```
-
-## File inventory
-
-**New:**
-- `netlify/functions/client-content.mjs`
-- `netlify/functions/client-media.mjs`
-- `js/client-content.js`
-- `BUILD_NOTES.md` (this file)
-
-**Modified:**
-- `admin/index.html` — pencil button, modal, edit CSS, JS handlers
-- `clients/**/*.html` — 250 files, one-line script tag insertion
-
-**Unchanged but relevant:**
-- `package.json` — `@netlify/blobs` was already there from the invite-state fix
-- `js/gate.js` — admin users bypass the client password gate automatically
-- `js/moxie-chat.js` — untouched, still loads before client-content.js
+**DESIGN STANDARD:** The live production site (https://portal.inboundblend.com) is the canonical reference for all UI/UX decisions. Every new feature must match the production site's look, feel, and interaction patterns. When adding new functionality, start by copying the production HTML/CSS/JS for the nearest existing component, then extend it. Never rebuild UI components from scratch.
 
 ---
 
-# Build Notes — Website Build Progress tracker
-
-Build date: 2026-04-10
-Branch: `sandbox` (same branch, second autonomous build of the day)
-
-## What was built
-
-Extends the admin edit modal and the public client-content renderer
-with an optional "Website Build Progress" tracker. Off by default per
-client; when enabled, renders a horizontal 3-state stepper above the
-Current Work section on every page for that client.
-
-1. **Schema extension** in `netlify/functions/client-content.mjs`
-   - Added `websiteBuild: { enabled, steps:[{label,status,note}],
-     previewUrl, markupUrl, teamNotes }` to the per-client JSON blob
-   - `sanitizeWebsiteBuild()` clamps string lengths, validates status
-     enum (not_started / in_progress / complete), and coerces
-     enabled to boolean
-   - Default empty shape returned on GET for clients with no saved
-     content, so the admin modal always has a safe object to bind to
-
-2. **Admin modal** — new third section in the edit modal:
-   - Master toggle pill: "Show tracker on dashboard" (off by default).
-     First time toggled ON for a client with no steps yet, the editor
-     auto-seeds the 14 default steps as a convenience.
-   - Steps editor: label text input, status dropdown (colored when
-     active — orange for in_progress, green for complete), up/down
-     reorder arrows, delete button.
-   - "Reset to Default (14 steps)" button — replaces current steps
-     after a confirm prompt.
-   - Preview Site URL, Markup/Feedback URL, Team Notes textarea.
-   - Saves via the existing `POST /client-content` endpoint — no new
-     function needed.
-
-3. **Public tracker** in `js/client-content.js`
-   - `buildWebsiteBuildNode()` returns a detached DOM node; the
-     existing render pipeline was refactored to `insertSections()`
-     so both Website Build and Current Work are placed in the right
-     order in a single DOM insertion.
-   - Order on the page: Website Build first, then Current Work.
-   - Rendering:
-     - Gradient-background card with a thin rainbow bar across the
-       top (blue → orange → green).
-     - Horizontal stepper with a filled progress line from start to
-       the last active step's center.
-     - 3 dot states — gray/numbered (not started), orange pulsing
-       with ripple ring (in progress), green with checkmark (complete).
-     - Labels under each dot, tooltip on hover if the step has a note.
-     - Optional CTA buttons: blue "Preview Site" + orange outline
-       "Share Feedback".
-     - Optional "Notes from the Team" callout card (amber accent,
-       friendly tone).
-   - Horizontally scrollable on narrow screens (min-width 720px on
-     the tracker).
-   - Pulse + ripple animations via CSS keyframes — respects the
-     brand palette, no cheese.
-
-## Judgment calls I made
-
-1. **Default 14 steps are seeded on first toggle ON** — the spec said
-   "Reset to default steps" button, and the steps should be editable
-   "later". First-time toggle with empty steps would give a useless
-   blank editor, so I pre-populate. Admin can still reset or delete
-   individual steps.
-
-2. **Progress bar semantics** — the line fill extends from start to
-   the center of the last "complete or in_progress" dot. Counting
-   completed-only steps would leave the in_progress dot visually
-   disconnected. The percentage text in the header ("X% Complete")
-   counts *only* complete steps, not in_progress, so the header
-   reflects strict progress.
-
-3. **Tooltip note** uses `.wb-tooltip` span + `data-note` attribute
-   as a gate. CSS does the show/hide so no JS listeners are needed.
-   The text wraps up to 220px so longer notes don't overflow off-screen.
-
-4. **Insertion order refactor** — the previous build had
-   `renderCurrentWork` inserting directly. I refactored to
-   `buildCurrentWorkNode` + `insertSections([wb, cw])` so both
-   sections land in one DOM insertion with the right order. Cleaner
-   than per-section anchor logic.
-
-5. **`closeEditModal` no longer reassigns editState** — now mutates the
-   existing object so references stay stable. Avoids any repeat of
-   the scope bug that bit us earlier today.
-
-6. **Status dropdown coloring** — each `<select>` gets a status class
-   that tints its background (green for complete, orange for
-   in_progress). Gives the admin a quick visual sense of where each
-   step is without hunting through the labels.
-
-7. **Horizontal scroll on mobile** — 14 steps is too many to fit on
-   a phone screen without squishing. Tracker has `min-width: 720px`
-   inside an overflow-x container. Standard scrollbar, no fade
-   edges (can add if needed).
-
-8. **No icons for preview/markup buttons on the admin side** — the
-   public-facing buttons have eye + pencil SVG icons, but the admin
-   editor just shows plain URL fields. Keeps the admin UI simple.
-
-## Test data currently in the sandbox store
-
-- **2601002 Jeff Baker & Sons Landscaping** — `websiteBuild.enabled =
-  true`, 14 steps (6 complete, 1 in_progress, 7 not_started), preview
-  URL, markup URL, and team notes populated. Shows the full tracker
-  with active state.
-- **2010001 Epoxy Stone** — `websiteBuild.enabled = false`. Used to
-  verify the toggle OFF path hides the section. Still has the Current
-  Work row from the previous build.
-
-## File inventory (delta from last build)
-
-**Modified:**
-- `netlify/functions/client-content.mjs` — schema extension + sanitizer
-- `admin/index.html` — new Website Build section (CSS + HTML + JS
-  handlers + exposed window globals)
-- `js/client-content.js` — new `buildWebsiteBuildNode()` + scoped CSS +
-  refactored `insertSections()` pipeline
-- `BUILD_NOTES.md` — this section
-
-**Not touched:**
-- Client HTML files — no script tag change needed, the existing
-  `/js/client-content.js` picks up the new data automatically
-- `netlify/functions/client-media.mjs` — no change
-- `js/moxie-chat.js`, `js/gate.js`, `css/moxie.css` — untouched
-
----
-
-# Build Notes — Add New Client feature
-
-Build date: 2026-04-12
-Branch: `sandbox`
-
-## What was built
-
-An "Add Client" button on the admin dashboard that creates a new
-client entirely from the admin UI — no CLI, no manual file creation.
-Also adds a "Client Info" section to the edit modal for all clients
-(both new and existing) with metadata fields.
-
-1. **`netlify/functions/create-client.mjs`** — new v2 function
-   - GET returns the client registry (dynamically-created clients)
-   - POST validates (7-digit number, no duplicates), adds to the
-     registry blob, and initializes a client-content blob with
-     metadata
-   - Duplicate checks against BOTH the registry and `data/clients.json`
-   - Returns `{ ok, number, name, dashboardUrl }`
-
-2. **`netlify/edge-functions/client-page.js`** — Netlify Edge Function
-   - Intercepts all `/clients/*` requests via `config.path`
-   - Calls `context.next()` to check if a static file exists
-   - If static file exists → passes through (existing clients work
-     unchanged)
-   - If 404 → checks the client registry blob → if client exists,
-     generates the dashboard HTML from an embedded template → serves
-     as `text/html`
-   - If client not in registry → returns the original 404
-
-3. **`netlify/functions/meta-index.mjs`** — lightweight function
-   that reads the `meta-index` key from the `admin-state` blob
-   store. Returns `{ clientNum: { slack, dropbox, legacy } }` for
-   all clients that have any metadata set. Used by the admin page
-   to render small indicator icons on each tile.
-
-4. **Admin page changes** (`admin/index.html`):
-   - **"+ Add Client" button** — blue CTA next to the search bar.
-     Opens a creation modal with: Client Name (required), Client
-     Number (required, 7-digit, unique), Slack Channel, Dropbox
-     Link, Legacy Reporting Link, Notes.
-   - **Toast notification** — slides up from the bottom on success:
-     "✅ {Name} created! Click the pencil to add services."
-   - **Dynamic tile injection** — new client card is inserted
-     alphabetically into the grid without a page reload.
-   - **"Client Info" section** — new FIRST section in the edit
-     modal (above pills/Current Work/Website Build) with the
-     metadata fields. Works for ALL clients, not just new ones.
-   - **Metadata icons** on each tile — 💬 Slack, 📁 Dropbox,
-     📊 Legacy — rendered from the meta-index after tiles are built.
-
-5. **Schema extension** in `client-content.mjs`:
-   - Added `meta: { slackChannel, dropboxLink, legacyReportingLink,
-     notes }` field
-   - Added `sanitizeMeta()` function with string length clamping
-   - After every content save, `updateMetaIndex()` writes a
-     lightweight index to `admin-state` store so the admin page
-     can render metadata icons without fetching every client's
-     full blob
-
-## Key architecture decision: Edge Function for dynamic pages
-
-**Problem**: Netlify Functions can't write files to the deployed
-file system. So `create-client` can't literally create
-`clients/NNNNNNN/index.html`. And `force=false` redirects don't
-fire for paths under directories that DO exist (`clients/` exists)
-but subdirectories that DON'T exist (`clients/9999999/`).
-
-**Solution**: A Netlify Edge Function at path `/clients/*` that:
-1. Calls `context.next()` — lets Netlify try to serve the static file
-2. If the static file returns 200, passes it through (no interference)
-3. If 404, checks the client registry blob and generates the HTML
-
-This approach means:
-- Existing clients (63 static files): served as before, zero overhead
-- New clients (dynamic): generated on-the-fly from the template
-- No file system writes, no deploy-time generation, no GitHub API
-- The template is embedded in the edge function as a template literal
-
-**Trade-off**: Edge Functions run at every CDN request to `/clients/*`,
-adding ~10ms of latency for the `context.next()` check even for
-existing static clients. This is negligible for a low-traffic admin/
-client portal. If it becomes an issue, the edge function can be
-removed once all clients have static files (i.e. after running the
-moxie skill for each new client).
-
-## Blob stores used (updated inventory)
-
-| Store | Key | Purpose |
-|---|---|---|
-| `admin-state` | `invites` | Invited-to-dashboard state |
-| `admin-state` | `dismissed-health` | Dismissed health warnings |
-| `admin-state` | `meta-index` | Lightweight metadata icons index |
-| `client-content` | `{clientNum}` | Per-client content (pills, currentWork, websiteBuild, meta) |
-| `client-media` | `{mediaId}` | Binary media files (images/videos) |
-| `client-registry` | `clients` | Map of dynamically-created clients: `{ num: { name } }` |
-
-## Test data in the sandbox store
-
-- **9999999 "Test Client Company"** — created via the API during
-  build verification. Has metadata: Slack channel, Dropbox link,
-  Legacy reporting link, notes. Dashboard served dynamically at
-  `/clients/9999999/`. Ready for Todd to review. Can be left or
-  deleted — it won't interfere with real clients.
-
-## File inventory (delta from Website Build tracker build)
-
-**New:**
-- `netlify/functions/create-client.mjs`
-- `netlify/functions/meta-index.mjs`
-- `netlify/edge-functions/client-page.js`
-
-**Modified:**
-- `netlify/functions/client-content.mjs` — meta field + sanitizer + meta-index update
-- `admin/index.html` — Add Client button/modal, Client Info section in edit modal, metadata icons, toast notification
-- `netlify.toml` — unchanged (redirect rules were added then removed in favor of edge function)
-- `BUILD_NOTES.md` — this section
-
-**Removed:**
-- `netlify/functions/client-page.mjs` — replaced by the edge function
-
----
-
-# Build Notes — Five Admin Enhancements (Status, Projects, Headings, Logo, Compat)
-
-Build date: 2026-04-12
-Branch: `sandbox`
-
-## Features built
-
-### Feature 1: Client Status Dropdown (NCO / Active / Paused)
-- `status` field added to client-content schema (default: `"active"`)
-- Colored badge on each admin tile (green Active, orange NCO, gray Paused)
-- Filter buttons at top of admin grid: All | NCO | Active | Paused
-- Dropdown in edit modal's Client Info section
-- Status stored in meta-index for quick badge rendering
-- Admin-only — does NOT render on public dashboards
-
-### Feature 2: Generic Projects Tracker (replaces websiteBuild)
-- `websiteBuild` → `projects: [...]` array. Each project has its own
-  name, enabled toggle, step list, preview/markup URLs, team notes
-- Admin modal: "Projects" section with collapsible project cards,
-  expand/collapse toggle, per-project step management
-- Public: multiple enabled projects stack as independent tracker
-  sections, each with its own heading (project name)
-- **Migration**: on GET, if `websiteBuild` exists and `projects` does
-  not, auto-migrates it into `projects[0]` named "Website Build". The
-  migration is transparent — client-content.mjs reads old data, returns
-  new schema. On next save, new schema is persisted.
-- The 14 default steps (Signed Proposal → Go Live) are available via
-  "Reset to Default" button, per project
-
-### Feature 3: Current Work Heading Labels
-- `currentWork` items now have `type: "content" | "heading"`
-- Items without `type` default to `"content"` (backward compat)
-- Admin: "+ Add Heading" button alongside "+ Add Row". Headings render
-  with blue background and bold Barlow Condensed font for distinction
-- Public: headings render as styled subheadings (`<h3 class="cw-heading">`)
-  with a left blue accent border. Content cards following a heading are
-  grouped in their own grid until the next heading
-- If no headings exist, behavior is identical to before (single grid)
-
-### Feature 4: Client Logo on Dashboard
-- `logoMediaId` field in client-content schema (default: `null`)
-- Admin: logo upload in Client Info section, preview + "Remove Logo"
-- Public: `applyClientLogo()` finds all `<img>` with `moxie-mascot`
-  in src and replaces with the custom logo (via client-media endpoint)
-- If no logo, MOXIE mascot remains (no change for logoless clients)
-
-### Feature 5: Backward Compatibility
-- Status missing → `"active"`
-- `websiteBuild` data → auto-migrates to `projects` array
-- `currentWork` items without `type` → `"content"`
-- `logoMediaId` missing → `null`
-- `migrateContent()` function in client-content.mjs handles all upgrades
-  on read. Old data is never crashed on.
-
-## Judgment calls
-
-1. **Migration on read, not batch**: Rather than batch-migrating all 63+
-   clients, the migration runs lazily on each GET. When the admin opens
-   a client, old data is migrated and returned. On save, new schema is
-   written. This avoids a risky batch operation and works incrementally.
-
-2. **Projects are collapsible in the admin**: With multiple projects
-   each potentially having 14 steps, the modal body could get very long.
-   Collapsible panels (click header to expand/collapse) keep it
-   manageable. New projects auto-expand; existing ones start collapsed.
-
-3. **Heading labels are optional grouping**: Headings don't wrap
-   content in a container. They just visually introduce a group.
-   The public renderer builds separate `.current-work-grid` elements
-   for each group, which keeps the grid layout clean.
-
-4. **Logo replacement via `img[src*=moxie-mascot]` selector**: The
-   public renderer finds ALL images on the page whose src contains
-   "moxie-mascot" (there are usually 2-3 per page: hero, analysis
-   label, etc.) and replaces them all. This is simpler than targeting
-   specific CSS classes and catches all instances.
-
-5. **Status filter interacts with existing service filter**: Both
-   filters are ANDed together — a tile must match the status filter
-   AND the service filter AND the search query to appear. "All" means
-   no status filtering.
-
-6. **Meta-index now includes status + hasLogo**: Updated
-   `updateMetaIndex()` to always write a full entry for every client
-   that has any data, so the admin can show status badges and logo
-   indicators without per-client fetches.
-
-## Test data in sandbox
-
-- **2601002 Jeff Baker**: status=NCO, custom logo (facebook header image),
-  2 projects (Website Redesign + Landing Page Campaign), current work with
-  2 headings ("March Ad Campaigns" + "Billboard Creative") + 3 content rows
-- **2010001 Epoxy Stone**: status=active (default), no logo, no projects,
-  1 current work row — verifies defaults + backward compat
-- **9999999 Test Client Company**: from Add Client build — still in registry
-
-## File inventory
-
-**Modified:**
-- `netlify/functions/client-content.mjs` — full schema v2: migrateContent(),
-  sanitizeProject(), sanitizeCurrentWorkItem(), updated updateMetaIndex()
-- `admin/index.html` — status badges+filter, projects tab, heading labels,
-  logo upload, ~800 lines of changes across CSS/HTML/JS
-- `js/client-content.js` — buildProjectNodes() (multi-project), heading
-  labels in buildCurrentWorkNode(), applyClientLogo(), refactored insertion
-- `BUILD_NOTES.md` — this section
-
----
-
-# PERMANENT DESIGN STANDARD
-
-**DESIGN STANDARD:** The live production site (https://portal.inboundblend.com) is the canonical reference for all UI/UX decisions. Every new feature must match the production site's look, feel, and interaction patterns. When adding new functionality, start by copying the production HTML/CSS/JS for the nearest existing component, then extend it. Never rebuild UI components from scratch. If in doubt, curl production and copy.
-
-This rule was established on 2026-04-12 after multiple UI regressions caused by rebuilding components instead of copying production patterns.
+## Build Log — 2026-04-12: Clean Reset + Feature Rebuild
+
+### Phase 1: Reset admin/index.html to production state
+- Overwrote admin/index.html with the known-good version from commit `1ec193f`
+- Backend files preserved: `client-content.mjs` (v2 schema with status, projects, logo, headings), `create-client.mjs`, `client-page.js` (edge function), `meta-index.mjs`
+- `js/client-content.js` preserved: has rendering logic for headings, projects, logo replacement
+- `css/moxie.css` was NOT modified in any post-1ec193f commit — clean
+
+### Feature A: Client Status Dropdown
+- Added to Client Info section of edit modal
+- Status select: Active / NCO / Paused using `.edit-select` class
+- Status badges on grid tiles (colored pills using `.tile-status`)
+- Filter buttons above grid: All / Active / NCO / Paused
+- Status persists via client-content function (status field)
+- Status loaded from meta-index on page load for badge rendering
+
+### Feature B: Current Work Headings
+- Added "+ Add Heading" button next to "+ Add Row" in CW section
+- Heading items render as `.heading-editor` rows with blue border accent
+- Uses `type: 'heading'` items in currentWork array
+- Backend already supports heading type in client-content.mjs
+
+### Feature C: Projects (multi-project support)
+- Projects section added to edit modal
+- Each project: name, toggle (ON/OFF), steps editor, preview URL, markup URL, team notes
+- Steps: label + status dropdown (Not Started / In Progress / Complete) + reorder + delete
+- Collapsible project cards using `.project-card` pattern
+- Add Project / Delete Project controls
+- Uses `projects[]` array in client-content schema
+
+### Feature D: Client Logo Upload
+- Added to Client Info section using `.logo-upload-area` pattern
+- Upload preview thumbnail (64x64) in `.logo-preview`
+- Remove Logo button
+- Logo replaces mascot in .branding div on dashboards (handled by js/client-content.js)
+
+### Feature E: Add New Client
+- "+ Add Client" button on admin page using `.add-client-btn`
+- Modal with: Client Name, Client Number (7 digits), Slack Channel, Dropbox Link, Legacy Reporting Link, Notes
+- Calls create-client function
+- New client tile added to grid immediately with pencil icon
+- Toast notification on success
+
+### Design Decisions
+- All new CSS reuses existing CSS variables (--blue, --border, --text, etc.)
+- Input/select/button styling matches the production modal patterns exactly
+- Project cards use a collapsible pattern for managing multiple projects
+- Status filter is AND-ed with existing service/ad-platform stat filters and search
+- editState expanded to include all new fields; saveContent sends full payload
