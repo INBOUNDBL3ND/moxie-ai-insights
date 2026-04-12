@@ -15,7 +15,7 @@ const REG_KEY = "clients";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
   "Cache-Control": "no-cache, no-store, must-revalidate",
 };
@@ -45,6 +45,7 @@ export default async (req) => {
       const body = await req.json();
       const name = String(body.name || "").trim();
       const number = String(body.number || "").trim();
+      const force = body.force === true;
 
       if (!name) {
         return Response.json(
@@ -63,14 +64,18 @@ export default async (req) => {
       // static clients.json (proxied by the admin page, but the
       // function can read the deployed static file).
       const reg = (await registry().get(REG_KEY, { type: "json" })) || {};
-      if (reg[number]) {
+      if (reg[number] && !force) {
         return Response.json(
-          { error: `Client number ${number} already exists in the registry` },
+          {
+            error: `Client number ${number} already exists in the registry`,
+            existingName: reg[number].name,
+            canForce: true,
+          },
           { status: 409, headers: corsHeaders }
         );
       }
 
-      // Also check static clients.json
+      // Also check static clients.json — static clients are real (have committed folders), never force-overwrite
       try {
         const url = new URL(req.url);
         const staticRes = await fetch(`${url.origin}/data/clients.json`);
@@ -133,6 +138,58 @@ export default async (req) => {
           dashboardUrl: `/clients/${number}/`,
         },
         { status: 201, headers: corsHeaders }
+      );
+    } catch (err) {
+      return Response.json(
+        { error: err.message },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+  }
+
+  if (req.method === "DELETE") {
+    try {
+      const url = new URL(req.url);
+      const number = String(url.searchParams.get("number") || "").trim();
+      if (!/^\d{7}$/.test(number)) {
+        return Response.json(
+          { error: "Client number must be exactly 7 digits" },
+          { status: 400, headers: corsHeaders }
+        );
+      }
+
+      // Refuse to delete static clients (those with committed folders/static data)
+      try {
+        const staticRes = await fetch(`${url.origin}/data/clients.json`);
+        if (staticRes.ok) {
+          const staticClients = await staticRes.json();
+          if (staticClients[number]) {
+            return Response.json(
+              { error: `Cannot delete static client ${number}` },
+              { status: 409, headers: corsHeaders }
+            );
+          }
+        }
+      } catch (_) {}
+
+      const reg = (await registry().get(REG_KEY, { type: "json" })) || {};
+      const existed = !!reg[number];
+      if (reg[number]) {
+        delete reg[number];
+        await registry().setJSON(REG_KEY, reg);
+      }
+      try { await content().delete(number); } catch (_) {}
+      try {
+        const idx = (await metaIdx().get("meta-index", { type: "json" })) || {};
+        if (idx[number]) {
+          delete idx[number];
+          await metaIdx().setJSON("meta-index", idx);
+        }
+      } catch (_) {}
+
+      return Response.json(
+        { ok: true, number, existed },
+        { status: 200, headers: corsHeaders }
       );
     } catch (err) {
       return Response.json(
