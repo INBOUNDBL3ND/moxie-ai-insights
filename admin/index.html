@@ -217,112 +217,90 @@
     }
     .pill-input-row button:hover { background: #fca5a5; }
 
-    .cw-row-card {
-      border: 1px solid var(--border);
+    .row-editor {
+      border: 1.5px solid var(--border);
       border-radius: 10px;
-      padding: 16px;
+      padding: 14px;
       margin-bottom: 12px;
-      background: #fff;
+      background: var(--bg-card);
       display: grid;
-      grid-template-columns: 130px 1fr;
-      gap: 14px;
-      transition: box-shadow 0.15s;
+      grid-template-columns: 140px 1fr;
+      gap: 12px;
     }
-    .cw-row-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .cw-row-card.heading-row {
+    .row-editor.heading-row {
       grid-template-columns: 1fr;
       background: linear-gradient(135deg, #EBF5FF 0%, #f0f7ff 100%);
       border-color: rgba(29, 128, 222, 0.25);
-      padding: 12px 16px;
     }
-    .cw-upload-zone {
-      width: 130px;
+    .row-media {
+      width: 140px;
       height: 100px;
       border-radius: 8px;
-      border: 2px dashed var(--border);
+      background: #eef2f6;
+      overflow: hidden;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      border: 1px dashed var(--border);
       position: relative;
-      overflow: hidden;
-      transition: border-color 0.15s, background 0.15s;
-      background: var(--bg-card);
     }
-    .cw-upload-zone:hover { border-color: var(--blue); background: #f8faff; }
-    .cw-upload-zone img, .cw-upload-zone video {
+    .row-media img, .row-media video {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 6px;
     }
-    .cw-upload-zone input[type=file] {
+    .row-media input[type=file] {
       position: absolute;
       inset: 0;
       opacity: 0;
       cursor: pointer;
     }
-    .cw-upload-zone .upload-icon {
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-    .cw-upload-zone .upload-text {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-align: center;
+    .row-media .upload-hint {
       pointer-events: none;
+      text-align: center;
+      line-height: 1.3;
+      padding: 0 10px;
     }
-    .cw-fields {
+    .row-fields {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-    }
-    .cw-fields textarea,
-    .cw-fields input {
-      padding: 10px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-family: var(--font);
-      font-size: 0.88rem;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .cw-fields textarea { min-height: 60px; resize: vertical; }
-    .cw-fields textarea:focus,
-    .cw-fields input:focus { border-color: var(--blue); }
-    .cw-row-actions {
-      grid-column: 1 / -1;
-      display: flex;
-      justify-content: flex-end;
       gap: 6px;
-      padding-top: 8px;
-      border-top: 1px solid var(--border);
     }
-    .cw-action-btn {
-      background: var(--bg-card);
+    .row-fields textarea,
+    .row-fields input {
+      padding: 8px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: var(--font);
+      font-size: 0.87rem;
+      color: var(--text);
+      resize: vertical;
+    }
+    .row-fields textarea { min-height: 48px; }
+    .row-fields textarea:focus,
+    .row-fields input:focus { outline: none; border-color: var(--blue); }
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+      grid-column: 1 / -1;
+      justify-content: flex-end;
+    }
+    .row-actions button {
+      background: var(--white);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 6px 10px;
-      font-size: 0.8rem;
+      padding: 5px 12px;
+      font-size: 0.78rem;
       cursor: pointer;
-      color: var(--text-muted);
-      transition: all 0.15s;
       font-family: var(--font);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      font-weight: 600;
+      color: var(--text);
     }
-    .cw-action-btn:hover { border-color: var(--blue); color: var(--blue); background: #fff; }
-    .cw-action-btn.delete:hover { border-color: #dc3545; color: #dc3545; }
-    .cw-buttons-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
-    .cw-buttons-row .edit-btn-add { flex: 1; }
+    .row-actions button:hover { background: var(--bg-card); border-color: var(--blue); color: var(--blue); }
+    .row-actions .del-btn:hover { background: #fee2e2; border-color: #fca5a5; color: #b91c1c; }
 
     .edit-btn-add {
       background: var(--blue-light);
@@ -844,9 +822,9 @@
           <h3>Current Work</h3>
           <p class="hint">Live campaigns / creative shown to the client below their monthly reports. Each row: image or video, a note, and a link button.</p>
           <div id="edit-rows-list"></div>
-          <div class="cw-buttons-row">
-            <button class="edit-btn-add" onclick="addRow()">+ Add Row</button>
-            <button class="edit-btn-add" onclick="addHeading()">+ Add Heading</button>
+          <div style="display:flex;gap:8px;">
+            <button class="edit-btn-add" onclick="addRow()" style="flex:1;">+ Add Row</button>
+            <button class="edit-btn-add" onclick="addHeading()" style="flex:1;">+ Add Heading</button>
           </div>
         </div>
 
@@ -1353,17 +1331,17 @@
       }).join('');
       document.getElementById('edit-pills-list').innerHTML = pillsHtml;
 
-      // Current Work rows (supports both 'content' and 'heading' types)
+      // Current Work rows — production layout with heading support
       var rowsHtml = editState.currentWork.map(function(item, i) {
         if (item.type === 'heading') {
-          return '<div class=”cw-row-card heading-row”>' +
-            '<div class=”cw-fields”>' +
-              '<input type=”text” value=”' + escapeHtml(item.label) + '” placeholder=”Section heading (e.g. March Ad Campaigns)” style=”font-family:Barlow Condensed,sans-serif;font-size:1.05rem;font-weight:700;color:var(--blue);” oninput=”editState.currentWork[' + i + '].label = this.value”>' +
+          return '<div class=”row-editor heading-row”>' +
+            '<div class=”row-fields”>' +
+              '<input type=”text” value=”' + escapeHtml(item.label) + '” placeholder=”Section heading” style=”font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:700;color:var(--blue);” oninput=”editState.currentWork[' + i + '].label = this.value”>' +
             '</div>' +
-            '<div class=”cw-row-actions”>' +
-              '<button class=”cw-action-btn” onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
-              '<button class=”cw-action-btn” onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
-              '<button class=”cw-action-btn delete” onclick=”removeRow(' + i + ')”>&#x1F5D1; Delete</button>' +
+            '<div class=”row-actions”>' +
+              '<button onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
+              '<button onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
+              '<button class=”del-btn” onclick=”removeRow(' + i + ')”>Delete</button>' +
             '</div>' +
           '</div>';
         }
@@ -1375,21 +1353,24 @@
             mediaInner = '<img src=”/.netlify/functions/client-media?id=' + encodeURIComponent(item.mediaId) + '” alt=””>';
           }
         } else {
-          mediaInner = '<div class=”upload-icon”><svg width=”24” height=”24” viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5”><path d=”M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4”/><polyline points=”17 8 12 3 7 8”/><line x1=”12” y1=”3” x2=”12” y2=”15”/></svg></div><span class=”upload-text”>Upload</span>';
+          mediaInner = '<span class=”upload-hint”>Click to upload<br>image or video</span>';
         }
-        return '<div class=”cw-row-card”>' +
-          '<label class=”cw-upload-zone”>' + mediaInner + '<input type=”file” accept=”image/*,video/*” onchange=”uploadRowMedia(' + i + ', this.files[0])”></label>' +
-          '<div class=”cw-fields”>' +
-            '<textarea placeholder=”Describe this campaign, ad, or creative...” oninput=”editState.currentWork[' + i + '].note = this.value”>' + escapeHtml(item.note) + '</textarea>' +
-            '<input type=”url” placeholder=”https://...” value=”' + escapeHtml(item.linkUrl) + '” oninput=”editState.currentWork[' + i + '].linkUrl = this.value”>' +
-            '<input type=”text” placeholder=”Button label (e.g. View Campaign)” value=”' + escapeHtml(item.linkLabel) + '” oninput=”editState.currentWork[' + i + '].linkLabel = this.value”>' +
+        return '<div class=”row-editor”>' +
+          '<label class=”row-media”>' +
+            mediaInner +
+            '<input type=”file” accept=”image/*,video/*” onchange=”uploadRowMedia(' + i + ', this.files[0])”>' +
+          '</label>' +
+          '<div class=”row-fields”>' +
+            '<textarea placeholder=”Note / description” oninput=”editState.currentWork[' + i + '].note = this.value”>' + escapeHtml(item.note) + '</textarea>' +
+            '<input type=”url” placeholder=”Link URL (https://…)” value=”' + escapeHtml(item.linkUrl) + '” oninput=”editState.currentWork[' + i + '].linkUrl = this.value”>' +
+            '<input type=”text” placeholder=”Button label (e.g. View Landing Page)” value=”' + escapeHtml(item.linkLabel) + '” oninput=”editState.currentWork[' + i + '].linkLabel = this.value”>' +
           '</div>' +
-          '<div class=”cw-row-actions”>' +
-            '<button class=”cw-action-btn” onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
-            '<button class=”cw-action-btn” onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
-            '<button class=”cw-action-btn delete” onclick=”removeRow(' + i + ')”>&#x1F5D1; Delete</button>' +
+          '<div class=”row-actions”>' +
+            '<button onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
+            '<button onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
+            '<button class=”del-btn” onclick=”removeRow(' + i + ')”>Delete</button>' +
           '</div>' +
-        '</div>';
+          '</div>';
       }).join('');
       document.getElementById('edit-rows-list').innerHTML = rowsHtml || '<p class=”hint” style=”text-align:center;padding:20px 0;”>No rows yet. Click + below to add one.</p>';
 
