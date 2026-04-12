@@ -51,6 +51,28 @@
 - New client tile added to grid immediately with pencil icon
 - Toast notification on success
 
+## Build Log — 2026-04-12 (pm): Image Lightbox + Active Default + Live Status
+
+### Change 1: Current Work image lightbox + carousel (js/client-content.js)
+- Thumbnails: `object-fit: cover` → `object-fit: contain` so full image is visible (no cropping)
+- Thumbnails are clickable (cursor: zoom-in) with an expand-icon overlay on hover
+- Single lightbox DOM injected lazily on first open (reused afterwards)
+- Features: full-screen backdrop (rgba 0,0,0,.85), close button (top-right), carousel arrows, keyboard (Esc/←/→), touch swipe
+- Counter (`2 / 5`), caption shows heading + note in white text
+- z-index 100000 (above Ask MOXIE chat)
+- Body scroll locked while lightbox open; video auto-pauses on close
+
+### Change 2: Default filter = Active (admin/index.html)
+- `activeStatusFilter` initialized to `'active'` (was `'all'`)
+- Active filter-button marked `.active` by default
+- Clients without saved status default to `'active'` via the existing `clientStatuses[num] || 'active'` fallback, so the filter still shows all "unassigned" clients
+
+### Change 3: Live status updates (admin/index.html)
+- **Immediate**: `saveContent` updates tile badge + `data-status`, re-runs `applyFilter()` (so a card changed to Paused while viewing Active disappears), shows toast "Status updated to X"
+- **Cross-session polling**: `pollClientStatuses()` fetches `/.netlify/functions/meta-index` every 30s, diffs against `clientStatuses`, updates changed badges, re-applies filter, shows toast "N client status(es) changed"
+- Also polls on tab `visibilitychange` → visible for fast catch-up
+- Lightweight: reuses existing meta-index endpoint (no new function needed — meta-index already returns per-client status)
+
 ### Design Decisions
 - All new CSS reuses existing CSS variables (--blue, --border, --text, etc.)
 - Input/select/button styling matches the production modal patterns exactly

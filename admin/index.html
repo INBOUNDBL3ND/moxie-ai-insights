@@ -1443,11 +1443,52 @@
               badge.textContent = editState.status === 'nco' ? 'NCO' : editState.status.charAt(0).toUpperCase() + editState.status.slice(1);
             }
           }
+          // Re-apply filter in case the new status no longer matches the active filter
+          applyFilter();
+          // Brief status toast
+          var label = editState.status === 'nco' ? 'NCO' : editState.status.charAt(0).toUpperCase() + editState.status.slice(1);
+          showToast('Status updated to ' + label);
           setEditStatus('Saved ✓', 'success');
           setTimeout(closeEditModal, 700);
         })
         .catch(function(e) { setEditStatus('Save failed: ' + e.message, 'error'); });
     }
+
+    // ─── Live status polling (every 30s for other sessions' changes) ───
+    function pollClientStatuses() {
+      fetch('/.netlify/functions/meta-index', { cache: 'no-store' })
+        .then(function(r) { return r.json(); })
+        .then(function(idx) {
+          var changedCount = 0;
+          Object.keys(idx).forEach(function(num) {
+            var newStatus = idx[num].status;
+            if (!newStatus) return;
+            var currentStatus = clientStatuses[num] || 'active';
+            if (currentStatus !== newStatus) {
+              clientStatuses[num] = newStatus;
+              var tile = document.querySelector('.client-tile[data-num="' + num + '"]');
+              if (tile) {
+                tile.setAttribute('data-status', newStatus);
+                var badge = tile.querySelector('.tile-status');
+                if (badge) {
+                  badge.className = 'tile-status status-' + newStatus;
+                  badge.textContent = newStatus === 'nco' ? 'NCO' : newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                }
+              }
+              changedCount++;
+            }
+          });
+          if (changedCount > 0) {
+            applyFilter();
+            showToast(changedCount + ' client status' + (changedCount === 1 ? '' : 'es') + ' changed');
+          }
+        })
+        .catch(function() {});
+    }
+    setInterval(pollClientStatuses, 30000);
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) pollClientStatuses();
+    });
 
     function closeEditModal() {
       document.getElementById('edit-modal').classList.remove('open');
