@@ -352,7 +352,7 @@
     .edit-btn-save:hover { background: #1668B8; }
     .edit-btn-cancel:hover { background: var(--bg-card); }
 
-    /* Website Build section (inside edit modal) */
+    /* Website Build / Projects section (inside edit modal) — production patterns */
     .wb-section-head {
       display: flex;
       align-items: center;
@@ -360,39 +360,21 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-    .toggle-switch {
-      position: relative;
+    .wb-toggle {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      font-family: var(--font);
+      gap: 8px;
       font-size: 0.85rem;
-      font-weight: 600;
       color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 12px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
     }
-    .toggle-switch input { display: none; }
-    .toggle-track {
-      width: 44px;
-      height: 24px;
-      border-radius: 12px;
-      background: #d1d5db;
-      position: relative;
-      transition: background 0.2s;
-    }
-    .toggle-switch input:checked + .toggle-track { background: #27AE60; }
-    .toggle-knob {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
-    }
-    .toggle-switch input:checked + .toggle-track .toggle-knob { transform: translateX(20px); }
+    .wb-toggle input { width: 16px; height: 16px; accent-color: var(--blue); cursor: pointer; }
+    .wb-toggle.on { background: rgba(39, 174, 96, 0.08); border-color: var(--green); color: var(--green); }
 
     .wb-editor {
       margin-top: 16px;
@@ -410,47 +392,40 @@
     }
     .wb-editor h4:first-child { margin-top: 0; }
 
-    .step-row {
+    .wb-step-row {
       display: grid;
-      grid-template-columns: 28px 1fr 120px auto auto auto;
-      gap: 8px;
+      grid-template-columns: 1fr 130px auto auto auto;
+      gap: 6px;
       align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #f3f4f6;
+      margin-bottom: 6px;
     }
-    .step-row:last-child { border-bottom: none; }
-    .step-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #d1d5db;
-      margin: 0 auto;
-    }
-    .step-dot.complete { background: #27AE60; }
-    .step-dot.in_progress { background: #DF6229; }
-    .step-row input[type=text] {
-      padding: 8px 10px;
+    .wb-step-row input[type=text],
+    .wb-step-row select {
+      padding: 7px 10px;
       border: 1.5px solid var(--border);
       border-radius: 6px;
       font-family: var(--font);
       font-size: 0.85rem;
       color: var(--text);
-      outline: none;
-    }
-    .step-row input[type=text]:focus { border-color: var(--blue); }
-    .step-row select {
-      padding: 6px 8px;
-      border: 1.5px solid var(--border);
-      border-radius: 6px;
-      font-family: var(--font);
-      font-size: 0.8rem;
-      color: var(--text);
-      outline: none;
       background: #fff;
     }
-    .step-row select.status-complete { background: rgba(39,174,96,0.08); color: #27AE60; font-weight: 600; }
-    .step-row select.status-in_progress { background: rgba(223,98,41,0.08); color: #DF6229; font-weight: 600; }
-    .step-row .cw-action-btn { padding: 4px 8px; font-size: 0.78rem; }
+    .wb-step-row input[type=text]:focus,
+    .wb-step-row select:focus { outline: none; border-color: var(--blue); }
+    .wb-step-row select.status-complete { background: rgba(39, 174, 96, 0.1); color: var(--green); font-weight: 700; }
+    .wb-step-row select.status-in_progress { background: rgba(223, 98, 41, 0.1); color: var(--orange); font-weight: 700; }
+    .wb-step-row button {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 5px 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      min-width: 28px;
+      line-height: 1;
+    }
+    .wb-step-row button:hover { background: var(--bg-card); border-color: var(--blue); }
+    .wb-step-row button.del { color: #b91c1c; }
+    .wb-step-row button.del:hover { background: #fee2e2; border-color: #fca5a5; }
 
     .wb-step-buttons {
       display: flex;
@@ -1387,24 +1362,22 @@
             return '<option value=”' + o.v + '”' + (step.status === o.v ? ' selected' : '') + '>' + o.l + '</option>';
           }).join('');
           var statusClass = 'status-' + (step.status || 'not_started');
-          return '<div class=”step-row”>' +
-            '<div class=”step-dot ' + (step.status || 'not_started') + '”></div>' +
+          return '<div class=”wb-step-row”>' +
             '<input type=”text” value=”' + escapeHtml(step.label) + '” placeholder=”Step name” oninput=”editState.projects[' + pi + '].steps[' + si + '].label = this.value”>' +
             '<select class=”' + statusClass + '” onchange=”setProjStepStatus(' + pi + ',' + si + ',this.value)”>' + opts + '</select>' +
-            '<button class=”cw-action-btn” onclick=”moveProjStep(' + pi + ',' + si + ',-1)” title=”Move up”>&uarr;</button>' +
-            '<button class=”cw-action-btn” onclick=”moveProjStep(' + pi + ',' + si + ',1)” title=”Move down”>&darr;</button>' +
-            '<button class=”cw-action-btn delete” onclick=”removeProjStep(' + pi + ',' + si + ')” title=”Remove”>&times;</button>' +
+            '<button onclick=”moveProjStep(' + pi + ',' + si + ',-1)” title=”Move up”>&uarr;</button>' +
+            '<button onclick=”moveProjStep(' + pi + ',' + si + ',1)” title=”Move down”>&darr;</button>' +
+            '<button class=”del” onclick=”removeProjStep(' + pi + ',' + si + ')” title=”Remove”>&times;</button>' +
             '</div>';
         }).join('');
 
         var bodyHtml = isExpanded ? (
-          '<div class=”project-card-body”>' +
+          '<div class=”project-card-body wb-editor” style=”margin-top:0;border-top:1px solid var(--border);”>' +
             '<div class=”wb-field” style=”margin-bottom:12px;”><label>Project Name</label><input type=”text” value=”' + escapeHtml(proj.name) + '” placeholder=”e.g. Website Redesign” oninput=”editState.projects[' + pi + '].name = this.value”></div>' +
             '<div class=”wb-field”><label>Show on client dashboard</label>' +
-              '<label class=”toggle-switch”>' +
+              '<label class=”wb-toggle' + (proj.enabled ? ' on' : '') + '”>' +
               '<input type=”checkbox”' + (proj.enabled ? ' checked' : '') + ' onchange=”editState.projects[' + pi + '].enabled = this.checked; renderEditModal();”>' +
-              '<div class=”toggle-track”><div class=”toggle-knob”></div></div>' +
-              '<span>' + (proj.enabled ? 'Visible on dashboard' : 'Hidden from dashboard') + '</span>' +
+              '<span>' + (proj.enabled ? 'Enabled' : 'Disabled') + '</span>' +
               '</label></div>' +
             '<h4>Steps</h4>' +
             '<div>' + (stepsHtml || '<p class=”hint” style=”text-align:center;padding:14px 0;”>No steps. Click Reset to Default for the standard 14-step build.</p>') + '</div>' +
@@ -1417,7 +1390,7 @@
             '<div class=”wb-field”><label>Markup / Feedback URL</label><input type=”url” value=”' + escapeHtml(proj.markupUrl) + '” placeholder=”https://…” oninput=”editState.projects[' + pi + '].markupUrl = this.value”></div>' +
             '<h4>Notes from the Team</h4>' +
             '<div class=”wb-field”><textarea placeholder=”Short note…” oninput=”editState.projects[' + pi + '].teamNotes = this.value”>' + escapeHtml(proj.teamNotes) + '</textarea></div>' +
-            '<div style=”text-align:right;margin-top:8px;”><button class=”cw-action-btn delete” style=”padding:8px 16px;” onclick=”deleteProject(' + pi + ')”>&#x1F5D1; Delete Project</button></div>' +
+            '<div style=”text-align:right;margin-top:12px;”><button onclick=”deleteProject(' + pi + ')” style=”background:none;border:none;color:#b91c1c;font-family:var(--font);font-size:0.8rem;font-weight:600;cursor:pointer;text-decoration:underline;”>Delete this project</button></div>' +
           '</div>'
         ) : '';
 
