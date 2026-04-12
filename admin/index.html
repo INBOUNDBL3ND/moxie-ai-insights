@@ -1109,6 +1109,9 @@
         var noResults = document.getElementById('no-results');
 
         search.addEventListener('input', function () { applyFilter(); });
+
+        // Apply initial filter (default is 'active') now that tiles + statuses are loaded
+        applyFilter();
         }); // end healthPromise.then
       });
 
