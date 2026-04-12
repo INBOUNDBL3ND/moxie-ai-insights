@@ -173,11 +173,14 @@
     }
     .edit-section h3 {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--blue);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin: 0 0 10px;
+      letter-spacing: 0.8px;
+      margin: 0 0 6px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(29, 128, 222, 0.15);
+      font-weight: 700;
     }
     .edit-section p.hint {
       font-size: 0.8rem;
@@ -185,114 +188,168 @@
       margin: -4px 0 12px;
     }
 
-    .pill-input-row {
+    .pills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .pill-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #EBF5FF;
+      color: #1D80DE;
+      border-radius: 20px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1px solid rgba(29, 128, 222, 0.2);
+      cursor: default;
+      transition: all 0.15s;
+    }
+    .pill-chip:hover { background: #dbeafe; }
+    .pill-chip .pill-remove {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: transparent;
+      color: #1D80DE;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+      transition: all 0.15s;
+    }
+    .pill-chip .pill-remove:hover { background: #1D80DE; color: #fff; }
+    .pill-add-row {
       display: flex;
       gap: 8px;
-      margin-bottom: 8px;
       align-items: center;
     }
-    .pill-input-row input {
+    .pill-add-row input {
       flex: 1;
-      padding: 9px 12px;
+      padding: 10px 14px;
       border: 1.5px solid var(--border);
       border-radius: 8px;
       font-family: var(--font);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       color: var(--text);
+      outline: none;
     }
-    .pill-input-row input:focus { outline: none; border-color: var(--blue); }
-    .pill-input-row button {
-      background: #fee2e2;
-      color: #b91c1c;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 1.1rem;
-      line-height: 1;
-    }
-    .pill-input-row button:hover { background: #fca5a5; }
+    .pill-add-row input:focus { border-color: var(--blue); }
 
-    .row-editor {
-      border: 1.5px solid var(--border);
+    .cw-row-card {
+      border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 14px;
+      padding: 16px;
       margin-bottom: 12px;
-      background: var(--bg-card);
+      background: #fff;
       display: grid;
-      grid-template-columns: 140px 1fr;
-      gap: 12px;
+      grid-template-columns: 130px 1fr;
+      gap: 14px;
+      transition: box-shadow 0.15s;
     }
-    .row-media {
-      width: 140px;
+    .cw-row-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .cw-row-card.heading-row {
+      grid-template-columns: 1fr;
+      background: linear-gradient(135deg, #EBF5FF 0%, #f0f7ff 100%);
+      border-color: rgba(29, 128, 222, 0.25);
+      padding: 12px 16px;
+    }
+    .cw-upload-zone {
+      width: 130px;
       height: 100px;
       border-radius: 8px;
-      background: #eef2f6;
-      overflow: hidden;
+      border: 2px dashed var(--border);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      border: 1px dashed var(--border);
+      cursor: pointer;
       position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, background 0.15s;
+      background: var(--bg-card);
     }
-    .row-media img, .row-media video {
+    .cw-upload-zone:hover { border-color: var(--blue); background: #f8faff; }
+    .cw-upload-zone img, .cw-upload-zone video {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      border-radius: 6px;
     }
-    .row-media input[type=file] {
+    .cw-upload-zone input[type=file] {
       position: absolute;
       inset: 0;
       opacity: 0;
       cursor: pointer;
     }
-    .row-media .upload-hint {
-      pointer-events: none;
-      text-align: center;
-      line-height: 1.3;
-      padding: 0 10px;
+    .cw-upload-zone .upload-icon {
+      color: var(--text-muted);
+      margin-bottom: 4px;
     }
-    .row-fields {
+    .cw-upload-zone .upload-text {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-align: center;
+      pointer-events: none;
+    }
+    .cw-fields {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
-    .row-fields textarea,
-    .row-fields input {
-      padding: 8px 10px;
+    .cw-fields textarea,
+    .cw-fields input {
+      padding: 10px 12px;
       border: 1.5px solid var(--border);
-      border-radius: 7px;
+      border-radius: 8px;
       font-family: var(--font);
-      font-size: 0.87rem;
+      font-size: 0.88rem;
       color: var(--text);
-      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
     }
-    .row-fields textarea { min-height: 48px; }
-    .row-fields textarea:focus,
-    .row-fields input:focus { outline: none; border-color: var(--blue); }
-    .row-actions {
-      display: flex;
-      gap: 6px;
-      margin-top: 4px;
+    .cw-fields textarea { min-height: 60px; resize: vertical; }
+    .cw-fields textarea:focus,
+    .cw-fields input:focus { border-color: var(--blue); }
+    .cw-row-actions {
       grid-column: 1 / -1;
+      display: flex;
       justify-content: flex-end;
+      gap: 6px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
     }
-    .row-actions button {
-      background: var(--white);
+    .cw-action-btn {
+      background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 5px 12px;
-      font-size: 0.78rem;
+      padding: 6px 10px;
+      font-size: 0.8rem;
       cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s;
       font-family: var(--font);
-      font-weight: 600;
-      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
-    .row-actions button:hover { background: var(--bg-card); border-color: var(--blue); color: var(--blue); }
-    .row-actions .del-btn:hover { background: #fee2e2; border-color: #fca5a5; color: #b91c1c; }
+    .cw-action-btn:hover { border-color: var(--blue); color: var(--blue); background: #fff; }
+    .cw-action-btn.delete:hover { border-color: #dc3545; color: #dc3545; }
+    .cw-buttons-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .cw-buttons-row .edit-btn-add { flex: 1; }
 
     .edit-btn-add {
       background: var(--blue-light);
@@ -352,21 +409,39 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-    .wb-toggle {
+    .toggle-switch {
+      position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      color: var(--text);
-      font-weight: 600;
+      gap: 10px;
       cursor: pointer;
-      padding: 6px 12px;
-      background: var(--white);
-      border: 1.5px solid var(--border);
-      border-radius: 7px;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
     }
-    .wb-toggle input { width: 16px; height: 16px; accent-color: var(--blue); cursor: pointer; }
-    .wb-toggle.on { background: rgba(39, 174, 96, 0.08); border-color: var(--green); color: var(--green); }
+    .toggle-switch input { display: none; }
+    .toggle-track {
+      width: 44px;
+      height: 24px;
+      border-radius: 12px;
+      background: #d1d5db;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-track { background: #27AE60; }
+    .toggle-knob {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-track .toggle-knob { transform: translateX(20px); }
 
     .wb-editor {
       margin-top: 16px;
@@ -384,40 +459,47 @@
     }
     .wb-editor h4:first-child { margin-top: 0; }
 
-    .wb-step-row {
+    .step-row {
       display: grid;
-      grid-template-columns: 1fr 130px auto auto auto;
-      gap: 6px;
+      grid-template-columns: 28px 1fr 120px auto auto auto;
+      gap: 8px;
       align-items: center;
-      margin-bottom: 6px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f3f4f6;
     }
-    .wb-step-row input[type=text],
-    .wb-step-row select {
-      padding: 7px 10px;
+    .step-row:last-child { border-bottom: none; }
+    .step-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #d1d5db;
+      margin: 0 auto;
+    }
+    .step-dot.complete { background: #27AE60; }
+    .step-dot.in_progress { background: #DF6229; }
+    .step-row input[type=text] {
+      padding: 8px 10px;
       border: 1.5px solid var(--border);
       border-radius: 6px;
       font-family: var(--font);
       font-size: 0.85rem;
       color: var(--text);
+      outline: none;
+    }
+    .step-row input[type=text]:focus { border-color: var(--blue); }
+    .step-row select {
+      padding: 6px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.8rem;
+      color: var(--text);
+      outline: none;
       background: #fff;
     }
-    .wb-step-row input[type=text]:focus,
-    .wb-step-row select:focus { outline: none; border-color: var(--blue); }
-    .wb-step-row select.status-complete { background: rgba(39, 174, 96, 0.1); color: var(--green); font-weight: 700; }
-    .wb-step-row select.status-in_progress { background: rgba(223, 98, 41, 0.1); color: var(--orange); font-weight: 700; }
-    .wb-step-row button {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 5px 8px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      min-width: 28px;
-      line-height: 1;
-    }
-    .wb-step-row button:hover { background: var(--bg-card); border-color: var(--blue); }
-    .wb-step-row button.del { color: #b91c1c; }
-    .wb-step-row button.del:hover { background: #fee2e2; border-color: #fca5a5; }
+    .step-row select.status-complete { background: rgba(39,174,96,0.08); color: #27AE60; font-weight: 600; }
+    .step-row select.status-in_progress { background: rgba(223,98,41,0.08); color: #DF6229; font-weight: 600; }
+    .step-row .cw-action-btn { padding: 4px 8px; font-size: 0.78rem; }
 
     .wb-step-buttons {
       display: flex;
@@ -463,8 +545,28 @@
     .wb-field textarea:focus { outline: none; border-color: var(--blue); }
     .wb-field textarea { min-height: 72px; resize: vertical; }
 
+    .edit-modal-body input[type=text],
+    .edit-modal-body input[type=url],
+    .edit-modal-body textarea,
+    .edit-modal-body select {
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .edit-modal-body input:focus,
+    .edit-modal-body textarea:focus,
+    .edit-modal-body select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(29,128,222,0.1); }
+    .edit-modal-body textarea { min-height: 80px; resize: vertical; }
+
     @media (max-width: 560px) {
-      .wb-step-row { grid-template-columns: 1fr; }
+      .step-row { grid-template-columns: 1fr; }
     }
 
     /* Add Client button + modal */
@@ -763,15 +865,14 @@
           <h3>Your Active Marketing Services</h3>
           <p class="hint">Pills shown on the client dashboard and monthly reports. Leave empty to use the defaults baked into the HTML.</p>
           <div id="edit-pills-list"></div>
-          <button class="edit-btn-add" onclick="addPill()">+ Add Service</button>
         </div>
         <div class="edit-section">
           <h3>Current Work</h3>
           <p class="hint">Live campaigns / creative shown to the client below their monthly reports. Each row: image or video, a note, and a link button.</p>
           <div id="edit-rows-list"></div>
-          <div style="display:flex;gap:8px;">
-            <button class="edit-btn-add" onclick="addRow()" style="flex:1;">+ Add Row</button>
-            <button class="edit-btn-add" onclick="addHeading()" style="flex:1;">+ Add Heading</button>
+          <div class="cw-buttons-row">
+            <button class="edit-btn-add" onclick="addRow()">+ Add Row</button>
+            <button class="edit-btn-add" onclick="addHeading()">+ Add Heading</button>
           </div>
         </div>
 
@@ -1269,26 +1370,28 @@
         }
       }
 
-      var pillsHtml = editState.pills.map(function(p, i) {
-        return '<div class=”pill-input-row”>' +
-          '<input type=”text” value=”' + escapeHtml(p) + '” placeholder=”Service name” ' +
-          'oninput=”editState.pills[' + i + '] = this.value”>' +
-          '<button onclick=”removePill(' + i + ')” title=”Remove”>×</button>' +
-          '</div>';
-      }).join('');
+      var pillsHtml = '<div class=”pills-container”>';
+      editState.pills.forEach(function(p, i) {
+        pillsHtml += '<span class=”pill-chip”>' + escapeHtml(p) +
+          '<button class=”pill-remove” onclick=”removePill(' + i + ')” title=”Remove”>&times;</button></span>';
+      });
+      pillsHtml += '</div>';
+      pillsHtml += '<div class=”pill-add-row”>' +
+        '<input type=”text” id=”pill-add-input” placeholder=”Type a service and press Enter” onkeydown=”if(event.key===\'Enter\'){event.preventDefault();addPillFromInput();}”>' +
+        '<button class=”edit-btn-add” style=”flex:0 0 auto;width:auto;padding:10px 16px;” onclick=”addPillFromInput()”>+ Add</button></div>';
       document.getElementById('edit-pills-list').innerHTML = pillsHtml;
 
       // Current Work rows (supports both 'content' and 'heading' types)
       var rowsHtml = editState.currentWork.map(function(item, i) {
         if (item.type === 'heading') {
-          return '<div class=”row-editor” style=”background:#e8f0fe;border-color:var(--blue-border);grid-template-columns:1fr;”>' +
-            '<div class=”row-fields”>' +
-              '<input type=”text” value=”' + escapeHtml(item.label) + '” placeholder=”Section heading” style=”font-family:\'Barlow Condensed\',sans-serif;font-size:1rem;font-weight:700;color:var(--blue);” oninput=”editState.currentWork[' + i + '].label = this.value”>' +
+          return '<div class=”cw-row-card heading-row”>' +
+            '<div class=”cw-fields”>' +
+              '<input type=”text” value=”' + escapeHtml(item.label) + '” placeholder=”Section heading (e.g. March Ad Campaigns)” style=”font-family:Barlow Condensed,sans-serif;font-size:1.05rem;font-weight:700;color:var(--blue);” oninput=”editState.currentWork[' + i + '].label = this.value”>' +
             '</div>' +
-            '<div class=”row-actions”>' +
-              '<button onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
-              '<button onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
-              '<button class=”del-btn” onclick=”removeRow(' + i + ')”>Delete</button>' +
+            '<div class=”cw-row-actions”>' +
+              '<button class=”cw-action-btn” onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
+              '<button class=”cw-action-btn” onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
+              '<button class=”cw-action-btn delete” onclick=”removeRow(' + i + ')”>&#x1F5D1; Delete</button>' +
             '</div>' +
           '</div>';
         }
@@ -1300,24 +1403,21 @@
             mediaInner = '<img src=”/.netlify/functions/client-media?id=' + encodeURIComponent(item.mediaId) + '” alt=””>';
           }
         } else {
-          mediaInner = '<span class=”upload-hint”>Click to upload<br>image or video</span>';
+          mediaInner = '<div class=”upload-icon”><svg width=”24” height=”24” viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”1.5”><path d=”M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4”/><polyline points=”17 8 12 3 7 8”/><line x1=”12” y1=”3” x2=”12” y2=”15”/></svg></div><span class=”upload-text”>Upload</span>';
         }
-        return '<div class=”row-editor”>' +
-          '<label class=”row-media”>' +
-            mediaInner +
-            '<input type=”file” accept=”image/*,video/*” onchange=”uploadRowMedia(' + i + ', this.files[0])”>' +
-          '</label>' +
-          '<div class=”row-fields”>' +
-            '<textarea placeholder=”Note / description” oninput=”editState.currentWork[' + i + '].note = this.value”>' + escapeHtml(item.note) + '</textarea>' +
-            '<input type=”url” placeholder=”Link URL (https://…)” value=”' + escapeHtml(item.linkUrl) + '” oninput=”editState.currentWork[' + i + '].linkUrl = this.value”>' +
-            '<input type=”text” placeholder=”Button label (e.g. View Landing Page)” value=”' + escapeHtml(item.linkLabel) + '” oninput=”editState.currentWork[' + i + '].linkLabel = this.value”>' +
+        return '<div class=”cw-row-card”>' +
+          '<label class=”cw-upload-zone”>' + mediaInner + '<input type=”file” accept=”image/*,video/*” onchange=”uploadRowMedia(' + i + ', this.files[0])”></label>' +
+          '<div class=”cw-fields”>' +
+            '<textarea placeholder=”Describe this campaign, ad, or creative...” oninput=”editState.currentWork[' + i + '].note = this.value”>' + escapeHtml(item.note) + '</textarea>' +
+            '<input type=”url” placeholder=”https://...” value=”' + escapeHtml(item.linkUrl) + '” oninput=”editState.currentWork[' + i + '].linkUrl = this.value”>' +
+            '<input type=”text” placeholder=”Button label (e.g. View Campaign)” value=”' + escapeHtml(item.linkLabel) + '” oninput=”editState.currentWork[' + i + '].linkLabel = this.value”>' +
           '</div>' +
-          '<div class=”row-actions”>' +
-            '<button onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
-            '<button onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
-            '<button class=”del-btn” onclick=”removeRow(' + i + ')”>Delete</button>' +
+          '<div class=”cw-row-actions”>' +
+            '<button class=”cw-action-btn” onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
+            '<button class=”cw-action-btn” onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
+            '<button class=”cw-action-btn delete” onclick=”removeRow(' + i + ')”>&#x1F5D1; Delete</button>' +
           '</div>' +
-          '</div>';
+        '</div>';
       }).join('');
       document.getElementById('edit-rows-list').innerHTML = rowsHtml || '<p class=”hint” style=”text-align:center;padding:20px 0;”>No rows yet. Click + below to add one.</p>';
 
@@ -1334,12 +1434,13 @@
             return '<option value=”' + o.v + '”' + (step.status === o.v ? ' selected' : '') + '>' + o.l + '</option>';
           }).join('');
           var statusClass = 'status-' + (step.status || 'not_started');
-          return '<div class=”wb-step-row”>' +
+          return '<div class=”step-row”>' +
+            '<div class=”step-dot ' + (step.status || 'not_started') + '”></div>' +
             '<input type=”text” value=”' + escapeHtml(step.label) + '” placeholder=”Step name” oninput=”editState.projects[' + pi + '].steps[' + si + '].label = this.value”>' +
             '<select class=”' + statusClass + '” onchange=”setProjStepStatus(' + pi + ',' + si + ',this.value)”>' + opts + '</select>' +
-            '<button onclick=”moveProjStep(' + pi + ',' + si + ',-1)” title=”Move up”>&uarr;</button>' +
-            '<button onclick=”moveProjStep(' + pi + ',' + si + ',1)” title=”Move down”>&darr;</button>' +
-            '<button class=”del” onclick=”removeProjStep(' + pi + ',' + si + ')” title=”Remove”>&times;</button>' +
+            '<button class=”cw-action-btn” onclick=”moveProjStep(' + pi + ',' + si + ',-1)” title=”Move up”>&uarr;</button>' +
+            '<button class=”cw-action-btn” onclick=”moveProjStep(' + pi + ',' + si + ',1)” title=”Move down”>&darr;</button>' +
+            '<button class=”cw-action-btn delete” onclick=”removeProjStep(' + pi + ',' + si + ')” title=”Remove”>&times;</button>' +
             '</div>';
         }).join('');
 
@@ -1347,7 +1448,11 @@
           '<div class=”project-card-body”>' +
             '<div class=”wb-field” style=”margin-bottom:12px;”><label>Project Name</label><input type=”text” value=”' + escapeHtml(proj.name) + '” placeholder=”e.g. Website Redesign” oninput=”editState.projects[' + pi + '].name = this.value”></div>' +
             '<div class=”wb-field”><label>Show on client dashboard</label>' +
-              '<label class=”wb-toggle' + (proj.enabled ? ' on' : '') + '”><input type=”checkbox”' + (proj.enabled ? ' checked' : '') + ' onchange=”editState.projects[' + pi + '].enabled = this.checked; renderEditModal();”> ' + (proj.enabled ? 'Enabled' : 'Disabled') + '</label></div>' +
+              '<label class=”toggle-switch”>' +
+              '<input type=”checkbox”' + (proj.enabled ? ' checked' : '') + ' onchange=”editState.projects[' + pi + '].enabled = this.checked; renderEditModal();”>' +
+              '<div class=”toggle-track”><div class=”toggle-knob”></div></div>' +
+              '<span>' + (proj.enabled ? 'Visible on dashboard' : 'Hidden from dashboard') + '</span>' +
+              '</label></div>' +
             '<h4>Steps</h4>' +
             '<div>' + (stepsHtml || '<p class=”hint” style=”text-align:center;padding:14px 0;”>No steps. Click Reset to Default for the standard 14-step build.</p>') + '</div>' +
             '<div class=”wb-step-buttons”>' +
@@ -1359,7 +1464,7 @@
             '<div class=”wb-field”><label>Markup / Feedback URL</label><input type=”url” value=”' + escapeHtml(proj.markupUrl) + '” placeholder=”https://…” oninput=”editState.projects[' + pi + '].markupUrl = this.value”></div>' +
             '<h4>Notes from the Team</h4>' +
             '<div class=”wb-field”><textarea placeholder=”Short note…” oninput=”editState.projects[' + pi + '].teamNotes = this.value”>' + escapeHtml(proj.teamNotes) + '</textarea></div>' +
-            '<div style=”text-align:right;margin-top:8px;”><button class=”del-btn” style=”background:#fee2e2;color:#b91c1c;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:600;” onclick=”deleteProject(' + pi + ')”>Delete Project</button></div>' +
+            '<div style=”text-align:right;margin-top:8px;”><button class=”cw-action-btn delete” style=”padding:8px 16px;” onclick=”deleteProject(' + pi + ')”>&#x1F5D1; Delete Project</button></div>' +
           '</div>'
         ) : '';
 
@@ -1431,6 +1536,12 @@
       // Focus the new field
       var inputs = document.querySelectorAll('#edit-pills-list input');
       if (inputs.length) inputs[inputs.length - 1].focus();
+    }
+    function addPillFromInput() {
+      var input = document.getElementById('pill-add-input');
+      if (!input) return;
+      var val = input.value.trim();
+      if (val) { editState.pills.push(val); renderEditModal(); }
     }
     function removePill(i) {
       editState.pills.splice(i, 1);
@@ -1562,6 +1673,7 @@
     window.openEditModal = openEditModal;
     window.closeEditModal = closeEditModal;
     window.addPill = addPill;
+    window.addPillFromInput = addPillFromInput;
     window.removePill = removePill;
     window.addRow = addRow;
     window.addHeading = addHeading;
