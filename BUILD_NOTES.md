@@ -392,3 +392,112 @@ moxie skill for each new client).
 
 **Removed:**
 - `netlify/functions/client-page.mjs` — replaced by the edge function
+
+---
+
+# Build Notes — Five Admin Enhancements (Status, Projects, Headings, Logo, Compat)
+
+Build date: 2026-04-12
+Branch: `sandbox`
+
+## Features built
+
+### Feature 1: Client Status Dropdown (NCO / Active / Paused)
+- `status` field added to client-content schema (default: `"active"`)
+- Colored badge on each admin tile (green Active, orange NCO, gray Paused)
+- Filter buttons at top of admin grid: All | NCO | Active | Paused
+- Dropdown in edit modal's Client Info section
+- Status stored in meta-index for quick badge rendering
+- Admin-only — does NOT render on public dashboards
+
+### Feature 2: Generic Projects Tracker (replaces websiteBuild)
+- `websiteBuild` → `projects: [...]` array. Each project has its own
+  name, enabled toggle, step list, preview/markup URLs, team notes
+- Admin modal: "Projects" section with collapsible project cards,
+  expand/collapse toggle, per-project step management
+- Public: multiple enabled projects stack as independent tracker
+  sections, each with its own heading (project name)
+- **Migration**: on GET, if `websiteBuild` exists and `projects` does
+  not, auto-migrates it into `projects[0]` named "Website Build". The
+  migration is transparent — client-content.mjs reads old data, returns
+  new schema. On next save, new schema is persisted.
+- The 14 default steps (Signed Proposal → Go Live) are available via
+  "Reset to Default" button, per project
+
+### Feature 3: Current Work Heading Labels
+- `currentWork` items now have `type: "content" | "heading"`
+- Items without `type` default to `"content"` (backward compat)
+- Admin: "+ Add Heading" button alongside "+ Add Row". Headings render
+  with blue background and bold Barlow Condensed font for distinction
+- Public: headings render as styled subheadings (`<h3 class="cw-heading">`)
+  with a left blue accent border. Content cards following a heading are
+  grouped in their own grid until the next heading
+- If no headings exist, behavior is identical to before (single grid)
+
+### Feature 4: Client Logo on Dashboard
+- `logoMediaId` field in client-content schema (default: `null`)
+- Admin: logo upload in Client Info section, preview + "Remove Logo"
+- Public: `applyClientLogo()` finds all `<img>` with `moxie-mascot`
+  in src and replaces with the custom logo (via client-media endpoint)
+- If no logo, MOXIE mascot remains (no change for logoless clients)
+
+### Feature 5: Backward Compatibility
+- Status missing → `"active"`
+- `websiteBuild` data → auto-migrates to `projects` array
+- `currentWork` items without `type` → `"content"`
+- `logoMediaId` missing → `null`
+- `migrateContent()` function in client-content.mjs handles all upgrades
+  on read. Old data is never crashed on.
+
+## Judgment calls
+
+1. **Migration on read, not batch**: Rather than batch-migrating all 63+
+   clients, the migration runs lazily on each GET. When the admin opens
+   a client, old data is migrated and returned. On save, new schema is
+   written. This avoids a risky batch operation and works incrementally.
+
+2. **Projects are collapsible in the admin**: With multiple projects
+   each potentially having 14 steps, the modal body could get very long.
+   Collapsible panels (click header to expand/collapse) keep it
+   manageable. New projects auto-expand; existing ones start collapsed.
+
+3. **Heading labels are optional grouping**: Headings don't wrap
+   content in a container. They just visually introduce a group.
+   The public renderer builds separate `.current-work-grid` elements
+   for each group, which keeps the grid layout clean.
+
+4. **Logo replacement via `img[src*=moxie-mascot]` selector**: The
+   public renderer finds ALL images on the page whose src contains
+   "moxie-mascot" (there are usually 2-3 per page: hero, analysis
+   label, etc.) and replaces them all. This is simpler than targeting
+   specific CSS classes and catches all instances.
+
+5. **Status filter interacts with existing service filter**: Both
+   filters are ANDed together — a tile must match the status filter
+   AND the service filter AND the search query to appear. "All" means
+   no status filtering.
+
+6. **Meta-index now includes status + hasLogo**: Updated
+   `updateMetaIndex()` to always write a full entry for every client
+   that has any data, so the admin can show status badges and logo
+   indicators without per-client fetches.
+
+## Test data in sandbox
+
+- **2601002 Jeff Baker**: status=NCO, custom logo (facebook header image),
+  2 projects (Website Redesign + Landing Page Campaign), current work with
+  2 headings ("March Ad Campaigns" + "Billboard Creative") + 3 content rows
+- **2010001 Epoxy Stone**: status=active (default), no logo, no projects,
+  1 current work row — verifies defaults + backward compat
+- **9999999 Test Client Company**: from Add Client build — still in registry
+
+## File inventory
+
+**Modified:**
+- `netlify/functions/client-content.mjs` — full schema v2: migrateContent(),
+  sanitizeProject(), sanitizeCurrentWorkItem(), updated updateMetaIndex()
+- `admin/index.html` — status badges+filter, projects tab, heading labels,
+  logo upload, ~800 lines of changes across CSS/HTML/JS
+- `js/client-content.js` — buildProjectNodes() (multi-project), heading
+  labels in buildCurrentWorkNode(), applyClientLogo(), refactored insertion
+- `BUILD_NOTES.md` — this section

@@ -531,6 +531,41 @@
       color: var(--blue);
       font-size: 10px;
     }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      line-height: 1;
+    }
+    .status-badge.status-active { background: rgba(39, 174, 96, 0.12); color: #27AE60; }
+    .status-badge.status-nco { background: rgba(223, 98, 41, 0.12); color: #DF6229; }
+    .status-badge.status-paused { background: rgba(153, 153, 153, 0.15); color: #999; }
+
+    .status-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .status-filter-btn {
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .status-filter-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .status-filter-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
   </style>
 </head>
 <body>
@@ -549,6 +584,13 @@
 
     <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:6px;">Ad Platform Breakdown</div>
     <div class="admin-stats" id="admin-ad-breakdown" style="margin-top:0;"></div>
+
+    <div class="status-filters" id="status-filters">
+      <button class="status-filter-btn active" onclick="setStatusFilter('all', this)">All</button>
+      <button class="status-filter-btn" onclick="setStatusFilter('nco', this)">NCO</button>
+      <button class="status-filter-btn" onclick="setStatusFilter('active', this)">Active</button>
+      <button class="status-filter-btn" onclick="setStatusFilter('paused', this)">Paused</button>
+    </div>
 
     <div style="display:flex;gap:12px;align-items:center;margin-bottom:24px;">
       <input type="text" class="search-bar" id="search" placeholder="Search by client name or number..." autocomplete="off" style="margin-bottom:0;flex:1;">
@@ -633,6 +675,26 @@
           <h3>Client Info</h3>
           <p class="hint">Metadata for this client. These fields are for internal admin use and don't render on the client dashboard.</p>
           <div class="wb-field">
+            <label>Client Logo <span style="font-weight:400;color:var(--text-muted);">(optional — replaces MOXIE mascot on dashboard)</span></label>
+            <div id="logo-preview" style="margin-bottom:8px;"></div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <label class="edit-btn-add" style="margin-top:0;flex:0 0 auto;cursor:pointer;padding:8px 14px;">
+                Upload Logo
+                <input type="file" accept="image/*" onchange="uploadClientLogo(this.files[0])" style="display:none;">
+              </label>
+              <button onclick="removeClientLogo()" style="background:#fee2e2;color:#b91c1c;border:none;padding:8px 14px;border-radius:8px;font-family:var(--font);font-weight:600;font-size:0.82rem;cursor:pointer;display:none;" id="remove-logo-btn">Remove Logo</button>
+            </div>
+            <p class="hint" style="margin-top:6px;">Recommended: 200x200px or similar square/landscape ratio. PNG, JPG, or SVG.</p>
+          </div>
+          <div class="wb-field">
+            <label>Status</label>
+            <select id="meta-status-input" onchange="editState.status = this.value" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--font);font-size:0.88rem;">
+              <option value="active">Active</option>
+              <option value="nco">NCO (New Client Onboarding)</option>
+              <option value="paused">Paused</option>
+            </select>
+          </div>
+          <div class="wb-field">
             <label>Slack Channel</label>
             <input type="text" id="meta-slack-input" placeholder="#2601005_acme-plumbing" oninput="editState.meta.slackChannel = this.value">
           </div>
@@ -660,39 +722,17 @@
           <h3>Current Work</h3>
           <p class="hint">Live campaigns / creative shown to the client below their monthly reports. Each row: image or video, a note, and a link button.</p>
           <div id="edit-rows-list"></div>
-          <button class="edit-btn-add" onclick="addRow()">+ Add Current Work Row</button>
+          <div style="display:flex;gap:8px;">
+            <button class="edit-btn-add" onclick="addRow()" style="flex:1;">+ Add Row</button>
+            <button class="edit-btn-add" onclick="addHeading()" style="flex:1;">+ Add Heading</button>
+          </div>
         </div>
 
         <div class="edit-section">
-          <div class="wb-section-head">
-            <h3>Website Build</h3>
-            <label class="wb-toggle" id="wb-toggle-label">
-              <input type="checkbox" id="wb-enabled-input" onchange="toggleWebsiteBuild(this.checked)">
-              <span>Show tracker on dashboard</span>
-            </label>
-          </div>
-          <p class="hint">Off by default. Turn on only for clients with an active website build. The tracker renders above Current Work on every dashboard page for that client.</p>
-          <div id="wb-editor" class="wb-editor" style="display:none;">
-            <h4>Steps</h4>
-            <div id="wb-steps-list"></div>
-            <div class="wb-step-buttons">
-              <button class="edit-btn-add" onclick="addWbStep()">+ Add Step</button>
-              <button class="btn-secondary" onclick="resetWbSteps()">Reset to Default (14 steps)</button>
-            </div>
-            <h4>Links</h4>
-            <div class="wb-field">
-              <label for="wb-preview-url-input">Preview Site URL (optional)</label>
-              <input type="url" id="wb-preview-url-input" placeholder="https://…" oninput="editState.websiteBuild.previewUrl = this.value">
-            </div>
-            <div class="wb-field">
-              <label for="wb-markup-url-input">Markup / Feedback URL (optional)</label>
-              <input type="url" id="wb-markup-url-input" placeholder="https://…" oninput="editState.websiteBuild.markupUrl = this.value">
-            </div>
-            <h4>Notes from the Team</h4>
-            <div class="wb-field">
-              <textarea id="wb-team-notes-input" placeholder="Short note from the team — renders as a styled callout on the dashboard" oninput="editState.websiteBuild.teamNotes = this.value"></textarea>
-            </div>
-          </div>
+          <h3>Projects</h3>
+          <p class="hint">Each project gets its own step tracker on the client dashboard. Click a project name to expand.</p>
+          <div id="edit-projects-list"></div>
+          <button class="edit-btn-add" onclick="addProject()">+ Add Project</button>
         </div>
       </div>
       <div class="edit-modal-footer">
@@ -706,6 +746,7 @@
   <script>
     var tiles = [];
     var activeFilter = null;
+    var statusFilter = 'all';
     var clientFlags = {};
     var clientInvited = {};
     var pendingInvites = {}; // client#s with an in-flight POST — skipped during poll sync
@@ -928,8 +969,14 @@
               '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>' +
               '</button>';
 
+            var clientStatus = 'active';
+            var statusLabel = {nco:'NCO',active:'Active',paused:'Paused'};
+            var badgeHtml = '<span class="status-badge status-' + clientStatus + '" id="status-badge-' + num + '">' + (statusLabel[clientStatus] || 'Active') + '</span>';
+            a.setAttribute('data-status', clientStatus);
+
             a.innerHTML =
               pencilBtn +
+              badgeHtml +
               '<div style="display:flex;justify-content:space-between;align-items:center;padding-right:36px;">' +
                 '<div class="tile-name">' + name + '</div>' +
               '</div>' +
@@ -959,8 +1006,9 @@
         var searchQ = document.getElementById('search').value.toLowerCase().trim();
         var matchSearch = !searchQ || tile.getAttribute('data-name').indexOf(searchQ) > -1 || num.indexOf(searchQ) > -1;
         var matchFilter = !activeFilter || (clientFlags[num] && clientFlags[num][activeFilter]);
-        tile.style.display = (matchSearch && matchFilter) ? '' : 'none';
-        if (matchSearch && matchFilter) visible++;
+        var matchStatus = statusFilter === 'all' || tile.getAttribute('data-status') === statusFilter;
+        tile.style.display = (matchSearch && matchFilter && matchStatus) ? '' : 'none';
+        if (matchSearch && matchFilter && matchStatus) visible++;
       });
       noResults.style.display = visible === 0 ? 'block' : 'none';
     }
@@ -1031,14 +1079,11 @@
     });
 
     // ─── Edit modal (Client Content) ───────────────────────────────────────
-    var DEFAULT_WB_STEPS = [
+    var DEFAULT_PROJECT_STEPS = [
       'Signed Proposal', 'Payment', 'Discovery', 'Brand Kit', 'Messaging',
       'Draft 1', 'Revisions Round 1', 'Draft 2', 'Revisions Round 2',
       'Draft 3', 'Revisions Round 3', 'Final Approval', 'DNS Access', 'Go Live'
     ];
-    function emptyWebsiteBuild() {
-      return { enabled: false, steps: [], previewUrl: '', markupUrl: '', teamNotes: '' };
-    }
     function emptyMeta() {
       return { slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '' };
     }
@@ -1047,8 +1092,10 @@
       name: '',
       pills: [],
       currentWork: [],
-      websiteBuild: emptyWebsiteBuild(),
+      projects: [],
       meta: emptyMeta(),
+      status: 'active',
+      logoMediaId: null,
     };
 
     function escapeHtml(s) {
@@ -1071,8 +1118,10 @@
       editState.name = name || num;
       editState.pills = [];
       editState.currentWork = [];
-      editState.websiteBuild = emptyWebsiteBuild();
+      editState.projects = [];
       editState.meta = emptyMeta();
+      editState.status = 'active';
+      editState.logoMediaId = null;
 
       document.getElementById('edit-modal-title').textContent = 'Edit: ' + editState.name;
       document.getElementById('edit-modal-subtitle').textContent = '#' + num;
@@ -1084,22 +1133,32 @@
         .then(function(data) {
           editState.pills = Array.isArray(data.pills) ? data.pills.slice() : [];
           editState.currentWork = Array.isArray(data.currentWork) ? data.currentWork.slice() : [];
-          if (data.websiteBuild && typeof data.websiteBuild === 'object') {
-            editState.websiteBuild = {
+          editState.status = data.status || 'active';
+          editState.logoMediaId = data.logoMediaId || null;
+          editState.projects = Array.isArray(data.projects) ? data.projects.map(function(p) {
+            return {
+              id: p.id || 'proj-' + Date.now(),
+              name: String(p.name || ''),
+              enabled: Boolean(p.enabled),
+              steps: Array.isArray(p.steps) ? p.steps.slice() : [],
+              previewUrl: String(p.previewUrl || ''),
+              markupUrl: String(p.markupUrl || ''),
+              teamNotes: String(p.teamNotes || ''),
+              _expanded: false,
+            };
+          }) : [];
+          // Legacy migration: if data.websiteBuild exists and projects is empty
+          if (editState.projects.length === 0 && data.websiteBuild && (data.websiteBuild.enabled || (data.websiteBuild.steps && data.websiteBuild.steps.length > 0))) {
+            editState.projects = [{
+              id: 'migrated-wb',
+              name: 'Website Build',
               enabled: Boolean(data.websiteBuild.enabled),
-              steps: Array.isArray(data.websiteBuild.steps)
-                ? data.websiteBuild.steps.map(function(s) {
-                    return {
-                      label: String(s.label || ''),
-                      status: ['not_started', 'in_progress', 'complete'].indexOf(s.status) >= 0 ? s.status : 'not_started',
-                      note: String(s.note || ''),
-                    };
-                  })
-                : [],
+              steps: Array.isArray(data.websiteBuild.steps) ? data.websiteBuild.steps.slice() : [],
               previewUrl: String(data.websiteBuild.previewUrl || ''),
               markupUrl: String(data.websiteBuild.markupUrl || ''),
               teamNotes: String(data.websiteBuild.teamNotes || ''),
-            };
+              _expanded: true,
+            }];
           }
           if (data.meta && typeof data.meta === 'object') {
             editState.meta = {
@@ -1147,123 +1206,175 @@
       el = document.getElementById('meta-legacy-input'); if (el) el.value = editState.meta.legacyReportingLink || '';
       el = document.getElementById('meta-notes-input'); if (el) el.value = editState.meta.notes || '';
 
+      // Status dropdown
+      var sel = document.getElementById('meta-status-input'); if (sel) sel.value = editState.status || 'active';
+
+      // Logo preview
+      var logoPreview = document.getElementById('logo-preview');
+      var removeBtn = document.getElementById('remove-logo-btn');
+      if (logoPreview) {
+        if (editState.logoMediaId) {
+          logoPreview.innerHTML = '<img src=”/.netlify/functions/client-media?id=' + encodeURIComponent(editState.logoMediaId) + '” style=”max-width:120px;max-height:120px;border-radius:8px;border:1px solid var(--border);object-fit:contain;”>';
+          if (removeBtn) removeBtn.style.display = '';
+        } else {
+          logoPreview.innerHTML = '';
+          if (removeBtn) removeBtn.style.display = 'none';
+        }
+      }
+
       var pillsHtml = editState.pills.map(function(p, i) {
-        return '<div class="pill-input-row">' +
-          '<input type="text" value="' + escapeHtml(p) + '" placeholder="Service name" ' +
-          'oninput="editState.pills[' + i + '] = this.value">' +
-          '<button onclick="removePill(' + i + ')" title="Remove">×</button>' +
+        return '<div class=”pill-input-row”>' +
+          '<input type=”text” value=”' + escapeHtml(p) + '” placeholder=”Service name” ' +
+          'oninput=”editState.pills[' + i + '] = this.value”>' +
+          '<button onclick=”removePill(' + i + ')” title=”Remove”>×</button>' +
           '</div>';
       }).join('');
       document.getElementById('edit-pills-list').innerHTML = pillsHtml;
 
-      var rowsHtml = editState.currentWork.map(function(row, i) {
+      // Current Work rows (supports both 'content' and 'heading' types)
+      var rowsHtml = editState.currentWork.map(function(item, i) {
+        if (item.type === 'heading') {
+          return '<div class=”row-editor” style=”background:#e8f0fe;border-color:var(--blue-border);grid-template-columns:1fr;”>' +
+            '<div class=”row-fields”>' +
+              '<input type=”text” value=”' + escapeHtml(item.label) + '” placeholder=”Section heading” style=”font-family:\'Barlow Condensed\',sans-serif;font-size:1rem;font-weight:700;color:var(--blue);” oninput=”editState.currentWork[' + i + '].label = this.value”>' +
+            '</div>' +
+            '<div class=”row-actions”>' +
+              '<button onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
+              '<button onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
+              '<button class=”del-btn” onclick=”removeRow(' + i + ')”>Delete</button>' +
+            '</div>' +
+          '</div>';
+        }
         var mediaInner;
-        if (row.mediaId) {
-          if (row.mediaType === 'video') {
-            mediaInner = '<video src="/.netlify/functions/client-media?id=' + encodeURIComponent(row.mediaId) + '" muted playsinline></video>';
+        if (item.mediaId) {
+          if (item.mediaType === 'video') {
+            mediaInner = '<video src=”/.netlify/functions/client-media?id=' + encodeURIComponent(item.mediaId) + '” muted playsinline></video>';
           } else {
-            mediaInner = '<img src="/.netlify/functions/client-media?id=' + encodeURIComponent(row.mediaId) + '" alt="">';
+            mediaInner = '<img src=”/.netlify/functions/client-media?id=' + encodeURIComponent(item.mediaId) + '” alt=””>';
           }
         } else {
-          mediaInner = '<span class="upload-hint">Click to upload<br>image or video</span>';
+          mediaInner = '<span class=”upload-hint”>Click to upload<br>image or video</span>';
         }
-        return '<div class="row-editor">' +
-          '<label class="row-media">' +
+        return '<div class=”row-editor”>' +
+          '<label class=”row-media”>' +
             mediaInner +
-            '<input type="file" accept="image/*,video/*" onchange="uploadRowMedia(' + i + ', this.files[0])">' +
+            '<input type=”file” accept=”image/*,video/*” onchange=”uploadRowMedia(' + i + ', this.files[0])”>' +
           '</label>' +
-          '<div class="row-fields">' +
-            '<textarea placeholder="Note / description" oninput="editState.currentWork[' + i + '].note = this.value">' + escapeHtml(row.note) + '</textarea>' +
-            '<input type="url" placeholder="Link URL (https://…)" value="' + escapeHtml(row.linkUrl) + '" oninput="editState.currentWork[' + i + '].linkUrl = this.value">' +
-            '<input type="text" placeholder="Button label (e.g. View Landing Page)" value="' + escapeHtml(row.linkLabel) + '" oninput="editState.currentWork[' + i + '].linkLabel = this.value">' +
+          '<div class=”row-fields”>' +
+            '<textarea placeholder=”Note / description” oninput=”editState.currentWork[' + i + '].note = this.value”>' + escapeHtml(item.note) + '</textarea>' +
+            '<input type=”url” placeholder=”Link URL (https://…)” value=”' + escapeHtml(item.linkUrl) + '” oninput=”editState.currentWork[' + i + '].linkUrl = this.value”>' +
+            '<input type=”text” placeholder=”Button label (e.g. View Landing Page)” value=”' + escapeHtml(item.linkLabel) + '” oninput=”editState.currentWork[' + i + '].linkLabel = this.value”>' +
           '</div>' +
-          '<div class="row-actions">' +
-            '<button onclick="moveRow(' + i + ', -1)" title="Move up">&uarr;</button>' +
-            '<button onclick="moveRow(' + i + ', 1)" title="Move down">&darr;</button>' +
-            '<button class="del-btn" onclick="removeRow(' + i + ')">Delete</button>' +
+          '<div class=”row-actions”>' +
+            '<button onclick=”moveRow(' + i + ', -1)” title=”Move up”>&uarr;</button>' +
+            '<button onclick=”moveRow(' + i + ', 1)” title=”Move down”>&darr;</button>' +
+            '<button class=”del-btn” onclick=”removeRow(' + i + ')”>Delete</button>' +
           '</div>' +
           '</div>';
       }).join('');
-      document.getElementById('edit-rows-list').innerHTML = rowsHtml || '<p class="hint" style="text-align:center;padding:20px 0;">No rows yet. Click + below to add one.</p>';
+      document.getElementById('edit-rows-list').innerHTML = rowsHtml || '<p class=”hint” style=”text-align:center;padding:20px 0;”>No rows yet. Click + below to add one.</p>';
 
-      // Website Build section
-      var wb = editState.websiteBuild;
-      var enabledInput = document.getElementById('wb-enabled-input');
-      var toggleLabel = document.getElementById('wb-toggle-label');
-      var editor = document.getElementById('wb-editor');
-      if (enabledInput) enabledInput.checked = !!wb.enabled;
-      if (toggleLabel) toggleLabel.classList.toggle('on', !!wb.enabled);
-      if (editor) editor.style.display = wb.enabled ? '' : 'none';
-
-      var statusOpts = [
-        { v: 'not_started', l: 'Not Started' },
-        { v: 'in_progress', l: 'In Progress' },
-        { v: 'complete', l: 'Complete' },
-      ];
-      var stepsHtml = wb.steps.map(function(step, i) {
-        var opts = statusOpts.map(function(o) {
-          return '<option value="' + o.v + '"' + (step.status === o.v ? ' selected' : '') + '>' + o.l + '</option>';
+      // Projects section
+      var projHtml = editState.projects.map(function(proj, pi) {
+        var isExpanded = proj._expanded;
+        var statusOpts = [
+          { v: 'not_started', l: 'Not Started' },
+          { v: 'in_progress', l: 'In Progress' },
+          { v: 'complete', l: 'Complete' },
+        ];
+        var stepsHtml = proj.steps.map(function(step, si) {
+          var opts = statusOpts.map(function(o) {
+            return '<option value=”' + o.v + '”' + (step.status === o.v ? ' selected' : '') + '>' + o.l + '</option>';
+          }).join('');
+          var statusClass = 'status-' + (step.status || 'not_started');
+          return '<div class=”wb-step-row”>' +
+            '<input type=”text” value=”' + escapeHtml(step.label) + '” placeholder=”Step name” oninput=”editState.projects[' + pi + '].steps[' + si + '].label = this.value”>' +
+            '<select class=”' + statusClass + '” onchange=”setProjStepStatus(' + pi + ',' + si + ',this.value)”>' + opts + '</select>' +
+            '<button onclick=”moveProjStep(' + pi + ',' + si + ',-1)” title=”Move up”>&uarr;</button>' +
+            '<button onclick=”moveProjStep(' + pi + ',' + si + ',1)” title=”Move down”>&darr;</button>' +
+            '<button class=”del” onclick=”removeProjStep(' + pi + ',' + si + ')” title=”Remove”>&times;</button>' +
+            '</div>';
         }).join('');
-        var statusClass = 'status-' + (step.status || 'not_started');
-        return '<div class="wb-step-row">' +
-          '<input type="text" value="' + escapeHtml(step.label) + '" placeholder="Step name" ' +
-            'oninput="editState.websiteBuild.steps[' + i + '].label = this.value">' +
-          '<select class="' + statusClass + '" onchange="setWbStepStatus(' + i + ', this.value)">' + opts + '</select>' +
-          '<button onclick="moveWbStep(' + i + ', -1)" title="Move up">&uarr;</button>' +
-          '<button onclick="moveWbStep(' + i + ', 1)" title="Move down">&darr;</button>' +
-          '<button class="del" onclick="removeWbStep(' + i + ')" title="Remove">×</button>' +
-          '</div>';
+
+        var bodyHtml = isExpanded ? (
+          '<div style=”padding:12px 14px 14px;”>' +
+            '<div class=”wb-field” style=”margin-bottom:12px;”><label>Project Name</label><input type=”text” value=”' + escapeHtml(proj.name) + '” placeholder=”e.g. Website Redesign” oninput=”editState.projects[' + pi + '].name = this.value”></div>' +
+            '<div class=”wb-field”><label>Show on client dashboard</label>' +
+              '<label class=”wb-toggle' + (proj.enabled ? ' on' : '') + '”><input type=”checkbox”' + (proj.enabled ? ' checked' : '') + ' onchange=”editState.projects[' + pi + '].enabled = this.checked; renderEditModal();”> ' + (proj.enabled ? 'Enabled' : 'Disabled') + '</label></div>' +
+            '<h4>Steps</h4>' +
+            '<div>' + (stepsHtml || '<p class=”hint” style=”text-align:center;padding:14px 0;”>No steps. Click Reset to Default for the standard 14-step build.</p>') + '</div>' +
+            '<div class=”wb-step-buttons”>' +
+              '<button class=”edit-btn-add” onclick=”addProjStep(' + pi + ')”>+ Add Step</button>' +
+              '<button class=”btn-secondary” onclick=”resetProjSteps(' + pi + ')”>Reset to Default</button>' +
+            '</div>' +
+            '<h4>Links</h4>' +
+            '<div class=”wb-field”><label>Preview Site URL</label><input type=”url” value=”' + escapeHtml(proj.previewUrl) + '” placeholder=”https://…” oninput=”editState.projects[' + pi + '].previewUrl = this.value”></div>' +
+            '<div class=”wb-field”><label>Markup / Feedback URL</label><input type=”url” value=”' + escapeHtml(proj.markupUrl) + '” placeholder=”https://…” oninput=”editState.projects[' + pi + '].markupUrl = this.value”></div>' +
+            '<h4>Notes from the Team</h4>' +
+            '<div class=”wb-field”><textarea placeholder=”Short note…” oninput=”editState.projects[' + pi + '].teamNotes = this.value”>' + escapeHtml(proj.teamNotes) + '</textarea></div>' +
+            '<div style=”text-align:right;margin-top:8px;”><button class=”del-btn” style=”background:#fee2e2;color:#b91c1c;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:600;” onclick=”deleteProject(' + pi + ')”>Delete Project</button></div>' +
+          '</div>'
+        ) : '';
+
+        return '<div style=”border:1.5px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;background:var(--bg-card);”>' +
+          '<div onclick=”toggleProjectExpand(' + pi + ')” style=”display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;”>' +
+            '<div style=”display:flex;align-items:center;gap:8px;”><strong style=”font-family:Barlow Condensed,sans-serif;font-size:1rem;”>' + escapeHtml(proj.name || 'Untitled Project') + '</strong>' +
+              (proj.enabled ? '<span style=”font-size:0.65rem;background:rgba(39,174,96,0.12);color:#27AE60;padding:2px 6px;border-radius:4px;font-weight:700;”>ON</span>' : '<span style=”font-size:0.65rem;background:rgba(153,153,153,0.12);color:#999;padding:2px 6px;border-radius:4px;font-weight:700;”>OFF</span>') +
+            '</div>' +
+            '<span style=”font-size:1.2rem;color:var(--text-muted);”>' + (isExpanded ? '&#9662;' : '&#9656;') + '</span>' +
+          '</div>' +
+          bodyHtml +
+        '</div>';
       }).join('');
-      var stepsList = document.getElementById('wb-steps-list');
-      if (stepsList) stepsList.innerHTML = stepsHtml || '<p class="hint" style="text-align:center;padding:14px 0;">No steps yet. Click “Reset to Default” for the standard 14-step build.</p>';
-
-      var pEl = document.getElementById('wb-preview-url-input');
-      if (pEl) pEl.value = wb.previewUrl || '';
-      var mEl = document.getElementById('wb-markup-url-input');
-      if (mEl) mEl.value = wb.markupUrl || '';
-      var tEl = document.getElementById('wb-team-notes-input');
-      if (tEl) tEl.value = wb.teamNotes || '';
+      document.getElementById('edit-projects-list').innerHTML = projHtml || '<p class=”hint” style=”text-align:center;padding:20px 0;”>No projects yet. Click + below to add one.</p>';
     }
 
-    function toggleWebsiteBuild(enabled) {
-      editState.websiteBuild.enabled = !!enabled;
-      // First time turning on with no steps? Seed with defaults as a convenience.
-      if (enabled && editState.websiteBuild.steps.length === 0) {
-        editState.websiteBuild.steps = DEFAULT_WB_STEPS.map(function(label) {
-          return { label: label, status: 'not_started', note: '' };
-        });
-      }
-      renderEditModal();
-    }
-    function resetWbSteps() {
-      if (editState.websiteBuild.steps.length > 0) {
-        if (!confirm('Replace the current steps with the default 14-step build? This cannot be undone until you reload.')) return;
-      }
-      editState.websiteBuild.steps = DEFAULT_WB_STEPS.map(function(label) {
-        return { label: label, status: 'not_started', note: '' };
+    // Project handler functions
+    function addProject() {
+      editState.projects.push({
+        id: 'proj-' + Date.now(),
+        name: '',
+        enabled: false,
+        steps: [],
+        previewUrl: '',
+        markupUrl: '',
+        teamNotes: '',
+        _expanded: true,
       });
       renderEditModal();
     }
-    function addWbStep() {
-      editState.websiteBuild.steps.push({ label: '', status: 'not_started', note: '' });
+    function deleteProject(pi) {
+      if (!confirm('Delete this project and all its steps?')) return;
+      editState.projects.splice(pi, 1);
       renderEditModal();
     }
-    function removeWbStep(i) {
+    function toggleProjectExpand(pi) {
+      editState.projects[pi]._expanded = !editState.projects[pi]._expanded;
+      renderEditModal();
+    }
+    function addProjStep(pi) {
+      editState.projects[pi].steps.push({ label: '', status: 'not_started', note: '' });
+      renderEditModal();
+    }
+    function removeProjStep(pi, si) {
       if (!confirm('Delete this step?')) return;
-      editState.websiteBuild.steps.splice(i, 1);
+      editState.projects[pi].steps.splice(si, 1);
       renderEditModal();
     }
-    function moveWbStep(i, dir) {
-      var j = i + dir;
-      var arr = editState.websiteBuild.steps;
+    function moveProjStep(pi, si, dir) {
+      var arr = editState.projects[pi].steps;
+      var j = si + dir;
       if (j < 0 || j >= arr.length) return;
-      var tmp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = tmp;
+      var tmp = arr[si]; arr[si] = arr[j]; arr[j] = tmp;
       renderEditModal();
     }
-    function setWbStepStatus(i, status) {
-      editState.websiteBuild.steps[i].status = status;
+    function setProjStepStatus(pi, si, status) {
+      editState.projects[pi].steps[si].status = status;
+      renderEditModal();
+    }
+    function resetProjSteps(pi) {
+      if (editState.projects[pi].steps.length > 0 && !confirm('Replace current steps with the default 14?')) return;
+      editState.projects[pi].steps = DEFAULT_PROJECT_STEPS.map(function(l) { return { label: l, status: 'not_started', note: '' }; });
       renderEditModal();
     }
 
@@ -1281,6 +1392,7 @@
 
     function addRow() {
       editState.currentWork.push({
+        type: 'content',
         id: 'row-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
         mediaId: '',
         mediaType: 'image',
@@ -1288,6 +1400,10 @@
         linkUrl: '',
         linkLabel: ''
       });
+      renderEditModal();
+    }
+    function addHeading() {
+      editState.currentWork.push({ type: 'heading', id: 'h-' + Date.now(), label: '' });
       renderEditModal();
     }
     function removeRow(i) {
@@ -1325,8 +1441,10 @@
       var payload = {
         pills: editState.pills.map(function(p) { return String(p || '').trim(); }).filter(Boolean),
         currentWork: editState.currentWork,
-        websiteBuild: editState.websiteBuild,
+        projects: editState.projects,
         meta: editState.meta,
+        status: editState.status,
+        logoMediaId: editState.logoMediaId,
       };
       setEditStatus('Saving…');
       fetch('/.netlify/functions/client-content?client=' + encodeURIComponent(editState.client), {
@@ -1349,8 +1467,10 @@
       editState.name = '';
       editState.pills = [];
       editState.currentWork = [];
-      editState.websiteBuild = emptyWebsiteBuild();
+      editState.projects = [];
       editState.meta = emptyMeta();
+      editState.status = 'active';
+      editState.logoMediaId = null;
       setEditStatus('');
     }
 
@@ -1362,22 +1482,58 @@
     }
 
     // Expose for inline onclick handlers
+    // Logo upload functions
+    function uploadClientLogo(file) {
+      if (!file) return;
+      setEditStatus('Uploading logo…');
+      var fd = new FormData();
+      fd.append('file', file);
+      fetch('/.netlify/functions/client-media', { method: 'POST', body: fd })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.error) { setEditStatus('Upload failed: ' + data.error, 'error'); return; }
+          editState.logoMediaId = data.id;
+          setEditStatus('Logo uploaded ✓', 'success');
+          renderEditModal();
+        })
+        .catch(function(e) { setEditStatus('Upload failed: ' + e.message, 'error'); });
+    }
+    function removeClientLogo() {
+      editState.logoMediaId = null;
+      renderEditModal();
+    }
+
+    // Status filter function
+    function setStatusFilter(status, btn) {
+      statusFilter = status;
+      document.querySelectorAll('.status-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      applyFilter();
+    }
+
     window.openEditModalFromTile = openEditModalFromTile;
     window.openEditModal = openEditModal;
     window.closeEditModal = closeEditModal;
     window.addPill = addPill;
     window.removePill = removePill;
     window.addRow = addRow;
+    window.addHeading = addHeading;
     window.removeRow = removeRow;
     window.moveRow = moveRow;
     window.uploadRowMedia = uploadRowMedia;
     window.saveContent = saveContent;
-    window.toggleWebsiteBuild = toggleWebsiteBuild;
-    window.resetWbSteps = resetWbSteps;
-    window.addWbStep = addWbStep;
-    window.removeWbStep = removeWbStep;
-    window.moveWbStep = moveWbStep;
-    window.setWbStepStatus = setWbStepStatus;
+    window.addProject = addProject;
+    window.deleteProject = deleteProject;
+    window.toggleProjectExpand = toggleProjectExpand;
+    window.addProjStep = addProjStep;
+    window.removeProjStep = removeProjStep;
+    window.moveProjStep = moveProjStep;
+    window.setProjStepStatus = setProjStepStatus;
+    window.resetProjSteps = resetProjSteps;
+    window.uploadClientLogo = uploadClientLogo;
+    window.removeClientLogo = removeClientLogo;
+    window.setStatusFilter = setStatusFilter;
+    window.renderEditModal = renderEditModal;
     window.editState = editState; // for inline handlers that reference editState.X
 
     // ─── Add Client modal ──────────────────────────────────────────────────
@@ -1441,11 +1597,14 @@
       a.rel = 'noopener noreferrer';
       a.setAttribute('data-name', name.toLowerCase());
       a.setAttribute('data-num', num);
+      a.setAttribute('data-status', 'active');
       var pencilBtn = '<button class="pencil-btn" title="Edit client content"' +
         ' onclick="event.preventDefault();event.stopPropagation();openEditModalFromTile(this)">' +
         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>' +
         '</button>';
+      var badgeHtml = '<span class="status-badge status-active" id="status-badge-' + num + '">Active</span>';
       a.innerHTML = pencilBtn +
+        badgeHtml +
         '<div style="display:flex;justify-content:space-between;align-items:center;padding-right:36px;"><div class="tile-name">' + name + '</div></div>' +
         '<div class="tile-number">#' + num + '</div>' +
         '<div class="tile-meta-icons" id="meta-icons-' + num + '"></div>' +
@@ -1489,6 +1648,18 @@
             if (idx[num].dropbox) html += dropIco;
             if (idx[num].legacy) html += legacyIco;
             el.innerHTML = html;
+
+            // Apply status badge and data-status from meta index
+            if (idx[num].status) {
+              var badge = document.getElementById('status-badge-' + num);
+              var tile = badge ? badge.closest('.client-tile') : null;
+              if (badge) {
+                var sl = {nco:'NCO',active:'Active',paused:'Paused'};
+                badge.className = 'status-badge status-' + idx[num].status;
+                badge.textContent = sl[idx[num].status] || 'Active';
+              }
+              if (tile) tile.setAttribute('data-status', idx[num].status);
+            }
           });
         })
         .catch(function() {});

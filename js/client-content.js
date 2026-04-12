@@ -4,12 +4,13 @@
  * Fetches /.netlify/functions/client-content?client=NNNNNN and:
  *   - Overrides the "Your Active Marketing Services" pills if the
  *     admin has saved an override
- *   - Injects a "Website Build Progress" tracker section (when
- *     websiteBuild.enabled is true)
- *   - Injects a "Current Work" section containing rows from the admin
+ *   - Injects one or more project tracker sections (when enabled)
+ *   - Injects a "Current Work" section containing rows from the admin,
+ *     with optional heading labels that group content cards
+ *   - Replaces MOXIE mascot images with the client logo when provided
  *
  * Insertion order (top to bottom):
- *   [Website Build Progress], [Current Work]
+ *   [Project trackers...], [Current Work]
  *
  * Insertion point:
  *   - Dashboard index (has .reports-grid):   after  .reports-grid
@@ -44,7 +45,11 @@
       '.cw-cta:hover{background:#1668B8;}',
       '@media (max-width:560px){.current-work-grid{grid-template-columns:1fr;}}',
 
-      /* Website Build section */
+      /* Current Work heading labels */
+      '.cw-heading{font-family:"Barlow Condensed",sans-serif;font-size:1.15rem;font-weight:700;color:var(--text,#1A1A2E);border-left:4px solid var(--blue,#1D80DE);padding-left:12px;margin:28px 0 14px;}',
+      '.cw-heading:first-child{margin-top:0;}',
+
+      /* Website Build / Project tracker section */
       '.website-build-section{position:relative;margin-top:32px;padding:26px 24px 24px;background:linear-gradient(140deg,#fbfcfe 0%,#eff6ff 60%,#fff7ed 100%);border-radius:16px;border:1px solid rgba(29,128,222,0.14);overflow:hidden;}',
       '.website-build-section::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#27AE60 0%,#1D80DE 50%,#DF6229 100%);}',
       '.wb-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px;flex-wrap:wrap;}',
@@ -120,10 +125,23 @@
       .join('\n      ');
   }
 
-  // ─────────────────── Website Build tracker ───────────────────
-  function buildWebsiteBuildNode(wb) {
-    if (!wb || !wb.enabled) return null;
-    var steps = Array.isArray(wb.steps) ? wb.steps : [];
+  // ─────────────────── client logo replacement ───────────────────
+  function applyClientLogo(logoMediaId) {
+    if (!logoMediaId) return;
+    var logoSrc = '/.netlify/functions/client-media?id=' + encodeURIComponent(logoMediaId);
+    var imgs = document.querySelectorAll('img');
+    for (var i = 0; i < imgs.length; i++) {
+      if (imgs[i].src && imgs[i].src.indexOf('moxie-mascot') !== -1) {
+        imgs[i].src = logoSrc;
+        imgs[i].style.objectFit = 'contain';
+      }
+    }
+  }
+
+  // ─────────────────── Project tracker (generic) ───────────────────
+  function buildProjectNode(proj, projectName) {
+    if (!proj || !proj.enabled) return null;
+    var steps = Array.isArray(proj.steps) ? proj.steps : [];
     if (steps.length === 0) return null;
 
     var n = steps.length;
@@ -168,7 +186,7 @@
     }
 
     var headerHtml = '<div class="wb-header">' +
-      '<h2 class="wb-title">Website Build Progress</h2>' +
+      '<h2 class="wb-title">' + escapeHtml(projectName) + '</h2>' +
       '<div class="wb-progress-text">' + progressPct + '% Complete</div>' +
       '</div>' +
       '<div class="wb-subtitle">Here is where your project stands right now. Hover any step with a note for details.</div>';
@@ -179,24 +197,24 @@
       '</div></div>';
 
     var actionsHtml = '';
-    var hasPreview = wb.previewUrl && /\S/.test(wb.previewUrl);
-    var hasMarkup = wb.markupUrl && /\S/.test(wb.markupUrl);
+    var hasPreview = proj.previewUrl && /\S/.test(proj.previewUrl);
+    var hasMarkup = proj.markupUrl && /\S/.test(proj.markupUrl);
     if (hasPreview || hasMarkup) {
       actionsHtml = '<div class="wb-actions">';
       if (hasPreview) {
-        actionsHtml += '<a class="wb-btn wb-btn-primary" href="' + escapeHtml(wb.previewUrl) + '" target="_blank" rel="noopener noreferrer">' + eyeSvg + ' Preview Site</a>';
+        actionsHtml += '<a class="wb-btn wb-btn-primary" href="' + escapeHtml(proj.previewUrl) + '" target="_blank" rel="noopener noreferrer">' + eyeSvg + ' Preview Site</a>';
       }
       if (hasMarkup) {
-        actionsHtml += '<a class="wb-btn wb-btn-secondary" href="' + escapeHtml(wb.markupUrl) + '" target="_blank" rel="noopener noreferrer">' + markupSvg + ' Share Feedback</a>';
+        actionsHtml += '<a class="wb-btn wb-btn-secondary" href="' + escapeHtml(proj.markupUrl) + '" target="_blank" rel="noopener noreferrer">' + markupSvg + ' Share Feedback</a>';
       }
       actionsHtml += '</div>';
     }
 
     var notesHtml = '';
-    if (wb.teamNotes && /\S/.test(wb.teamNotes)) {
+    if (proj.teamNotes && /\S/.test(proj.teamNotes)) {
       notesHtml = '<div class="wb-notes">' +
         '<span class="wb-notes-label">Notes from the Team</span>' +
-        escapeHtml(wb.teamNotes) +
+        escapeHtml(proj.teamNotes) +
         '</div>';
     }
 
@@ -206,7 +224,83 @@
     return section;
   }
 
+  // ─────────────────── Build project nodes from data ───────────────────
+  function buildProjectNodes(data) {
+    var nodes = [];
+
+    // New schema: data.projects array
+    if (Array.isArray(data.projects)) {
+      for (var i = 0; i < data.projects.length; i++) {
+        var proj = data.projects[i];
+        if (proj && proj.enabled) {
+          var node = buildProjectNode(proj, proj.name || 'Project');
+          if (node) nodes.push(node);
+        }
+      }
+      return nodes;
+    }
+
+    // Legacy schema: single data.websiteBuild object
+    if (data.websiteBuild) {
+      var legacyNode = buildProjectNode(data.websiteBuild, 'Website Build Progress');
+      if (legacyNode) nodes.push(legacyNode);
+    }
+
+    return nodes;
+  }
+
   // ─────────────────── Current Work section ───────────────────
+  function buildContentCard(row) {
+    var card = document.createElement('div');
+    card.className = 'cw-card';
+
+    var media = document.createElement('div');
+    media.className = 'cw-media';
+    if (row.mediaId) {
+      if (row.mediaType === 'video') {
+        var v = document.createElement('video');
+        v.src = mediaUrl(row.mediaId);
+        v.controls = true;
+        v.playsInline = true;
+        v.muted = true;
+        media.appendChild(v);
+      } else {
+        var img = document.createElement('img');
+        img.src = mediaUrl(row.mediaId);
+        img.alt = row.note || 'Current work';
+        img.loading = 'lazy';
+        media.appendChild(img);
+      }
+    } else {
+      var placeholder = document.createElement('div');
+      placeholder.className = 'cw-media-empty';
+      placeholder.textContent = 'No media';
+      media.appendChild(placeholder);
+    }
+    card.appendChild(media);
+
+    var body = document.createElement('div');
+    body.className = 'cw-body';
+    if (row.note) {
+      var note = document.createElement('div');
+      note.className = 'cw-note';
+      note.textContent = row.note;
+      body.appendChild(note);
+    }
+    if (row.linkUrl) {
+      var a = document.createElement('a');
+      a.className = 'cw-cta';
+      a.href = row.linkUrl;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = row.linkLabel || 'View';
+      body.appendChild(a);
+    }
+    card.appendChild(body);
+
+    return card;
+  }
+
   function buildCurrentWorkNode(rows) {
     if (!Array.isArray(rows) || rows.length === 0) return null;
 
@@ -218,60 +312,55 @@
     heading.textContent = 'Current Work';
     section.appendChild(heading);
 
-    var grid = document.createElement('div');
-    grid.className = 'current-work-grid';
+    // Check whether any item has type "heading"
+    var hasHeadings = false;
+    for (var k = 0; k < rows.length; k++) {
+      if (rows[k].type === 'heading') { hasHeadings = true; break; }
+    }
 
-    rows.forEach(function (row) {
-      var card = document.createElement('div');
-      card.className = 'cw-card';
+    if (!hasHeadings) {
+      // No headings — single grid, same as original behavior
+      var grid = document.createElement('div');
+      grid.className = 'current-work-grid';
+      for (var i = 0; i < rows.length; i++) {
+        grid.appendChild(buildContentCard(rows[i]));
+      }
+      section.appendChild(grid);
+    } else {
+      // Alternate between heading elements and grid groups
+      var container = document.createElement('div');
+      var currentGrid = null;
 
-      var media = document.createElement('div');
-      media.className = 'cw-media';
-      if (row.mediaId) {
-        if (row.mediaType === 'video') {
-          var v = document.createElement('video');
-          v.src = mediaUrl(row.mediaId);
-          v.controls = true;
-          v.playsInline = true;
-          v.muted = true;
-          media.appendChild(v);
+      for (var j = 0; j < rows.length; j++) {
+        var row = rows[j];
+        var itemType = row.type || 'content';
+
+        if (itemType === 'heading') {
+          // Close any open grid
+          if (currentGrid) {
+            container.appendChild(currentGrid);
+            currentGrid = null;
+          }
+          var h3 = document.createElement('h3');
+          h3.className = 'cw-heading';
+          h3.textContent = row.note || row.label || '';
+          container.appendChild(h3);
         } else {
-          var img = document.createElement('img');
-          img.src = mediaUrl(row.mediaId);
-          img.alt = row.note || 'Current work';
-          img.loading = 'lazy';
-          media.appendChild(img);
+          // Content card — add to current grid, create one if needed
+          if (!currentGrid) {
+            currentGrid = document.createElement('div');
+            currentGrid.className = 'current-work-grid';
+          }
+          currentGrid.appendChild(buildContentCard(row));
         }
-      } else {
-        var placeholder = document.createElement('div');
-        placeholder.className = 'cw-media-empty';
-        placeholder.textContent = 'No media';
-        media.appendChild(placeholder);
       }
-      card.appendChild(media);
+      // Flush final grid
+      if (currentGrid) {
+        container.appendChild(currentGrid);
+      }
+      section.appendChild(container);
+    }
 
-      var body = document.createElement('div');
-      body.className = 'cw-body';
-      if (row.note) {
-        var note = document.createElement('div');
-        note.className = 'cw-note';
-        note.textContent = row.note;
-        body.appendChild(note);
-      }
-      if (row.linkUrl) {
-        var a = document.createElement('a');
-        a.className = 'cw-cta';
-        a.href = row.linkUrl;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.textContent = row.linkLabel || 'View';
-        body.appendChild(a);
-      }
-      card.appendChild(body);
-
-      grid.appendChild(card);
-    });
-    section.appendChild(grid);
     return section;
   }
 
@@ -305,11 +394,11 @@
       .then(function (data) {
         if (!data) return;
         applyPillsOverride(data.pills);
-        // Order: Website Build (if enabled), then Current Work
-        insertSections([
-          buildWebsiteBuildNode(data.websiteBuild),
-          buildCurrentWorkNode(data.currentWork),
-        ]);
+        applyClientLogo(data.logoMediaId);
+        // Order: Project trackers (if any), then Current Work
+        var projectNodes = buildProjectNodes(data);
+        var currentWorkNode = buildCurrentWorkNode(data.currentWork);
+        insertSections(projectNodes.concat([currentWorkNode]));
       })
       .catch(function () {});
   }
