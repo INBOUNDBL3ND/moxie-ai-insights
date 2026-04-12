@@ -36,9 +36,29 @@
       '.current-work-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}',
       '.cw-card{background:var(--white,#fff);border:1px solid var(--border,#E5E7EB);border-radius:var(--radius,12px);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s,transform .2s;}',
       '.cw-card:hover{box-shadow:0 6px 20px rgba(29,128,222,0.12);transform:translateY(-2px);}',
-      '.cw-media{width:100%;aspect-ratio:16/10;background:#F1F5F9;overflow:hidden;display:flex;align-items:center;justify-content:center;}',
-      '.cw-media img,.cw-media video{width:100%;height:100%;object-fit:cover;display:block;}',
+      '.cw-media{width:100%;aspect-ratio:16/10;background:#F1F5F9;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;}',
+      '.cw-media img,.cw-media video{width:100%;height:100%;object-fit:contain;display:block;background:#F1F5F9;}',
       '.cw-media-empty{color:#94A3B8;font-size:0.8rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;}',
+      '.cw-media.cw-clickable{cursor:zoom-in;}',
+      '.cw-media .cw-expand-icon{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:6px;background:rgba(0,0,0,0.55);color:#fff;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;pointer-events:none;}',
+      '.cw-media.cw-clickable:hover .cw-expand-icon{opacity:1;}',
+      /* Lightbox */
+      '.cw-lightbox{position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:40px 60px;}',
+      '.cw-lightbox.open{display:flex;}',
+      '.cw-lightbox-stage{position:relative;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;align-items:center;gap:12px;}',
+      '.cw-lightbox-media{max-width:90vw;max-height:78vh;display:flex;align-items:center;justify-content:center;transition:opacity .12s;}',
+      '.cw-lightbox-media img,.cw-lightbox-media video{max-width:90vw;max-height:78vh;object-fit:contain;display:block;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,0.5);transition:opacity .2s;}',
+      '.cw-lightbox-caption{color:#fff;font-family:Barlow,sans-serif;font-size:0.9rem;text-align:center;max-width:90vw;line-height:1.4;padding:0 20px;}',
+      '.cw-lightbox-caption .cw-lb-heading{display:block;font-family:"Barlow Condensed",sans-serif;font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#60a5fa;font-weight:700;margin-bottom:4px;}',
+      '.cw-lightbox-close{position:absolute;top:16px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:28px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:background .15s;}',
+      '.cw-lightbox-close:hover{background:rgba(255,255,255,0.2);}',
+      '.cw-lightbox-arrow{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:32px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;font-family:serif;transition:background .15s;}',
+      '.cw-lightbox-arrow:hover{background:rgba(255,255,255,0.2);}',
+      '.cw-lightbox-arrow.prev{left:16px;}',
+      '.cw-lightbox-arrow.next{right:16px;}',
+      '.cw-lightbox-arrow[disabled]{opacity:0.25;cursor:default;}',
+      '.cw-lightbox-counter{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#fff;font-family:Barlow,sans-serif;font-size:0.85rem;background:rgba(0,0,0,0.55);padding:5px 12px;border-radius:20px;z-index:2;}',
+      '@media (max-width:600px){.cw-lightbox{padding:20px 8px;}.cw-lightbox-arrow{width:40px;height:40px;font-size:24px;}.cw-lightbox-arrow.prev{left:4px;}.cw-lightbox-arrow.next{right:4px;}}',
       '.cw-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px;flex:1;}',
       '.cw-note{font-family:var(--font,Barlow,sans-serif);font-size:0.92rem;color:var(--text,#1A1A2E);line-height:1.45;flex:1;}',
       '.cw-cta{display:inline-block;background:var(--blue,#1D80DE);color:#fff !important;padding:8px 16px;border-radius:var(--radius-sm,8px);font-family:var(--font,Barlow,sans-serif);font-weight:600;font-size:0.85rem;text-decoration:none !important;text-align:center;transition:background .15s;align-self:flex-start;}',
@@ -263,7 +283,11 @@
   }
 
   // ─────────────────── Current Work section ───────────────────
-  function buildContentCard(row) {
+  // Lightbox state (populated during render)
+  var lightboxItems = []; // [{ src, type, note, heading }]
+  var lightboxIdx = 0;
+
+  function buildContentCard(row, lightboxContext) {
     var card = document.createElement('div');
     card.className = 'cw-card';
 
@@ -283,6 +307,20 @@
         img.alt = row.note || 'Current work';
         img.loading = 'lazy';
         media.appendChild(img);
+        // Register this image in the lightbox list and make the thumb clickable
+        var itemIdx = lightboxItems.length;
+        lightboxItems.push({
+          src: mediaUrl(row.mediaId),
+          type: 'image',
+          note: row.note || '',
+          heading: (lightboxContext && lightboxContext.currentHeading) || ''
+        });
+        media.classList.add('cw-clickable');
+        var expandIcon = document.createElement('div');
+        expandIcon.className = 'cw-expand-icon';
+        expandIcon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+        media.appendChild(expandIcon);
+        media.addEventListener('click', function () { openLightbox(itemIdx); });
       }
     } else {
       var placeholder = document.createElement('div');
@@ -317,6 +355,10 @@
   function buildCurrentWorkNode(rows) {
     if (!Array.isArray(rows) || rows.length === 0) return null;
 
+    // Reset lightbox list for this render
+    lightboxItems = [];
+    var ctx = { currentHeading: '' };
+
     var section = document.createElement('div');
     section.className = 'current-work-section';
 
@@ -336,7 +378,7 @@
       var grid = document.createElement('div');
       grid.className = 'current-work-grid';
       for (var i = 0; i < rows.length; i++) {
-        grid.appendChild(buildContentCard(rows[i]));
+        grid.appendChild(buildContentCard(rows[i], ctx));
       }
       section.appendChild(grid);
     } else {
@@ -354,9 +396,11 @@
             container.appendChild(currentGrid);
             currentGrid = null;
           }
+          var headingText = row.note || row.label || '';
+          ctx.currentHeading = headingText;
           var h3 = document.createElement('h3');
           h3.className = 'cw-heading';
-          h3.textContent = row.note || row.label || '';
+          h3.textContent = headingText;
           container.appendChild(h3);
         } else {
           // Content card — add to current grid, create one if needed
@@ -364,7 +408,7 @@
             currentGrid = document.createElement('div');
             currentGrid.className = 'current-work-grid';
           }
-          currentGrid.appendChild(buildContentCard(row));
+          currentGrid.appendChild(buildContentCard(row, ctx));
         }
       }
       // Flush final grid
@@ -397,6 +441,127 @@
     }
     var container = document.querySelector('.container');
     if (container) container.appendChild(fragment);
+  }
+
+  // ─────────────────── Lightbox ───────────────────
+  var lightboxEl = null;
+  var lightboxMediaEl = null;
+  var lightboxCaptionEl = null;
+  var lightboxCounterEl = null;
+  var lightboxPrevBtn = null;
+  var lightboxNextBtn = null;
+  var lightboxTouchStartX = null;
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function buildLightbox() {
+    if (lightboxEl) return;
+    lightboxEl = document.createElement('div');
+    lightboxEl.className = 'cw-lightbox';
+    lightboxEl.innerHTML =
+      '<button class="cw-lightbox-close" aria-label="Close">&times;</button>' +
+      '<button class="cw-lightbox-arrow prev" aria-label="Previous">&#8249;</button>' +
+      '<button class="cw-lightbox-arrow next" aria-label="Next">&#8250;</button>' +
+      '<div class="cw-lightbox-stage">' +
+        '<div class="cw-lightbox-media"></div>' +
+        '<div class="cw-lightbox-caption"></div>' +
+      '</div>' +
+      '<div class="cw-lightbox-counter"></div>';
+    document.body.appendChild(lightboxEl);
+
+    lightboxMediaEl = lightboxEl.querySelector('.cw-lightbox-media');
+    lightboxCaptionEl = lightboxEl.querySelector('.cw-lightbox-caption');
+    lightboxCounterEl = lightboxEl.querySelector('.cw-lightbox-counter');
+    lightboxPrevBtn = lightboxEl.querySelector('.cw-lightbox-arrow.prev');
+    lightboxNextBtn = lightboxEl.querySelector('.cw-lightbox-arrow.next');
+
+    // Click backdrop to close (but not the stage)
+    lightboxEl.addEventListener('click', function (e) {
+      if (e.target === lightboxEl) closeLightbox();
+    });
+    lightboxEl.querySelector('.cw-lightbox-close').addEventListener('click', closeLightbox);
+    lightboxPrevBtn.addEventListener('click', function (e) { e.stopPropagation(); navLightbox(-1); });
+    lightboxNextBtn.addEventListener('click', function (e) { e.stopPropagation(); navLightbox(1); });
+
+    // Keyboard
+    document.addEventListener('keydown', function (e) {
+      if (!lightboxEl.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      else if (e.key === 'ArrowLeft') navLightbox(-1);
+      else if (e.key === 'ArrowRight') navLightbox(1);
+    });
+
+    // Touch swipe
+    lightboxEl.addEventListener('touchstart', function (e) {
+      lightboxTouchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    lightboxEl.addEventListener('touchend', function (e) {
+      if (lightboxTouchStartX === null) return;
+      var dx = e.changedTouches[0].clientX - lightboxTouchStartX;
+      lightboxTouchStartX = null;
+      if (Math.abs(dx) > 50) {
+        navLightbox(dx < 0 ? 1 : -1);
+      }
+    });
+  }
+
+  function openLightbox(idx) {
+    if (!lightboxItems.length) return;
+    buildLightbox();
+    lightboxIdx = Math.max(0, Math.min(idx || 0, lightboxItems.length - 1));
+    renderLightbox();
+    lightboxEl.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    if (!lightboxEl) return;
+    lightboxEl.classList.remove('open');
+    document.body.style.overflow = '';
+    // Pause any playing video
+    var vid = lightboxMediaEl.querySelector('video');
+    if (vid) try { vid.pause(); } catch (e) {}
+  }
+
+  function navLightbox(dir) {
+    var next = lightboxIdx + dir;
+    if (next < 0 || next >= lightboxItems.length) return;
+    lightboxIdx = next;
+    renderLightbox();
+  }
+
+  function renderLightbox() {
+    var item = lightboxItems[lightboxIdx];
+    if (!item) return;
+    // Swap media with a quick fade
+    lightboxMediaEl.style.opacity = '0';
+    setTimeout(function () {
+      lightboxMediaEl.innerHTML = '<img src="' + escapeHtml(item.src) + '" alt="' + escapeHtml(item.note) + '">';
+      lightboxMediaEl.style.opacity = '1';
+    }, 120);
+
+    var cap = '';
+    if (item.heading) cap += '<span class="cw-lb-heading">' + escapeHtml(item.heading) + '</span>';
+    if (item.note) cap += escapeHtml(item.note);
+    lightboxCaptionEl.innerHTML = cap;
+    lightboxCaptionEl.style.display = cap ? '' : 'none';
+
+    if (lightboxItems.length > 1) {
+      lightboxCounterEl.textContent = (lightboxIdx + 1) + ' / ' + lightboxItems.length;
+      lightboxCounterEl.style.display = '';
+      lightboxPrevBtn.style.display = '';
+      lightboxNextBtn.style.display = '';
+      lightboxPrevBtn.disabled = lightboxIdx === 0;
+      lightboxNextBtn.disabled = lightboxIdx === lightboxItems.length - 1;
+    } else {
+      lightboxCounterEl.style.display = 'none';
+      lightboxPrevBtn.style.display = 'none';
+      lightboxNextBtn.style.display = 'none';
+    }
   }
 
   // ─────────────────── init ───────────────────
