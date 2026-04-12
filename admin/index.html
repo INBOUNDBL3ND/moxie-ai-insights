@@ -466,6 +466,71 @@
     @media (max-width: 560px) {
       .wb-step-row { grid-template-columns: 1fr; }
     }
+
+    /* Add Client button + modal */
+    .add-client-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: all 0.15s;
+    }
+    .add-client-btn:hover {
+      background: #1668B8;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(29, 128, 222, 0.28);
+    }
+    .add-client-btn svg { flex-shrink: 0; }
+
+    /* Toast notification */
+    .admin-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1A1A2E;
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      z-index: 10000;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      max-width: 90%;
+      text-align: center;
+    }
+    .admin-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Meta icons on tiles */
+    .tile-meta-icons {
+      display: flex;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .tile-meta-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 10px;
+    }
   </style>
 </head>
 <body>
@@ -485,7 +550,13 @@
     <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:6px;">Ad Platform Breakdown</div>
     <div class="admin-stats" id="admin-ad-breakdown" style="margin-top:0;"></div>
 
-    <input type="text" class="search-bar" id="search" placeholder="Search by client name or number..." autocomplete="off">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:24px;">
+      <input type="text" class="search-bar" id="search" placeholder="Search by client name or number..." autocomplete="off" style="margin-bottom:0;flex:1;">
+      <button class="add-client-btn" onclick="openAddClientModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Client
+      </button>
+    </div>
 
     <div class="client-grid" id="client-grid"></div>
     <div class="no-results" id="no-results">No clients match your search.</div>
@@ -494,6 +565,55 @@
       <span class="powered-by">Powered by:</span>
       <a href="https://inboundblend.com" target="_blank" rel="noopener noreferrer"><img src="/assets/inbound-blend-logo.png" alt="Inbound Blend" class="footer-logo"></a>
       MOXIE AI Insights
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="admin-toast" class="admin-toast"></div>
+
+  <!-- Add Client modal -->
+  <div id="add-client-modal" class="edit-modal">
+    <div class="edit-modal-backdrop" onclick="closeAddClientModal()"></div>
+    <div class="edit-modal-content" onclick="event.stopPropagation()" style="max-width:520px;">
+      <div class="edit-modal-header">
+        <div>
+          <h2>Add New Client</h2>
+          <div class="client-sub">Create a new client dashboard</div>
+        </div>
+        <button class="edit-close-btn" onclick="closeAddClientModal()">×</button>
+      </div>
+      <div class="edit-modal-body">
+        <div class="wb-field">
+          <label>Client Name <span style="color:var(--orange);">*</span></label>
+          <input type="text" id="ac-name" placeholder="Acme Plumbing" required>
+        </div>
+        <div class="wb-field">
+          <label>Client Number <span style="color:var(--orange);">*</span> <span style="font-weight:400;color:var(--text-muted);">(7 digits)</span></label>
+          <input type="text" id="ac-number" placeholder="2601005" maxlength="7" pattern="\d{7}">
+        </div>
+        <div class="wb-field">
+          <label>Slack Channel <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <input type="text" id="ac-slack" placeholder="#2601005_acme-plumbing">
+        </div>
+        <div class="wb-field">
+          <label>Dropbox Link <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <input type="url" id="ac-dropbox" placeholder="https://www.dropbox.com/…">
+        </div>
+        <div class="wb-field">
+          <label>Legacy Reporting Link <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <input type="url" id="ac-legacy" placeholder="https://datastudio.google.com/…">
+        </div>
+        <div class="wb-field">
+          <label>Notes <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <textarea id="ac-notes" placeholder="Onboarding notes, special instructions, etc."></textarea>
+        </div>
+        <div class="edit-status" id="ac-status">&nbsp;</div>
+      </div>
+      <div class="edit-modal-footer">
+        <div style="flex:1;"></div>
+        <button class="edit-btn-cancel" onclick="closeAddClientModal()">Cancel</button>
+        <button class="edit-btn-save" onclick="submitNewClient()">Create Client</button>
+      </div>
     </div>
   </div>
 
@@ -509,6 +629,27 @@
         <button class="edit-close-btn" onclick="closeEditModal()" title="Close">×</button>
       </div>
       <div class="edit-modal-body">
+        <div class="edit-section">
+          <h3>Client Info</h3>
+          <p class="hint">Metadata for this client. These fields are for internal admin use and don't render on the client dashboard.</p>
+          <div class="wb-field">
+            <label>Slack Channel</label>
+            <input type="text" id="meta-slack-input" placeholder="#2601005_acme-plumbing" oninput="editState.meta.slackChannel = this.value">
+          </div>
+          <div class="wb-field">
+            <label>Dropbox Link</label>
+            <input type="url" id="meta-dropbox-input" placeholder="https://www.dropbox.com/…" oninput="editState.meta.dropboxLink = this.value">
+          </div>
+          <div class="wb-field">
+            <label>Legacy Reporting Link</label>
+            <input type="url" id="meta-legacy-input" placeholder="https://datastudio.google.com/…" oninput="editState.meta.legacyReportingLink = this.value">
+          </div>
+          <div class="wb-field">
+            <label>Notes</label>
+            <textarea id="meta-notes-input" placeholder="Onboarding notes, special instructions, etc." oninput="editState.meta.notes = this.value"></textarea>
+          </div>
+        </div>
+
         <div class="edit-section">
           <h3>Your Active Marketing Services</h3>
           <p class="hint">Pills shown on the client dashboard and monthly reports. Leave empty to use the defaults baked into the HTML.</p>
@@ -569,8 +710,17 @@
     var clientInvited = {};
     var pendingInvites = {}; // client#s with an in-flight POST — skipped during poll sync
 
-    fetch('/data/clients.json')
-      .then(function (r) { return r.json(); })
+    var allClients = {}; // merged static + registry — set during init
+
+    // Load static clients + dynamic registry in parallel, merge
+    Promise.all([
+      fetch('/data/clients.json').then(function(r) { return r.json(); }),
+      fetch('/.netlify/functions/create-client').then(function(r) { return r.json(); }).catch(function() { return {}; }),
+    ])
+      .then(function(results) {
+        allClients = Object.assign({}, results[0], results[1]);
+        return allClients;
+      })
       .then(function (clients) {
         var keys = Object.keys(clients).sort(function (a, b) {
           return clients[a].name.localeCompare(clients[b].name);
@@ -786,6 +936,7 @@
               '<div class="tile-number">#' + num + '</div>' +
               healthHtml +
               inviteHtml +
+              '<div class="tile-meta-icons" id="meta-icons-' + num + '"></div>' +
               (icons ? '<div style="display:flex;gap:6px;margin-top:6px;">' + icons + '</div>' : '') +
               '<div class="tile-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> View Dashboard</div>';
             grid.appendChild(a);
@@ -888,12 +1039,16 @@
     function emptyWebsiteBuild() {
       return { enabled: false, steps: [], previewUrl: '', markupUrl: '', teamNotes: '' };
     }
+    function emptyMeta() {
+      return { slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '' };
+    }
     var editState = {
       client: null,
       name: '',
       pills: [],
       currentWork: [],
       websiteBuild: emptyWebsiteBuild(),
+      meta: emptyMeta(),
     };
 
     function escapeHtml(s) {
@@ -917,6 +1072,7 @@
       editState.pills = [];
       editState.currentWork = [];
       editState.websiteBuild = emptyWebsiteBuild();
+      editState.meta = emptyMeta();
 
       document.getElementById('edit-modal-title').textContent = 'Edit: ' + editState.name;
       document.getElementById('edit-modal-subtitle').textContent = '#' + num;
@@ -943,6 +1099,14 @@
               previewUrl: String(data.websiteBuild.previewUrl || ''),
               markupUrl: String(data.websiteBuild.markupUrl || ''),
               teamNotes: String(data.websiteBuild.teamNotes || ''),
+            };
+          }
+          if (data.meta && typeof data.meta === 'object') {
+            editState.meta = {
+              slackChannel: String(data.meta.slackChannel || ''),
+              dropboxLink: String(data.meta.dropboxLink || ''),
+              legacyReportingLink: String(data.meta.legacyReportingLink || ''),
+              notes: String(data.meta.notes || ''),
             };
           }
           // If no pills override saved, seed the editor with the current HTML-baked pills
@@ -976,6 +1140,13 @@
     }
 
     function renderEditModal() {
+      // Client Info (meta fields)
+      var el;
+      el = document.getElementById('meta-slack-input'); if (el) el.value = editState.meta.slackChannel || '';
+      el = document.getElementById('meta-dropbox-input'); if (el) el.value = editState.meta.dropboxLink || '';
+      el = document.getElementById('meta-legacy-input'); if (el) el.value = editState.meta.legacyReportingLink || '';
+      el = document.getElementById('meta-notes-input'); if (el) el.value = editState.meta.notes || '';
+
       var pillsHtml = editState.pills.map(function(p, i) {
         return '<div class="pill-input-row">' +
           '<input type="text" value="' + escapeHtml(p) + '" placeholder="Service name" ' +
@@ -1154,7 +1325,8 @@
       var payload = {
         pills: editState.pills.map(function(p) { return String(p || '').trim(); }).filter(Boolean),
         currentWork: editState.currentWork,
-        websiteBuild: editState.websiteBuild
+        websiteBuild: editState.websiteBuild,
+        meta: editState.meta,
       };
       setEditStatus('Saving…');
       fetch('/.netlify/functions/client-content?client=' + encodeURIComponent(editState.client), {
@@ -1178,6 +1350,7 @@
       editState.pills = [];
       editState.currentWork = [];
       editState.websiteBuild = emptyWebsiteBuild();
+      editState.meta = emptyMeta();
       setEditStatus('');
     }
 
@@ -1206,6 +1379,126 @@
     window.moveWbStep = moveWbStep;
     window.setWbStepStatus = setWbStepStatus;
     window.editState = editState; // for inline handlers that reference editState.X
+
+    // ─── Add Client modal ──────────────────────────────────────────────────
+    function openAddClientModal() {
+      document.getElementById('add-client-modal').classList.add('open');
+      document.getElementById('ac-name').value = '';
+      document.getElementById('ac-number').value = '';
+      document.getElementById('ac-slack').value = '';
+      document.getElementById('ac-dropbox').value = '';
+      document.getElementById('ac-legacy').value = '';
+      document.getElementById('ac-notes').value = '';
+      var st = document.getElementById('ac-status');
+      if (st) st.innerHTML = '&nbsp;';
+      setTimeout(function() { document.getElementById('ac-name').focus(); }, 100);
+    }
+    function closeAddClientModal() {
+      document.getElementById('add-client-modal').classList.remove('open');
+    }
+    function submitNewClient() {
+      var name = document.getElementById('ac-name').value.trim();
+      var number = document.getElementById('ac-number').value.trim();
+      var st = document.getElementById('ac-status');
+
+      if (!name) { st.textContent = 'Client name is required.'; st.className = 'edit-status error'; return; }
+      if (!/^\d{7}$/.test(number)) { st.textContent = 'Client number must be exactly 7 digits.'; st.className = 'edit-status error'; return; }
+      if (allClients[number]) { st.textContent = 'Client #' + number + ' already exists.'; st.className = 'edit-status error'; return; }
+
+      st.textContent = 'Creating…'; st.className = 'edit-status';
+      var payload = {
+        name: name,
+        number: number,
+        slackChannel: document.getElementById('ac-slack').value.trim(),
+        dropboxLink: document.getElementById('ac-dropbox').value.trim(),
+        legacyReportingLink: document.getElementById('ac-legacy').value.trim(),
+        notes: document.getElementById('ac-notes').value.trim(),
+      };
+      fetch('/.netlify/functions/create-client', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.error) { st.textContent = data.error; st.className = 'edit-status error'; return; }
+          // Success — inject tile into grid + close modal
+          allClients[number] = { name: name };
+          injectTileForClient(number, name);
+          closeAddClientModal();
+          showToast('✅ ' + name + ' created! Click the pencil to add services.');
+        })
+        .catch(function(e) { st.textContent = 'Error: ' + e.message; st.className = 'edit-status error'; });
+    }
+
+    function injectTileForClient(num, name) {
+      var grid = document.getElementById('client-grid');
+      if (!grid) return;
+      var a = document.createElement('a');
+      a.className = 'client-tile';
+      a.href = '/clients/' + num + '/';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.setAttribute('data-name', name.toLowerCase());
+      a.setAttribute('data-num', num);
+      var pencilBtn = '<button class="pencil-btn" title="Edit client content"' +
+        ' onclick="event.preventDefault();event.stopPropagation();openEditModalFromTile(this)">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>' +
+        '</button>';
+      a.innerHTML = pencilBtn +
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding-right:36px;"><div class="tile-name">' + name + '</div></div>' +
+        '<div class="tile-number">#' + num + '</div>' +
+        '<div class="tile-meta-icons" id="meta-icons-' + num + '"></div>' +
+        '<div class="tile-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> View Dashboard</div>';
+      // Insert alphabetically
+      var inserted = false;
+      var existing = grid.querySelectorAll('.client-tile');
+      for (var i = 0; i < existing.length; i++) {
+        if (existing[i].getAttribute('data-name') > name.toLowerCase()) {
+          grid.insertBefore(a, existing[i]);
+          inserted = true;
+          break;
+        }
+      }
+      if (!inserted) grid.appendChild(a);
+      tiles.push(a);
+    }
+
+    function showToast(msg) {
+      var toast = document.getElementById('admin-toast');
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 3500);
+    }
+
+    // ─── Metadata icons loader ─────────────────────────────────────────────
+    var slackIco = '<span class="tile-meta-icon" title="Slack channel linked">💬</span>';
+    var dropIco = '<span class="tile-meta-icon" title="Dropbox folder linked">📁</span>';
+    var legacyIco = '<span class="tile-meta-icon" title="Legacy reporting linked">📊</span>';
+
+    function loadMetaIcons() {
+      fetch('/.netlify/functions/meta-index?cb=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(idx) {
+          Object.keys(idx).forEach(function(num) {
+            var el = document.getElementById('meta-icons-' + num);
+            if (!el) return;
+            var html = '';
+            if (idx[num].slack) html += slackIco;
+            if (idx[num].dropbox) html += dropIco;
+            if (idx[num].legacy) html += legacyIco;
+            el.innerHTML = html;
+          });
+        })
+        .catch(function() {});
+    }
+    // Load icons after tiles are built
+    setTimeout(loadMetaIcons, 500);
+
+    window.openAddClientModal = openAddClientModal;
+    window.closeAddClientModal = closeAddClientModal;
+    window.submitNewClient = submitNewClient;
 
     function dismissHealth(num, checkbox) {
       // Hide immediately

@@ -269,3 +269,126 @@ Current Work section on every page for that client.
   `/js/client-content.js` picks up the new data automatically
 - `netlify/functions/client-media.mjs` — no change
 - `js/moxie-chat.js`, `js/gate.js`, `css/moxie.css` — untouched
+
+---
+
+# Build Notes — Add New Client feature
+
+Build date: 2026-04-12
+Branch: `sandbox`
+
+## What was built
+
+An "Add Client" button on the admin dashboard that creates a new
+client entirely from the admin UI — no CLI, no manual file creation.
+Also adds a "Client Info" section to the edit modal for all clients
+(both new and existing) with metadata fields.
+
+1. **`netlify/functions/create-client.mjs`** — new v2 function
+   - GET returns the client registry (dynamically-created clients)
+   - POST validates (7-digit number, no duplicates), adds to the
+     registry blob, and initializes a client-content blob with
+     metadata
+   - Duplicate checks against BOTH the registry and `data/clients.json`
+   - Returns `{ ok, number, name, dashboardUrl }`
+
+2. **`netlify/edge-functions/client-page.js`** — Netlify Edge Function
+   - Intercepts all `/clients/*` requests via `config.path`
+   - Calls `context.next()` to check if a static file exists
+   - If static file exists → passes through (existing clients work
+     unchanged)
+   - If 404 → checks the client registry blob → if client exists,
+     generates the dashboard HTML from an embedded template → serves
+     as `text/html`
+   - If client not in registry → returns the original 404
+
+3. **`netlify/functions/meta-index.mjs`** — lightweight function
+   that reads the `meta-index` key from the `admin-state` blob
+   store. Returns `{ clientNum: { slack, dropbox, legacy } }` for
+   all clients that have any metadata set. Used by the admin page
+   to render small indicator icons on each tile.
+
+4. **Admin page changes** (`admin/index.html`):
+   - **"+ Add Client" button** — blue CTA next to the search bar.
+     Opens a creation modal with: Client Name (required), Client
+     Number (required, 7-digit, unique), Slack Channel, Dropbox
+     Link, Legacy Reporting Link, Notes.
+   - **Toast notification** — slides up from the bottom on success:
+     "✅ {Name} created! Click the pencil to add services."
+   - **Dynamic tile injection** — new client card is inserted
+     alphabetically into the grid without a page reload.
+   - **"Client Info" section** — new FIRST section in the edit
+     modal (above pills/Current Work/Website Build) with the
+     metadata fields. Works for ALL clients, not just new ones.
+   - **Metadata icons** on each tile — 💬 Slack, 📁 Dropbox,
+     📊 Legacy — rendered from the meta-index after tiles are built.
+
+5. **Schema extension** in `client-content.mjs`:
+   - Added `meta: { slackChannel, dropboxLink, legacyReportingLink,
+     notes }` field
+   - Added `sanitizeMeta()` function with string length clamping
+   - After every content save, `updateMetaIndex()` writes a
+     lightweight index to `admin-state` store so the admin page
+     can render metadata icons without fetching every client's
+     full blob
+
+## Key architecture decision: Edge Function for dynamic pages
+
+**Problem**: Netlify Functions can't write files to the deployed
+file system. So `create-client` can't literally create
+`clients/NNNNNNN/index.html`. And `force=false` redirects don't
+fire for paths under directories that DO exist (`clients/` exists)
+but subdirectories that DON'T exist (`clients/9999999/`).
+
+**Solution**: A Netlify Edge Function at path `/clients/*` that:
+1. Calls `context.next()` — lets Netlify try to serve the static file
+2. If the static file returns 200, passes it through (no interference)
+3. If 404, checks the client registry blob and generates the HTML
+
+This approach means:
+- Existing clients (63 static files): served as before, zero overhead
+- New clients (dynamic): generated on-the-fly from the template
+- No file system writes, no deploy-time generation, no GitHub API
+- The template is embedded in the edge function as a template literal
+
+**Trade-off**: Edge Functions run at every CDN request to `/clients/*`,
+adding ~10ms of latency for the `context.next()` check even for
+existing static clients. This is negligible for a low-traffic admin/
+client portal. If it becomes an issue, the edge function can be
+removed once all clients have static files (i.e. after running the
+moxie skill for each new client).
+
+## Blob stores used (updated inventory)
+
+| Store | Key | Purpose |
+|---|---|---|
+| `admin-state` | `invites` | Invited-to-dashboard state |
+| `admin-state` | `dismissed-health` | Dismissed health warnings |
+| `admin-state` | `meta-index` | Lightweight metadata icons index |
+| `client-content` | `{clientNum}` | Per-client content (pills, currentWork, websiteBuild, meta) |
+| `client-media` | `{mediaId}` | Binary media files (images/videos) |
+| `client-registry` | `clients` | Map of dynamically-created clients: `{ num: { name } }` |
+
+## Test data in the sandbox store
+
+- **9999999 "Test Client Company"** — created via the API during
+  build verification. Has metadata: Slack channel, Dropbox link,
+  Legacy reporting link, notes. Dashboard served dynamically at
+  `/clients/9999999/`. Ready for Todd to review. Can be left or
+  deleted — it won't interfere with real clients.
+
+## File inventory (delta from Website Build tracker build)
+
+**New:**
+- `netlify/functions/create-client.mjs`
+- `netlify/functions/meta-index.mjs`
+- `netlify/edge-functions/client-page.js`
+
+**Modified:**
+- `netlify/functions/client-content.mjs` — meta field + sanitizer + meta-index update
+- `admin/index.html` — Add Client button/modal, Client Info section in edit modal, metadata icons, toast notification
+- `netlify.toml` — unchanged (redirect rules were added then removed in favor of edge function)
+- `BUILD_NOTES.md` — this section
+
+**Removed:**
+- `netlify/functions/client-page.mjs` — replaced by the edge function

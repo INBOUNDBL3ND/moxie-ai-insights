@@ -30,6 +30,12 @@
 //       previewUrl: string,      // optional — renders a CTA button
 //       markupUrl:  string,      // optional — renders a second CTA button
 //       teamNotes:  string       // optional — renders as a callout card
+//     },
+//     meta: {
+//       slackChannel:        string,   // e.g. "#2601005_acme-plumbing"
+//       dropboxLink:         string,   // URL to shared Dropbox folder
+//       legacyReportingLink: string,   // URL to old Google Data Studio etc.
+//       notes:               string    // free-form onboarding/internal notes
 //     }
 //   }
 //
@@ -63,7 +69,41 @@ function emptyContent() {
       markupUrl: "",
       teamNotes: "",
     },
+    meta: {
+      slackChannel: "",
+      dropboxLink: "",
+      legacyReportingLink: "",
+      notes: "",
+    },
   };
+}
+
+function sanitizeMeta(m) {
+  if (!m || typeof m !== "object") return emptyContent().meta;
+  return {
+    slackChannel: String(m.slackChannel || "").slice(0, 200),
+    dropboxLink: String(m.dropboxLink || "").slice(0, 500),
+    legacyReportingLink: String(m.legacyReportingLink || "").slice(0, 500),
+    notes: String(m.notes || "").slice(0, 2000),
+  };
+}
+
+// Maintains a lightweight index in admin-state so the admin page can
+// show metadata icons without fetching every client's full content blob.
+async function updateMetaIndex(client, meta) {
+  const idx = getStore({ name: "admin-state", consistency: "strong" });
+  const raw = (await idx.get("meta-index", { type: "json" })) || {};
+  const has = (v) => typeof v === "string" && /\S/.test(v);
+  if (has(meta.slackChannel) || has(meta.dropboxLink) || has(meta.legacyReportingLink)) {
+    raw[client] = {
+      slack: has(meta.slackChannel),
+      dropbox: has(meta.dropboxLink),
+      legacy: has(meta.legacyReportingLink),
+    };
+  } else {
+    delete raw[client]; // nothing to show — remove entry to keep the index small
+  }
+  await idx.setJSON("meta-index", raw);
 }
 
 const VALID_STATUS = new Set(["not_started", "in_progress", "complete"]);
@@ -134,7 +174,12 @@ export default async (req) => {
       if (body.websiteBuild !== undefined) {
         out.websiteBuild = sanitizeWebsiteBuild(body.websiteBuild);
       }
+      if (body.meta !== undefined) {
+        out.meta = sanitizeMeta(body.meta);
+      }
       await s.setJSON(client, out);
+      // Update the lightweight meta-index for admin card icons
+      try { await updateMetaIndex(client, out.meta || emptyContent().meta); } catch (_) {}
       return Response.json(out, { headers: corsHeaders });
     } catch (err) {
       return Response.json(
