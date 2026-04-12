@@ -727,8 +727,8 @@
     <input type="text" class="search-bar" id="search" placeholder="Search by client name or number..." autocomplete="off">
 
     <div class="status-filters" id="status-filters">
-      <button class="status-filter-btn active" onclick="toggleStatusFilter('all',this)">All</button>
-      <button class="status-filter-btn" onclick="toggleStatusFilter('active',this)">Active</button>
+      <button class="status-filter-btn" onclick="toggleStatusFilter('all',this)">All</button>
+      <button class="status-filter-btn active" onclick="toggleStatusFilter('active',this)">Active</button>
       <button class="status-filter-btn" onclick="toggleStatusFilter('nco',this)">NCO</button>
       <button class="status-filter-btn" onclick="toggleStatusFilter('paused',this)">Paused</button>
     </div>
@@ -866,7 +866,7 @@
   <script>
     var tiles = [];
     var activeFilter = null;
-    var activeStatusFilter = 'all';
+    var activeStatusFilter = 'active';
     var clientFlags = {};
     var clientStatuses = {}; // num -> 'active' | 'nco' | 'paused'
     var clientInvited = {};
