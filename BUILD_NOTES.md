@@ -501,3 +501,11 @@ Branch: `sandbox`
 - `js/client-content.js` — buildProjectNodes() (multi-project), heading
   labels in buildCurrentWorkNode(), applyClientLogo(), refactored insertion
 - `BUILD_NOTES.md` — this section
+
+---
+
+# PERMANENT DESIGN STANDARD
+
+**DESIGN STANDARD:** The live production site (https://portal.inboundblend.com) is the canonical reference for all UI/UX decisions. Every new feature must match the production site's look, feel, and interaction patterns. When adding new functionality, start by copying the production HTML/CSS/JS for the nearest existing component, then extend it. Never rebuild UI components from scratch. If in doubt, curl production and copy.
+
+This rule was established on 2026-04-12 after multiple UI regressions caused by rebuilding components instead of copying production patterns.

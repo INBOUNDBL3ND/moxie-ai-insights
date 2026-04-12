@@ -188,61 +188,34 @@
       margin: -4px 0 12px;
     }
 
-    .pills-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .pill-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: #EBF5FF;
-      color: #1D80DE;
-      border-radius: 20px;
-      font-family: 'Barlow', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 600;
-      border: 1px solid rgba(29, 128, 222, 0.2);
-      cursor: default;
-      transition: all 0.15s;
-    }
-    .pill-chip:hover { background: #dbeafe; }
-    .pill-chip .pill-remove {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: transparent;
-      color: #1D80DE;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      line-height: 1;
-      padding: 0;
-      transition: all 0.15s;
-    }
-    .pill-chip .pill-remove:hover { background: #1D80DE; color: #fff; }
-    .pill-add-row {
+    .pill-input-row {
       display: flex;
       gap: 8px;
+      margin-bottom: 8px;
       align-items: center;
     }
-    .pill-add-row input {
+    .pill-input-row input {
       flex: 1;
-      padding: 10px 14px;
+      padding: 9px 12px;
       border: 1.5px solid var(--border);
       border-radius: 8px;
       font-family: var(--font);
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       color: var(--text);
-      outline: none;
     }
-    .pill-add-row input:focus { border-color: var(--blue); }
+    .pill-input-row input:focus { outline: none; border-color: var(--blue); }
+    .pill-input-row button {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+    .pill-input-row button:hover { background: #fca5a5; }
 
     .cw-row-card {
       border: 1px solid var(--border);
@@ -865,6 +838,7 @@
           <h3>Your Active Marketing Services</h3>
           <p class="hint">Pills shown on the client dashboard and monthly reports. Leave empty to use the defaults baked into the HTML.</p>
           <div id="edit-pills-list"></div>
+          <button class="edit-btn-add" onclick="addPill()">+ Add Service</button>
         </div>
         <div class="edit-section">
           <h3>Current Work</h3>
@@ -1370,15 +1344,13 @@
         }
       }
 
-      var pillsHtml = '<div class=”pills-container”>';
-      editState.pills.forEach(function(p, i) {
-        pillsHtml += '<span class=”pill-chip”>' + escapeHtml(p) +
-          '<button class=”pill-remove” onclick=”removePill(' + i + ')” title=”Remove”>&times;</button></span>';
-      });
-      pillsHtml += '</div>';
-      pillsHtml += '<div class=”pill-add-row”>' +
-        '<input type=”text” id=”pill-add-input” placeholder=”Type a service and press Enter” onkeydown=”if(event.key===\'Enter\'){event.preventDefault();addPillFromInput();}”>' +
-        '<button class=”edit-btn-add” style=”flex:0 0 auto;width:auto;padding:10px 16px;” onclick=”addPillFromInput()”>+ Add</button></div>';
+      var pillsHtml = editState.pills.map(function(p, i) {
+        return '<div class=”pill-input-row”>' +
+          '<input type=”text” value=”' + escapeHtml(p) + '” placeholder=”Service name” ' +
+          'oninput=”editState.pills[' + i + '] = this.value”>' +
+          '<button onclick=”removePill(' + i + ')” title=”Remove”>&times;</button>' +
+          '</div>';
+      }).join('');
       document.getElementById('edit-pills-list').innerHTML = pillsHtml;
 
       // Current Work rows (supports both 'content' and 'heading' types)
