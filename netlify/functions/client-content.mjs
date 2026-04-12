@@ -1,41 +1,21 @@
-// Per-client editable content (pills override + Current Work rows
-// + optional Website Build tracker). Persisted in Netlify Blobs.
-// GET is public (used by client dashboards to fetch override
-// content). POST is expected to come from the admin page which is
-// already gated by the admin password — no extra auth needed, same
-// security model as invites.mjs / health.mjs.
+// Per-client editable content. Persisted in Netlify Blobs.
+// GET is public (client dashboards fetch override content).
+// POST from admin page (gated by admin password).
 //
-// Schema:
+// Schema (v2 — projects array replaces websiteBuild):
 //   {
-//     pills: ["SEO", "Website Management", ...]         // optional override
+//     status: "active" | "nco" | "paused",          // admin-only
+//     logoMediaId: string | null,                    // custom logo for dashboard
+//     pills: ["SEO", ...] | null,                    // optional pill override
 //     currentWork: [
-//       {
-//         id:         string   (uuid),
-//         mediaId:    string   (blob key in client-media store),
-//         mediaType:  "image" | "video",
-//         note:       string,
-//         linkUrl:    string,
-//         linkLabel:  string
-//       }
+//       { type: "content", id, mediaId, mediaType, note, linkUrl, linkLabel }
+//       { type: "heading", id, label }
 //     ],
-//     websiteBuild: {
-//       enabled:    boolean,     // master toggle; section is hidden when false
-//       steps: [
-//         {
-//           label:  string,
-//           status: "not_started" | "in_progress" | "complete",
-//           note:   string          // optional; shown on hover
-//         }
-//       ],
-//       previewUrl: string,      // optional — renders a CTA button
-//       markupUrl:  string,      // optional — renders a second CTA button
-//       teamNotes:  string       // optional — renders as a callout card
-//     }
+//     projects: [
+//       { id, name, enabled, steps:[{label,status,note}], previewUrl, markupUrl, teamNotes }
+//     ],
+//     meta: { slackChannel, dropboxLink, legacyReportingLink, notes }
 //   }
-//
-// URL shape:
-//   GET  /.netlify/functions/client-content?client=NNNNNN
-//   POST /.netlify/functions/client-content?client=NNNNNN   body: JSON content
 
 import { getStore } from "@netlify/blobs";
 
@@ -54,40 +34,137 @@ function store() {
 
 function emptyContent() {
   return {
+    status: "active",
+    logoMediaId: null,
     pills: null,
     currentWork: [],
-    websiteBuild: {
-      enabled: false,
-      steps: [],
-      previewUrl: "",
-      markupUrl: "",
-      teamNotes: "",
-    },
+    projects: [],
+    meta: { slackChannel: "", dropboxLink: "", legacyReportingLink: "", notes: "" },
   };
 }
 
-const VALID_STATUS = new Set(["not_started", "in_progress", "complete"]);
+// ── Migration: upgrade old schemas on read ─────────────────────────
+function migrateContent(data) {
+  if (!data || typeof data !== "object") return emptyContent();
 
-function sanitizeWebsiteBuild(wb) {
-  if (!wb || typeof wb !== "object") return emptyContent().websiteBuild;
-  const steps = Array.isArray(wb.steps)
-    ? wb.steps
-        .filter((s) => s && typeof s === "object")
-        .map((s) => ({
-          label: String(s.label || "").slice(0, 120),
-          status: VALID_STATUS.has(s.status) ? s.status : "not_started",
-          note: String(s.note || "").slice(0, 500),
-        }))
+  // websiteBuild → projects (one-time migration)
+  if (data.websiteBuild && !data.projects) {
+    const wb = data.websiteBuild;
+    if (wb.enabled || (Array.isArray(wb.steps) && wb.steps.length > 0)) {
+      data.projects = [{
+        id: "migrated-wb-" + Date.now(),
+        name: "Website Build",
+        enabled: Boolean(wb.enabled),
+        steps: Array.isArray(wb.steps) ? wb.steps : [],
+        previewUrl: String(wb.previewUrl || ""),
+        markupUrl: String(wb.markupUrl || ""),
+        teamNotes: String(wb.teamNotes || ""),
+      }];
+    } else {
+      data.projects = [];
+    }
+    delete data.websiteBuild;
+  }
+  if (!Array.isArray(data.projects)) data.projects = [];
+
+  // status default
+  if (!data.status || !VALID_CLIENT_STATUS.has(data.status)) data.status = "active";
+
+  // logoMediaId default
+  if (data.logoMediaId === undefined) data.logoMediaId = null;
+
+  // currentWork type default
+  if (Array.isArray(data.currentWork)) {
+    data.currentWork = data.currentWork.map((item) => {
+      if (!item) return null;
+      if (!item.type) item.type = "content";
+      return item;
+    }).filter(Boolean);
+  } else {
+    data.currentWork = [];
+  }
+
+  if (!data.meta || typeof data.meta !== "object") {
+    data.meta = emptyContent().meta;
+  }
+
+  if (data.pills === undefined) data.pills = null;
+
+  return data;
+}
+
+// ── Validators ─────────────────────────────────────────────────────
+const VALID_STEP_STATUS = new Set(["not_started", "in_progress", "complete"]);
+const VALID_CLIENT_STATUS = new Set(["active", "nco", "paused"]);
+
+function sanitizeProject(p) {
+  if (!p || typeof p !== "object") return null;
+  const steps = Array.isArray(p.steps)
+    ? p.steps.filter((s) => s && typeof s === "object").map((s) => ({
+        label: String(s.label || "").slice(0, 120),
+        status: VALID_STEP_STATUS.has(s.status) ? s.status : "not_started",
+        note: String(s.note || "").slice(0, 500),
+      }))
     : [];
   return {
-    enabled: Boolean(wb.enabled),
+    id: String(p.id || `proj-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`),
+    name: String(p.name || "Untitled Project").slice(0, 200),
+    enabled: Boolean(p.enabled),
     steps,
-    previewUrl: String(wb.previewUrl || "").slice(0, 500),
-    markupUrl: String(wb.markupUrl || "").slice(0, 500),
-    teamNotes: String(wb.teamNotes || "").slice(0, 2000),
+    previewUrl: String(p.previewUrl || "").slice(0, 500),
+    markupUrl: String(p.markupUrl || "").slice(0, 500),
+    teamNotes: String(p.teamNotes || "").slice(0, 2000),
   };
 }
 
+function sanitizeMeta(m) {
+  if (!m || typeof m !== "object") return emptyContent().meta;
+  return {
+    slackChannel: String(m.slackChannel || "").slice(0, 200),
+    dropboxLink: String(m.dropboxLink || "").slice(0, 500),
+    legacyReportingLink: String(m.legacyReportingLink || "").slice(0, 500),
+    notes: String(m.notes || "").slice(0, 2000),
+  };
+}
+
+function sanitizeCurrentWorkItem(r, i) {
+  if (!r || typeof r !== "object") return null;
+  if (r.type === "heading") {
+    return {
+      type: "heading",
+      id: String(r.id || `h-${Date.now()}-${i}`),
+      label: String(r.label || "").slice(0, 200),
+    };
+  }
+  return {
+    type: "content",
+    id: String(r.id || `row-${Date.now()}-${i}`),
+    mediaId: r.mediaId ? String(r.mediaId) : "",
+    mediaType: r.mediaType === "video" ? "video" : "image",
+    note: String(r.note || ""),
+    linkUrl: String(r.linkUrl || ""),
+    linkLabel: String(r.linkLabel || ""),
+  };
+}
+
+// ── Meta-index updater ─────────────────────────────────────────────
+async function updateMetaIndex(client, content) {
+  const idx = getStore({ name: "admin-state", consistency: "strong" });
+  const raw = (await idx.get("meta-index", { type: "json" })) || {};
+  const has = (v) => typeof v === "string" && /\S/.test(v);
+  const meta = content.meta || {};
+  const entry = {
+    status: content.status || "active",
+    slack: has(meta.slackChannel),
+    dropbox: has(meta.dropboxLink),
+    legacy: has(meta.legacyReportingLink),
+    hasLogo: Boolean(content.logoMediaId),
+  };
+  raw[client] = entry;
+  await idx.setJSON("meta-index", raw);
+}
+
+// ── Handler ────────────────────────────────────────────────────────
 export default async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("", { status: 200, headers: corsHeaders });
@@ -105,7 +182,8 @@ export default async (req) => {
   const s = store();
 
   if (req.method === "GET") {
-    const data = (await s.get(client, { type: "json" })) || emptyContent();
+    const raw = (await s.get(client, { type: "json" })) || null;
+    const data = raw ? migrateContent(raw) : emptyContent();
     return Response.json(data, { headers: corsHeaders });
   }
 
@@ -113,28 +191,43 @@ export default async (req) => {
     try {
       const body = await req.json();
       const out = emptyContent();
+
+      // status
+      if (body.status && VALID_CLIENT_STATUS.has(body.status)) {
+        out.status = body.status;
+      } else {
+        out.status = body.status || "active";
+        if (!VALID_CLIENT_STATUS.has(out.status)) out.status = "active";
+      }
+
+      // logoMediaId
+      out.logoMediaId = body.logoMediaId ? String(body.logoMediaId) : null;
+
+      // pills
       if (Array.isArray(body.pills)) {
-        out.pills = body.pills
-          .map((p) => (typeof p === "string" ? p.trim() : ""))
-          .filter(Boolean);
+        out.pills = body.pills.map((p) => (typeof p === "string" ? p.trim() : "")).filter(Boolean);
         if (out.pills.length === 0) out.pills = null;
       }
+
+      // currentWork (with type support)
       if (Array.isArray(body.currentWork)) {
         out.currentWork = body.currentWork
-          .filter((r) => r && typeof r === "object")
-          .map((r, i) => ({
-            id: String(r.id || `row-${Date.now()}-${i}`),
-            mediaId: r.mediaId ? String(r.mediaId) : "",
-            mediaType: r.mediaType === "video" ? "video" : "image",
-            note: String(r.note || ""),
-            linkUrl: String(r.linkUrl || ""),
-            linkLabel: String(r.linkLabel || ""),
-          }));
+          .map((r, i) => sanitizeCurrentWorkItem(r, i))
+          .filter(Boolean);
       }
-      if (body.websiteBuild !== undefined) {
-        out.websiteBuild = sanitizeWebsiteBuild(body.websiteBuild);
+
+      // projects
+      if (Array.isArray(body.projects)) {
+        out.projects = body.projects.map(sanitizeProject).filter(Boolean);
       }
+
+      // meta
+      if (body.meta !== undefined) {
+        out.meta = sanitizeMeta(body.meta);
+      }
+
       await s.setJSON(client, out);
+      try { await updateMetaIndex(client, out); } catch (_) {}
       return Response.json(out, { headers: corsHeaders });
     } catch (err) {
       return Response.json(
