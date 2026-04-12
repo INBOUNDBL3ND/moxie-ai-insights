@@ -566,6 +566,53 @@
     }
     .status-filter-btn:hover { border-color: var(--blue); color: var(--blue); }
     .status-filter-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    /* Project cards in edit modal */
+    .project-card {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      background: var(--bg-card);
+    }
+    .project-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .project-card-header:hover { background: rgba(29, 128, 222, 0.04); }
+    .project-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .project-card-title strong {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+    }
+    .project-badge-on {
+      font-size: 0.65rem;
+      background: rgba(39, 174, 96, 0.12);
+      color: #27AE60;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .project-badge-off {
+      font-size: 0.65rem;
+      background: rgba(153, 153, 153, 0.12);
+      color: #999;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .project-card-body {
+      padding: 12px 14px 14px;
+      border-top: 1px solid var(--border);
+    }
   </style>
 </head>
 <body>
@@ -1297,7 +1344,7 @@
         }).join('');
 
         var bodyHtml = isExpanded ? (
-          '<div style=”padding:12px 14px 14px;”>' +
+          '<div class=”project-card-body”>' +
             '<div class=”wb-field” style=”margin-bottom:12px;”><label>Project Name</label><input type=”text” value=”' + escapeHtml(proj.name) + '” placeholder=”e.g. Website Redesign” oninput=”editState.projects[' + pi + '].name = this.value”></div>' +
             '<div class=”wb-field”><label>Show on client dashboard</label>' +
               '<label class=”wb-toggle' + (proj.enabled ? ' on' : '') + '”><input type=”checkbox”' + (proj.enabled ? ' checked' : '') + ' onchange=”editState.projects[' + pi + '].enabled = this.checked; renderEditModal();”> ' + (proj.enabled ? 'Enabled' : 'Disabled') + '</label></div>' +
@@ -1316,10 +1363,10 @@
           '</div>'
         ) : '';
 
-        return '<div style=”border:1.5px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;background:var(--bg-card);”>' +
-          '<div onclick=”toggleProjectExpand(' + pi + ')” style=”display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;”>' +
-            '<div style=”display:flex;align-items:center;gap:8px;”><strong style=”font-family:Barlow Condensed,sans-serif;font-size:1rem;”>' + escapeHtml(proj.name || 'Untitled Project') + '</strong>' +
-              (proj.enabled ? '<span style=”font-size:0.65rem;background:rgba(39,174,96,0.12);color:#27AE60;padding:2px 6px;border-radius:4px;font-weight:700;”>ON</span>' : '<span style=”font-size:0.65rem;background:rgba(153,153,153,0.12);color:#999;padding:2px 6px;border-radius:4px;font-weight:700;”>OFF</span>') +
+        return '<div class=”project-card”>' +
+          '<div class=”project-card-header” onclick=”toggleProjectExpand(' + pi + ')”>' +
+            '<div class=”project-card-title”><strong>' + escapeHtml(proj.name || 'Untitled Project') + '</strong>' +
+              (proj.enabled ? '<span class=”project-badge-on”>ON</span>' : '<span class=”project-badge-off”>OFF</span>') +
             '</div>' +
             '<span style=”font-size:1.2rem;color:var(--text-muted);”>' + (isExpanded ? '&#9662;' : '&#9656;') + '</span>' +
           '</div>' +

@@ -126,14 +126,27 @@
   }
 
   // ─────────────────── client logo replacement ───────────────────
+  // ONLY replaces the mascot in the dashboard-header branding area
+  // and in report-header branding. Does NOT touch MOXIE's Analysis,
+  // MOXIE Recommends, or the Ask MOXIE chat button.
   function applyClientLogo(logoMediaId) {
     if (!logoMediaId) return;
     var logoSrc = '/.netlify/functions/client-media?id=' + encodeURIComponent(logoMediaId);
-    var imgs = document.querySelectorAll('img');
-    for (var i = 0; i < imgs.length; i++) {
-      if (imgs[i].src && imgs[i].src.indexOf('moxie-mascot') !== -1) {
-        imgs[i].src = logoSrc;
-        imgs[i].style.objectFit = 'contain';
+    // Target only the hero mascot (dashboard index pages)
+    var heroImg = document.querySelector('.dashboard-hero .hero-mascot');
+    if (heroImg) {
+      heroImg.src = logoSrc;
+      heroImg.style.objectFit = 'contain';
+    }
+    // Target only the report-header mascot (monthly report pages)
+    var reportHeader = document.querySelector('.report-header');
+    if (reportHeader) {
+      var headerImgs = reportHeader.querySelectorAll('img');
+      for (var i = 0; i < headerImgs.length; i++) {
+        if (headerImgs[i].src && headerImgs[i].src.indexOf('moxie-mascot') !== -1) {
+          headerImgs[i].src = logoSrc;
+          headerImgs[i].style.objectFit = 'contain';
+        }
       }
     }
   }
