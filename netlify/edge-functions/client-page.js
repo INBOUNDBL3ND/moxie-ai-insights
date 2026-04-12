@@ -70,6 +70,7 @@ function buildDashboardHtml(num, name) {
 <body>
   <div class="container">
     <div class="dashboard-header" style="position:relative;">
+      <div style="position:absolute;top:16px;right:0;display:flex;flex-direction:column;gap:8px;align-items:flex-end;"><a href="https://calendly.com/walkermeg" target="_blank" rel="noopener noreferrer" style="background:#fff;color:#1D80DE;padding:12px 22px;border-radius:10px;font-size:1rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:10px;width:100%;justify-content:center;box-sizing:border-box;border:2px solid #1D80DE;"><img src="/assets/meg-headshot.png" alt="Meg" style="width:32px;height:32px;border-radius:50%;"> Meet w/ Meg</a></div>
       <div class="dashboard-hero">
         <img src="/assets/moxie-mascot-xs.png" alt="MOXIE" class="hero-mascot">
       </div>
