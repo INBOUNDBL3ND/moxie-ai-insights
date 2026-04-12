@@ -471,30 +471,6 @@
     .wb-field textarea:focus { outline: none; border-color: var(--blue); }
     .wb-field textarea { min-height: 72px; resize: vertical; }
 
-    .edit-modal-body input[type=text],
-    .edit-modal-body input[type=url],
-    .edit-modal-body textarea,
-    .edit-modal-body select {
-      padding: 10px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-family: var(--font);
-      font-size: 0.88rem;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.15s;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .edit-modal-body input:focus,
-    .edit-modal-body textarea:focus,
-    .edit-modal-body select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(29,128,222,0.1); }
-    .edit-modal-body textarea { min-height: 80px; resize: vertical; }
-
-    @media (max-width: 560px) {
-      .step-row { grid-template-columns: 1fr; }
-    }
-
     /* Add Client button + modal */
     .add-client-btn {
       display: inline-flex;
