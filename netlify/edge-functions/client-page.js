@@ -31,8 +31,16 @@ export default async function(req, context) {
   const client = reg[num];
   if (!client) return res; // not in registry — return the 404
 
+  // Best-effort: pull optional per-client meta from the client-content blob
+  let dropboxLink = "";
+  try {
+    const contentStore = getStore({ name: "client-content", consistency: "strong" });
+    const content = await contentStore.get(num, { type: "json" });
+    if (content?.meta?.dropboxLink) dropboxLink = String(content.meta.dropboxLink);
+  } catch (_) {}
+
   const escaped = escapeHtml(client.name);
-  const html = buildDashboardHtml(num, escaped);
+  const html = buildDashboardHtml(num, escaped, dropboxLink);
   return new Response(html, {
     status: 200,
     headers: {
@@ -54,7 +62,10 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
-function buildDashboardHtml(num, name) {
+function buildDashboardHtml(num, name, dropboxLink) {
+  const dropboxBtn = dropboxLink
+    ? `<a href="${escapeHtml(dropboxLink)}" target="_blank" rel="noopener" style="background:#fff;color:#1D80DE;padding:12px 22px;border-radius:10px;font-size:1rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:10px;width:100%;justify-content:center;box-sizing:border-box;border:2px solid #1D80DE;"><svg width="32" height="32" viewBox="0 0 43 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 0L0 8.1l8.7 7 12.8-8.1L12.5 0zM0 22.1l12.5 8.1 9-7-12.8-8.1L0 22.1zM21.5 23.2l9 7 12.5-8.1-8.7-7-12.8 8.1zM43 8.1L30.5 0l-9 7 12.8 8.1L43 8.1zM21.5 25l-9 7.1-3.5-2.3v2.6l12.5 7.5 12.5-7.5v-2.6l-3.5 2.3-9-7.1z" fill="#1D80DE"/></svg> Dropbox</a>`
+    : "";
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,7 +81,7 @@ function buildDashboardHtml(num, name) {
 <body>
   <div class="container">
     <div class="dashboard-header" style="position:relative;">
-      <div style="position:absolute;top:16px;right:0;display:flex;flex-direction:column;gap:8px;align-items:flex-end;"><a href="https://calendly.com/walkermeg" target="_blank" rel="noopener noreferrer" style="background:#fff;color:#1D80DE;padding:12px 22px;border-radius:10px;font-size:1rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:10px;width:100%;justify-content:center;box-sizing:border-box;border:2px solid #1D80DE;"><img src="/assets/meg-headshot.png" alt="Meg" style="width:32px;height:32px;border-radius:50%;"> Meet w/ Meg</a></div>
+      <div style="position:absolute;top:16px;right:0;display:flex;flex-direction:column;gap:8px;align-items:flex-end;"><a href="https://calendly.com/walkermeg" target="_blank" rel="noopener noreferrer" style="background:#fff;color:#1D80DE;padding:12px 22px;border-radius:10px;font-size:1rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:10px;width:100%;justify-content:center;box-sizing:border-box;border:2px solid #1D80DE;"><img src="/assets/meg-headshot.png" alt="Meg" style="width:32px;height:32px;border-radius:50%;"> Meet w/ Meg</a>${dropboxBtn}</div>
       <div class="dashboard-hero">
         <img src="/assets/moxie-mascot-xs.png" alt="MOXIE" class="hero-mascot">
       </div>
