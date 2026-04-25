@@ -785,6 +785,10 @@
               </div>
             </div>
           </div>
+          <div class="edit-field-group">
+            <label class="edit-field-label">Dropbox Link</label>
+            <input class="edit-select" id="edit-dropbox-link" type="url" placeholder="https://..." style="width:100%;box-sizing:border-box;" oninput="editState.meta.dropboxLink = this.value">
+          </div>
         </div>
         <div class="edit-section">
           <h3>Your Active Marketing Services</h3>
@@ -1304,6 +1308,9 @@
           if (logoRemove) logoRemove.style.display = 'none';
         }
       }
+
+      var dbInput = document.getElementById('edit-dropbox-link');
+      if (dbInput) dbInput.value = (editState.meta && editState.meta.dropboxLink) || '';
 
       // Pills
       var pillsHtml = editState.pills.map(function(p, i) {
