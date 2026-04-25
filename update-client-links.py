@@ -1,11 +1,39 @@
 #!/usr/bin/env python3
 """
 Update client dashboard links — Dropbox, Legacy Reports, Meet w/ Meg
-Run: python3 update-client-links.py
+Run: python3 update-client-links.py [--dry-run]
 """
-import json, re, os, glob
+import json, re, os, glob, sys, difflib, builtins
 
 BASE = os.path.dirname(os.path.abspath(__file__))
+
+DRY_RUN = False
+
+def _enable_dry_run_prefix():
+    _real_print = builtins.print
+    def _dry_print(*args, **kwargs):
+        _real_print("[DRY RUN]", *args, **kwargs)
+    builtins.print = _dry_print
+
+def write_file(path, new_content):
+    if DRY_RUN:
+        try:
+            with open(path) as _f:
+                old = _f.read()
+        except FileNotFoundError:
+            old = ""
+        print(f"WOULD WRITE: {path}")
+        diff = difflib.unified_diff(
+            old.splitlines(keepends=True),
+            new_content.splitlines(keepends=True),
+            fromfile=path + " (current)",
+            tofile=path + " (new)",
+        )
+        for line in diff:
+            print(line.rstrip("\n"))
+        return
+    with open(path, 'w') as f:
+        f.write(new_content)
 
 DB_SVG = '<svg width="16" height="16" viewBox="0 0 43 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 0L0 8.1l8.7 7 12.8-8.1L12.5 0zM0 22.1l12.5 8.1 9-7-12.8-8.1L0 22.1zM21.5 23.2l9 7 12.5-8.1-8.7-7-12.8 8.1zM43 8.1L30.5 0l-9 7 12.8 8.1L43 8.1zM21.5 25l-9 7.1-3.5-2.3v2.6l12.5 7.5 12.5-7.5v-2.6l-3.5 2.3-9-7.1z" fill="#fff"/></svg>'
 CHART_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1D80DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>'
@@ -70,8 +98,7 @@ def update_dashboard(filepath, dropbox, legacy):
         content
     )
 
-    with open(filepath, 'w') as f:
-        f.write(content)
+    write_file(filepath, content)
 
 def update_admin(num, dropbox, legacy):
     """Update admin dashboard clientLinks"""
@@ -103,10 +130,15 @@ def update_admin(num, dropbox, legacy):
             f'var clientLinks = {{\n{new_entry},\n'
         )
 
-    with open(admin_path, 'w') as f:
-        f.write(content)
+    write_file(admin_path, content)
 
 def main():
+    global DRY_RUN
+    if '--dry-run' in sys.argv:
+        DRY_RUN = True
+        sys.argv = [a for a in sys.argv if a != '--dry-run']
+        _enable_dry_run_prefix()
+
     clients = load_clients()
 
     print("\n  ╔══════════════════════════════════════╗")
