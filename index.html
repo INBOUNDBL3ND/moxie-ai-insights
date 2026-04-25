@@ -46,9 +46,15 @@
       var CLIENT_HASH = 'ODY3NQ==';
       var ADMIN_HASH = 'MDgwMzE3';
 
-      fetch('/data/clients.json')
-        .then(function (r) { return r.json(); })
-        .then(function (clients) {
+      Promise.all([
+        fetch('/data/clients.json').then(function (r) { return r.json(); }),
+        fetch('/.netlify/functions/create-client').then(function (r) { return r.json(); }).catch(function () { return {}; })
+      ])
+        .then(function (results) {
+          var staticClients = results[0] || {};
+          var registryClients = results[1] || {};
+          // Layer dynamic registry under static map (static wins on conflicts)
+          var clients = Object.assign({}, registryClients, staticClients);
           function doLogin() {
             var num = clientInput.value.trim();
             var code = codeInput.value;

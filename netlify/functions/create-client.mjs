@@ -95,11 +95,12 @@ export default async (req) => {
       await registry().setJSON(REG_KEY, reg);
 
       // Initialise client-content blob with empty content + metadata
+      const m = body.meta || {};
       const meta = {
-        slackChannel: String(body.slackChannel || "").trim().slice(0, 200),
-        dropboxLink: String(body.dropboxLink || "").trim().slice(0, 500),
-        legacyReportingLink: String(body.legacyReportingLink || "").trim().slice(0, 500),
-        notes: String(body.notes || "").trim().slice(0, 2000),
+        slackChannel:        String(m.slackChannel        ?? body.slackChannel        ?? "").trim().slice(0, 200),
+        dropboxLink:         String(m.dropboxLink         ?? body.dropboxLink         ?? "").trim().slice(0, 500),
+        legacyReportingLink: String(m.legacyReportingLink ?? body.legacyReportingLink ?? "").trim().slice(0, 500),
+        notes:               String(m.notes               ?? body.notes               ?? "").trim().slice(0, 2000),
       };
 
       const contentData = {
