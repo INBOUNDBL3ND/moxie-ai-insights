@@ -789,6 +789,13 @@
             <label class="edit-field-label">Dropbox Link</label>
             <input class="edit-select" id="edit-dropbox-link" type="url" placeholder="https://..." style="width:100%;box-sizing:border-box;" oninput="editState.meta.dropboxLink = this.value">
           </div>
+          <div class="edit-field-group">
+            <label class="edit-field-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:500;">
+              <input type="checkbox" id="edit-hide-platform-breakdown" style="width:18px;height:18px;cursor:pointer;" onchange="editState.meta.hidePlatformBreakdown = this.checked">
+              <span>Hide Platform Breakdown section in monthly reports</span>
+            </label>
+            <p class="hint" style="margin-top:4px;">For clients not running social or paid ads — hides the section across all of their reports.</p>
+          </div>
         </div>
         <div class="edit-section">
           <h3>Your Active Marketing Services</h3>
@@ -1244,7 +1251,7 @@
       editState.pills = [];
       editState.currentWork = [];
       editState.projects = [];
-      editState.meta = { slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '' };
+      editState.meta = { slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false };
 
       document.getElementById('edit-modal-title').textContent = 'Edit: ' + editState.name;
       document.getElementById('edit-modal-subtitle').textContent = '#' + num;
@@ -1259,7 +1266,7 @@
           editState.pills = Array.isArray(data.pills) ? data.pills.slice() : [];
           editState.currentWork = Array.isArray(data.currentWork) ? data.currentWork.slice() : [];
           editState.projects = Array.isArray(data.projects) ? JSON.parse(JSON.stringify(data.projects)) : [];
-          editState.meta = data.meta || { slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '' };
+          editState.meta = Object.assign({ slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false }, data.meta || {});
           // If no pills override saved, seed the editor with the current HTML-baked pills
           if (editState.pills.length === 0) {
             return fetchBakedPills(num).then(function(pills) { editState.pills = pills; });
@@ -1312,6 +1319,8 @@
 
       var dbInput = document.getElementById('edit-dropbox-link');
       if (dbInput) dbInput.value = (editState.meta && editState.meta.dropboxLink) || '';
+      var hpbInput = document.getElementById('edit-hide-platform-breakdown');
+      if (hpbInput) hpbInput.checked = Boolean(editState.meta && editState.meta.hidePlatformBreakdown);
 
       // Pills
       var pillsHtml = editState.pills.map(function(p, i) {

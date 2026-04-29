@@ -133,6 +133,53 @@
     return '/.netlify/functions/client-media?id=' + encodeURIComponent(mediaId);
   }
 
+  // ─────────────────── Dropbox button (header injection) ───────────────────
+  // Static dashboards have the Meet w/ Meg button hard-coded in HTML.
+  // Inject a Dropbox button next to it when meta.dropboxLink is set so the
+  // toggle works without regenerating the static page. Dynamic dashboards
+  // already render the button server-side; this guards against double-injection.
+  function applyDropboxButton(dropboxLink) {
+    if (!dropboxLink || !/\S/.test(dropboxLink)) return;
+    var headerStack = document.querySelector('.dashboard-header > div[style*="position:absolute"]');
+    if (!headerStack) return;
+    // Skip if a Dropbox button is already present (e.g. dynamic dashboard)
+    var existing = headerStack.querySelector('a[data-dropbox-btn]');
+    if (existing) return;
+    var anchors = headerStack.querySelectorAll('a');
+    for (var i = 0; i < anchors.length; i++) {
+      if (/dropbox\.com/i.test(anchors[i].getAttribute('href') || '')) return;
+    }
+    var btn = document.createElement('a');
+    btn.setAttribute('data-dropbox-btn', '1');
+    btn.href = dropboxLink;
+    btn.target = '_blank';
+    btn.rel = 'noopener';
+    btn.style.cssText = 'background:#fff;color:#1D80DE;padding:12px 22px;border-radius:10px;font-size:1rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:10px;width:100%;justify-content:center;box-sizing:border-box;border:2px solid #1D80DE;';
+    btn.innerHTML = '<svg width="32" height="32" viewBox="0 0 43 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 0L0 8.1l8.7 7 12.8-8.1L12.5 0zM0 22.1l12.5 8.1 9-7-12.8-8.1L0 22.1zM21.5 23.2l9 7 12.5-8.1-8.7-7-12.8 8.1zM43 8.1L30.5 0l-9 7 12.8 8.1L43 8.1zM21.5 25l-9 7.1-3.5-2.3v2.6l12.5 7.5 12.5-7.5v-2.6l-3.5 2.3-9-7.1z" fill="#1D80DE"/></svg> Dropbox';
+    headerStack.appendChild(btn);
+  }
+
+  // ─────────────────── Platform Breakdown toggle (per-client hide) ───────────
+  // For clients not on social/ads, hide the Platform Breakdown section in
+  // monthly reports. Keeps the section's markup intact so the toggle is
+  // reversible — flip meta.hidePlatformBreakdown back to false and it
+  // returns. Matches the section heading text rather than relying on a
+  // class so it works across legacy and new report HTML.
+  function applyPlatformBreakdownToggle(hide) {
+    if (!hide) return;
+    var headings = document.querySelectorAll('h2.section-label');
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (/^\s*Platform Breakdown\s*$/i.test(h.textContent || '')) {
+        h.style.display = 'none';
+        var sib = h.nextElementSibling;
+        if (sib && sib.classList.contains('platforms-grid')) {
+          sib.style.display = 'none';
+        }
+      }
+    }
+  }
+
   // ─────────────────── pills override ───────────────────
   function applyPillsOverride(pills) {
     if (!Array.isArray(pills) || pills.length === 0) return;
@@ -573,6 +620,9 @@
         if (!data) return;
         applyPillsOverride(data.pills);
         applyClientLogo(data.logoMediaId);
+        var meta = data.meta || {};
+        applyDropboxButton(meta.dropboxLink);
+        applyPlatformBreakdownToggle(meta.hidePlatformBreakdown);
         // Order: Project trackers (if any), then Current Work
         var projectNodes = buildProjectNodes(data);
         var currentWorkNode = buildCurrentWorkNode(data.currentWork);

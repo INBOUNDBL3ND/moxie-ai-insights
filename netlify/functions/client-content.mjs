@@ -14,7 +14,7 @@
 //     projects: [
 //       { id, name, enabled, steps:[{label,status,note}], previewUrl, markupUrl, teamNotes }
 //     ],
-//     meta: { slackChannel, dropboxLink, legacyReportingLink, notes }
+//     meta: { slackChannel, dropboxLink, legacyReportingLink, notes, hidePlatformBreakdown }
 //   }
 
 import { getStore } from "@netlify/blobs";
@@ -39,7 +39,7 @@ function emptyContent() {
     pills: null,
     currentWork: [],
     projects: [],
-    meta: { slackChannel: "", dropboxLink: "", legacyReportingLink: "", notes: "" },
+    meta: { slackChannel: "", dropboxLink: "", legacyReportingLink: "", notes: "", hidePlatformBreakdown: false },
   };
 }
 
@@ -124,6 +124,7 @@ function sanitizeMeta(m) {
     dropboxLink: String(m.dropboxLink || "").slice(0, 500),
     legacyReportingLink: String(m.legacyReportingLink || "").slice(0, 500),
     notes: String(m.notes || "").slice(0, 2000),
+    hidePlatformBreakdown: Boolean(m.hidePlatformBreakdown),
   };
 }
 
