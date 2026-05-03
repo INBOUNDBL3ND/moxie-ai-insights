@@ -14,7 +14,7 @@
 //     projects: [
 //       { id, name, enabled, steps:[{label,status,note}], previewUrl, markupUrl, teamNotes }
 //     ],
-//     meta: { slackChannel, dropboxLink, legacyReportingLink, notes, hidePlatformBreakdown }
+//     meta: { slackChannel, dropboxLink, legacyReportingLink, notes, hidePlatformBreakdown, audienceType }
 //   }
 
 import { getStore } from "@netlify/blobs";
@@ -39,7 +39,7 @@ function emptyContent() {
     pills: null,
     currentWork: [],
     projects: [],
-    meta: { slackChannel: "", dropboxLink: "", legacyReportingLink: "", notes: "", hidePlatformBreakdown: false },
+    meta: { slackChannel: "", dropboxLink: "", legacyReportingLink: "", notes: "", hidePlatformBreakdown: false, audienceType: "" },
   };
 }
 
@@ -117,14 +117,18 @@ function sanitizeProject(p) {
   };
 }
 
+const VALID_AUDIENCE_TYPES = new Set(["", "B2C", "B2B", "Both"]);
+
 function sanitizeMeta(m) {
   if (!m || typeof m !== "object") return emptyContent().meta;
+  const audience = String(m.audienceType || "").trim();
   return {
     slackChannel: String(m.slackChannel || "").slice(0, 200),
     dropboxLink: String(m.dropboxLink || "").slice(0, 500),
     legacyReportingLink: String(m.legacyReportingLink || "").slice(0, 500),
     notes: String(m.notes || "").slice(0, 2000),
     hidePlatformBreakdown: Boolean(m.hidePlatformBreakdown),
+    audienceType: VALID_AUDIENCE_TYPES.has(audience) ? audience : "",
   };
 }
 
@@ -160,6 +164,7 @@ async function updateMetaIndex(client, content) {
     dropbox: has(meta.dropboxLink),
     legacy: has(meta.legacyReportingLink),
     hasLogo: Boolean(content.logoMediaId),
+    audienceType: typeof meta.audienceType === "string" ? meta.audienceType : "",
   };
   raw[client] = entry;
   await idx.setJSON("meta-index", raw);
