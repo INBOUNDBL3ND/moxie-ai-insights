@@ -790,6 +790,16 @@
             <input class="edit-select" id="edit-dropbox-link" type="url" placeholder="https://..." style="width:100%;box-sizing:border-box;" oninput="editState.meta.dropboxLink = this.value">
           </div>
           <div class="edit-field-group">
+            <label class="edit-field-label">Audience</label>
+            <select class="edit-select" id="edit-audience-type" style="width:100%;box-sizing:border-box;" onchange="editState.meta.audienceType = this.value">
+              <option value="">Not set</option>
+              <option value="B2C">B2C — Business to Consumer</option>
+              <option value="B2B">B2B — Business to Business</option>
+              <option value="Both">Both — B2C &amp; B2B</option>
+            </select>
+            <p class="hint" style="margin-top:4px;">Determines how MOXIE's Analysis frames the audience (households vs. decision-makers vs. blended).</p>
+          </div>
+          <div class="edit-field-group">
             <label class="edit-field-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:500;">
               <input type="checkbox" id="edit-hide-platform-breakdown" style="width:18px;height:18px;cursor:pointer;" onchange="editState.meta.hidePlatformBreakdown = this.checked">
               <span>Hide Platform Breakdown section in monthly reports</span>
@@ -881,6 +891,7 @@
     var activeStatusFilter = 'active';
     var clientFlags = {};
     var clientStatuses = {}; // num -> 'active' | 'nco' | 'paused'
+    var clientAudience = {}; // num -> '' | 'B2C' | 'B2B' | 'Both'
     var clientInvited = {};
     var pendingInvites = {}; // client#s with an in-flight POST — skipped during poll sync
 
@@ -1052,6 +1063,7 @@
           fetch('/.netlify/functions/meta-index').then(function(r) { return r.json(); }).then(function(idx) {
             Object.keys(idx).forEach(function(num) {
               if (idx[num].status) clientStatuses[num] = idx[num].status;
+              if (idx[num].audienceType !== undefined) clientAudience[num] = idx[num].audienceType || '';
             });
           }).catch(function() {})
         ]).catch(function() {});
@@ -1109,13 +1121,20 @@
             var tileStatus = clientStatuses[num] || 'active';
             var statusLabel = tileStatus === 'nco' ? 'NCO' : tileStatus.charAt(0).toUpperCase() + tileStatus.slice(1);
             a.setAttribute('data-status', tileStatus);
+            var audienceVal = clientAudience[num] || '';
+            var audPillStyle, audPillText;
+            if (audienceVal === 'B2C') { audPillStyle = 'background:#1D80DE;color:#fff;border:1px solid #1D80DE;'; audPillText = 'B2C'; }
+            else if (audienceVal === 'B2B') { audPillStyle = 'background:#DF6229;color:#fff;border:1px solid #DF6229;'; audPillText = 'B2B'; }
+            else if (audienceVal === 'Both') { audPillStyle = 'background:#27AE60;color:#fff;border:1px solid #27AE60;'; audPillText = 'Both'; }
+            else { audPillStyle = 'background:transparent;color:#999;border:1px dashed #bbb;'; audPillText = 'Audience?'; }
+            var audPill = '<span class="tile-audience" data-num="' + num + '" style="' + audPillStyle + 'font-size:0.62rem;font-weight:700;padding:2px 7px;border-radius:9px;letter-spacing:0.04em;">' + audPillText + '</span>';
 
             a.innerHTML =
               pencilBtn +
               '<div style="display:flex;justify-content:space-between;align-items:center;padding-right:36px;">' +
                 '<div class="tile-name">' + name + '</div>' +
               '</div>' +
-              '<div class="tile-number">#' + num + ' <span class="tile-status status-' + tileStatus + '">' + statusLabel + '</span></div>' +
+              '<div class="tile-number">#' + num + ' <span class="tile-status status-' + tileStatus + '">' + statusLabel + '</span> ' + audPill + '</div>' +
               healthHtml +
               inviteHtml +
               (icons ? '<div style="display:flex;gap:6px;margin-top:6px;">' + icons + '</div>' : '') +
@@ -1251,7 +1270,7 @@
       editState.pills = [];
       editState.currentWork = [];
       editState.projects = [];
-      editState.meta = { slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false };
+      editState.meta = { slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false, audienceType: '' };
 
       document.getElementById('edit-modal-title').textContent = 'Edit: ' + editState.name;
       document.getElementById('edit-modal-subtitle').textContent = '#' + num;
@@ -1266,7 +1285,7 @@
           editState.pills = Array.isArray(data.pills) ? data.pills.slice() : [];
           editState.currentWork = Array.isArray(data.currentWork) ? data.currentWork.slice() : [];
           editState.projects = Array.isArray(data.projects) ? JSON.parse(JSON.stringify(data.projects)) : [];
-          editState.meta = Object.assign({ slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false }, data.meta || {});
+          editState.meta = Object.assign({ slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false, audienceType: '' }, data.meta || {});
           // If no pills override saved, seed the editor with the current HTML-baked pills
           if (editState.pills.length === 0) {
             return fetchBakedPills(num).then(function(pills) { editState.pills = pills; });
@@ -1319,6 +1338,8 @@
 
       var dbInput = document.getElementById('edit-dropbox-link');
       if (dbInput) dbInput.value = (editState.meta && editState.meta.dropboxLink) || '';
+      var audInput = document.getElementById('edit-audience-type');
+      if (audInput) audInput.value = (editState.meta && editState.meta.audienceType) || '';
       var hpbInput = document.getElementById('edit-hide-platform-breakdown');
       if (hpbInput) hpbInput.checked = Boolean(editState.meta && editState.meta.hidePlatformBreakdown);
 
@@ -1462,6 +1483,7 @@
           if (data.error) { setEditStatus('Save failed: ' + data.error, 'error'); return; }
           // Update status on tile
           clientStatuses[editState.client] = editState.status;
+          clientAudience[editState.client] = (editState.meta && editState.meta.audienceType) || '';
           var tile = document.querySelector('.client-tile[data-num="' + editState.client + '"]');
           if (tile) {
             tile.setAttribute('data-status', editState.status);
@@ -1469,6 +1491,14 @@
             if (badge) {
               badge.className = 'tile-status status-' + editState.status;
               badge.textContent = editState.status === 'nco' ? 'NCO' : editState.status.charAt(0).toUpperCase() + editState.status.slice(1);
+            }
+            var audBadge = tile.querySelector('.tile-audience');
+            if (audBadge) {
+              var av = clientAudience[editState.client];
+              if (av === 'B2C') { audBadge.style.cssText = 'background:#1D80DE;color:#fff;border:1px solid #1D80DE;font-size:0.62rem;font-weight:700;padding:2px 7px;border-radius:9px;letter-spacing:0.04em;'; audBadge.textContent = 'B2C'; }
+              else if (av === 'B2B') { audBadge.style.cssText = 'background:#DF6229;color:#fff;border:1px solid #DF6229;font-size:0.62rem;font-weight:700;padding:2px 7px;border-radius:9px;letter-spacing:0.04em;'; audBadge.textContent = 'B2B'; }
+              else if (av === 'Both') { audBadge.style.cssText = 'background:#27AE60;color:#fff;border:1px solid #27AE60;font-size:0.62rem;font-weight:700;padding:2px 7px;border-radius:9px;letter-spacing:0.04em;'; audBadge.textContent = 'Both'; }
+              else { audBadge.style.cssText = 'background:transparent;color:#999;border:1px dashed #bbb;font-size:0.62rem;font-weight:700;padding:2px 7px;border-radius:9px;letter-spacing:0.04em;'; audBadge.textContent = 'Audience?'; }
             }
           }
           // Re-apply filter in case the new status no longer matches the active filter
