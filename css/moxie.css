@@ -222,6 +222,29 @@ a:hover { text-decoration: underline; }
 }
 .platform-card .metric-row .metric-label { color: var(--text-muted); }
 .platform-card .metric-row .metric-value { font-weight: 600; }
+.platform-card .campaign-block {
+  border-top: 1px solid var(--border);
+  background: rgba(0,0,0,0.015);
+}
+.platform-card .campaign-block:first-of-type {
+  border-top: 2px solid var(--border);
+}
+.platform-card .campaign-label {
+  padding: 10px 20px 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.platform-card .totals-label {
+  padding: 10px 20px 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-blue, #1D80DE);
+}
 
 /* ── Service Pills ── */
 .services-grid {
