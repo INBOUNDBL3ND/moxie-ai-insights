@@ -1,0 +1,1129 @@
+{
+ "1602401": {
+  "name": "",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Email Newsletter",
+   "Facebook Ads",
+   "GeoFencing Ads",
+   "Google Display Ads",
+   "Google Search Ads",
+   "Microsoft Ads",
+   "Social Media Posts",
+   "TikTok Ads",
+   "Website Remarketing Ads"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": false
+ },
+ "1708001": {
+  "name": "Inbound Blend",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "AdRoll",
+   "Facebook Ads",
+   "Google Display Ads",
+   "Google Search / P-Max",
+   "LinkedIn Ads",
+   "Microsoft Ads",
+   "Social Media Posts",
+   "Website Management",
+   "YouTube Ads"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0.0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1708003": {
+  "name": "",
+  "status": "active",
+  "audience": "",
+  "pills": [],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": false,
+  "in_sheet": false
+ },
+ "1712001": {
+  "name": "Advantage Air",
+  "status": "paused",
+  "audience": "",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1801001": {
+  "name": "NWO",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Social Media Posts",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1801002": {
+  "name": "Mungos Italian Eatery",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1808002": {
+  "name": "DP Pumps",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Website Management",
+   "SEO",
+   "SEO"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1808004": {
+  "name": "Pumps and Parts",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Google P-Max",
+   "Google Search Ads",
+   "SEO",
+   "SEO",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 737.0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1903001": {
+  "name": "Captifi Wealth Solutions",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Email Newsletter"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1907001": {
+  "name": "Patriot",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Google Search Ads",
+   "Website Management",
+   "YouTube Ads",
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 881.0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1908001": {
+  "name": "Bart Inman Air",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Google Ad Management (Display)",
+   "Google Ad Management (Search)",
+   "Graphic Design",
+   "SEO",
+   "Social Media Ad Management (Facebook)",
+   "Website Management",
+   "Website Remarketing"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 4625.86,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1910002": {
+  "name": "Beam",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Google Ads",
+   "Social Media Posts",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 93.27,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "1910003": {
+  "name": "Pro Basement Finishers",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2009002": {
+  "name": "Control Co.",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Website Management",
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2009003": {
+  "name": "Med Search",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Email Newsletter",
+   "SEO",
+   "Social Media Posts",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0.0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2010001": {
+  "name": "Epoxy Stone",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Hosting",
+   "Website Management",
+   "Facebook Ads",
+   "Google Ad Management (Search)",
+   "Google Ad Management (Display)",
+   "Remarketing Ads"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2012001": {
+  "name": "Lighting Service, Inc. (LSI)",
+  "status": "active",
+  "audience": "Both",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2103001": {
+  "name": "Mentors 4 College",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Website Management",
+   "Hosting",
+   "Social Media Posts"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2105002": {
+  "name": "ITCG",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2105003": {
+  "name": "Kay-Bee Electric",
+  "status": "active",
+  "audience": "Both",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2106002": {
+  "name": "Brown and Brown",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Social Media Posts",
+   "TikTok Ads"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2108001": {
+  "name": "Uncle Leo's Pizza",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Website Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2201001": {
+  "name": "Iron Horse Energy Services",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2201002": {
+  "name": "Bavarian Enterprises",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Website Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2201003": {
+  "name": "Petra Masonry",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2203003": {
+  "name": "Prevailing Wage Consulting",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2203005": {
+  "name": "City of Ellisville",
+  "status": "active",
+  "audience": "Both",
+  "pills": [
+   "Social Media Posts",
+   "Blogs",
+   "Website Management",
+   "Email Newsletter",
+   "Graphic Design"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2205001": {
+  "name": "Leathers Interiors",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Social Media Posts",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 13.97,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2205004": {
+  "name": "Squeak Stoppers",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2206001": {
+  "name": "Whistling Oaks Therapeautic Ranch",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Website Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2207001": {
+  "name": "Honest Junk",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2208001": {
+  "name": "Energy View",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Website Management",
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2301001": {
+  "name": "Ranson & Associates (AMFam)",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Google Search Ads",
+   "GeoFencing Ads"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 404.92,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2301005": {
+  "name": "",
+  "status": "paused",
+  "audience": "",
+  "pills": [],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": false
+ },
+ "2306001": {
+  "name": "Elite Testosterone",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Digital Billboards",
+   "Facebook Ads",
+   "GeoFencing Ads",
+   "SEO"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 140.77,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2308001": {
+  "name": "Jones Family Law Group",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Blog Posts",
+   "SEO",
+   "Social Media Posts",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2311001": {
+  "name": "St. Josephs Parish Imperial",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Website Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2312002": {
+  "name": "Jordan Search Consultants",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2312004": {
+  "name": "Top Tier Outdoors",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Marketing Services"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2312005": {
+  "name": "ArrowUp Global",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2401006": {
+  "name": "Partners In Medicine",
+  "status": "active",
+  "audience": "Both",
+  "pills": [
+   "SEO",
+   "Social Media Posts",
+   "Website Management",
+   "Graphic Design"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2404002": {
+  "name": "U Store It",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Social Media Posts",
+   "Website Management",
+   "SEO",
+   "Facebook Ads",
+   "Billboards",
+   "Digital Billboards"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 205.77,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2404003": {
+  "name": "ALO Construction",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "SEO",
+   "Social Media Posts",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2405002": {
+  "name": "Whack A Mole",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "SEO",
+   "Website Management",
+   "Google Search Ads"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 227.0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2407003": {
+  "name": "Just Dancing",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Google Search Ads",
+   "SEO",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 1210.0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2407004": {
+  "name": "Just Pilates",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Facebook Ads",
+   "Google Search Ads"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 1378.45,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2408002": {
+  "name": "Organized to Thrive",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Social Media Ad Management (Facebook)",
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 286.74,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2412001": {
+  "name": "Visipak",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Google Search Ads (Indepak)",
+   "Google Search Ads (VisiPak)",
+   "Google Search Ads PMax (Indepak)",
+   "Google Search Ads PMax (VisiPak)",
+   "Google Shopping Ads (VisiPak)",
+   "Microsoft Ads (Indepak)",
+   "Microsoft Ads (VisiPak)",
+   "Social Media Posts (Indepak)",
+   "Social Media Posts (Sinclair & Rush)",
+   "Social Media Posts (VisiPak)",
+   "Website Design & Management (Clamshell Packaging)",
+   "Website Design & Management (Indepak)",
+   "Website Design & Management (VisiPak)"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 445.48,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2412002": {
+  "name": "VisiPak",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Google P-Max",
+   "Google Remarketing",
+   "Google Search Ads",
+   "Google Shopping Ads",
+   "LinkedIn Ads",
+   "Microsoft Ads",
+   "Social Media Posts"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 4495.33,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2412003": {
+  "name": "Indepak",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Google P-Max",
+   "Google Search Ads",
+   "Microsoft Ads",
+   "Social Media Posts",
+   "Website Design & Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 4729.19,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2412004": {
+  "name": "Clamshell Packaging",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Website Management",
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2501001": {
+  "name": "UtilliCo",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Website Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2504002": {
+  "name": "Indepak",
+  "status": "paused",
+  "audience": "Both",
+  "pills": [
+   "Facebook Ads",
+   "SEO",
+   "Social Media Posts",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2504004": {
+  "name": "Auctus Search Partners",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Website Management",
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2505002": {
+  "name": "Jobsprk",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2508005": {
+  "name": "Lift Station Depot",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Google Search Ads",
+   "SEO"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 578.0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2509002": {
+  "name": "BP Texas",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Graphic Design",
+   "Social Media Posts",
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2509003": {
+  "name": "Midalloy SM",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Blog Posts",
+   "Google Ads",
+   "Social Media Posts",
+   "Website Management",
+   "Website Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 3450.0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2509004": {
+  "name": "Luna Builds STL",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Website Management"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2510002": {
+  "name": "Whitewater Freight",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Social Media Ads (LinkedIn)",
+   "Social Media Posts"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 295.02,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2512001": {
+  "name": "",
+  "status": "paused",
+  "audience": "B2C",
+  "pills": [
+   "Social Media Ads (Facebook)"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": false
+ },
+ "2601001": {
+  "name": "West St. Louis County Chamber of Commerce",
+  "status": "active",
+  "audience": "Both",
+  "pills": [
+   "Email Newsletter",
+   "Flex Block (Graphic Design or Website Management)",
+   "Social Media Ads (Facebook)",
+   "Social Media Posts"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 14.72,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2601002": {
+  "name": "Jeff Baker & Sons Landscaping",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Graphic Design",
+   "Social Media"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 131.49,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2601003": {
+  "name": "",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Marketing Services"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": false
+ },
+ "2602001": {
+  "name": "The Law Office of Andi Grace Davis",
+  "status": "nco",
+  "audience": "B2C",
+  "pills": [
+   "Social Media Posts",
+   "Website Management",
+   "Graphic Design",
+   "SEO"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2602002": {
+  "name": "GRN Dublin",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "Flex Block (Website Management, Content Writing or Email Newsletter)",
+   "SEO",
+   "Social Media Ads (LinkedIn)",
+   "Social Media Posts"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2603001": {
+  "name": "",
+  "status": "active",
+  "audience": "Both",
+  "pills": [
+   "Marketing Services"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": false
+ },
+ "2603002": {
+  "name": "",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "WordPress Website Build",
+   "Hosting"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": false
+ },
+ "2603003": {
+  "name": "Cube Storage",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Social Media Ad Management (Facebook)",
+   "Google Ad Management (Search)",
+   "Geofencing Ad Management",
+   "Social Media Posts"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 894.18,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2604001": {
+  "name": "The National Museum of Transportation",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Social Media Posts"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2604002": {
+  "name": "Paraben",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "AEO & SEO"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2604003": {
+  "name": "AB Advisory Dynamics",
+  "status": "active",
+  "audience": "B2B",
+  "pills": [
+   "LinkedIn Ad Mgt",
+   "Social Media Posts"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 290.92,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2604004": {
+  "name": "Dapper Can",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Geofencing Ads",
+   "Remarketing Ads"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 88.29,
+  "has_dir": false,
+  "in_sheet": true
+ },
+ "2605001": {
+  "name": "Home Helpers Home Care STL",
+  "status": "nco",
+  "audience": "B2C",
+  "pills": [
+   "Google Search Ads",
+   "Facebook Ads",
+   "Social Media Posts",
+   "SEO"
+  ],
+  "contextNotes": "",
+  "has_june_paid": true,
+  "paid_spend": 193.0,
+  "has_dir": false,
+  "in_sheet": true
+ },
+ "2606005": {
+  "name": "",
+  "status": "nco",
+  "audience": "B2C",
+  "pills": [
+   "WordPress Website Build",
+   "Graphic Design"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": false,
+  "in_sheet": false
+ },
+ "2606006": {
+  "name": "",
+  "status": "nco",
+  "audience": "B2B",
+  "pills": [
+   "WordPress Website Build"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": false,
+  "in_sheet": false
+ },
+ "2606007": {
+  "name": "",
+  "status": "nco",
+  "audience": "B2C",
+  "pills": [
+   "Graphic Design + Video"
+  ],
+  "contextNotes": "",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "has_dir": false,
+  "in_sheet": false
+ }
+}

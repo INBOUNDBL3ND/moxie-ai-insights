@@ -1,0 +1,1980 @@
+{
+ "1908001": {
+  "name": "Bart Inman Air",
+  "has_june_paid": true,
+  "paid_spend": 4625.86,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 100.0,
+    "spend": 123.86,
+    "impr": 131549.0,
+    "reach": 15208.0,
+    "clicks": 447.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Google Display Ads",
+    "budget": 100.0,
+    "spend": 102.0,
+    "impr": 64000.0,
+    "reach": 0.0,
+    "clicks": 1220.0,
+    "ctr": "1.9",
+    "active": "False"
+   },
+   {
+    "platform": "Google Search",
+    "budget": 4500.0,
+    "spend": 4400.0,
+    "impr": 39700.0,
+    "reach": 0.0,
+    "clicks": 2840.0,
+    "ctr": "7.16",
+    "active": "False"
+   },
+   {
+    "platform": "Website Remarketing",
+    "budget": 75.0,
+    "spend": 73.09,
+    "impr": 46373.0,
+    "reach": 0.0,
+    "clicks": 15.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 5122.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2306001": {
+  "name": "Elite Testosterone",
+  "has_june_paid": true,
+  "paid_spend": 140.77,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 100.0,
+    "spend": 67.24,
+    "impr": 3254.0,
+    "reach": 1857.0,
+    "clicks": 26.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Digital Billboards",
+    "budget": 100.0,
+    "spend": 73.53,
+    "impr": 22100.0,
+    "reach": 0.0,
+    "clicks": 1810.0,
+    "ctr": "2.0",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 279.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2404002": {
+  "name": "U Store It",
+  "has_june_paid": true,
+  "paid_spend": 205.77,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 100.0,
+    "spend": 72.72,
+    "impr": 66851.0,
+    "reach": 10434.0,
+    "clicks": 263.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Digital Billboards",
+    "budget": 100.0,
+    "spend": 133.05,
+    "impr": 23800.0,
+    "reach": 0.0,
+    "clicks": 6210.0,
+    "ctr": "3.0",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 1.0,
+    "spend": 66900.0,
+    "impr": 1.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 234.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2408002": {
+  "name": "Organized to Thrive",
+  "has_june_paid": true,
+  "paid_spend": 286.74,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 300.0,
+    "spend": 286.74,
+    "impr": 282065.0,
+    "reach": 33545.0,
+    "clicks": 1039.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 942.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1708001": {
+  "name": "Inbound Blend",
+  "has_june_paid": false,
+  "paid_spend": 0.0,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 150.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "LinkedIn Ads",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Google Display Ads",
+    "budget": 75.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Google P-Max",
+    "budget": 390.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Google Video/CTV",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "YouTube Ads",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Microsoft Ads",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Remarketing",
+    "budget": 75.0,
+    "spend": 70.23,
+    "impr": 12734.0,
+    "reach": 0.0,
+    "clicks": 2.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Email Newsletters",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 27.0,
+    "spend": 1404.0,
+    "impr": 36.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 421.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2601001": {
+  "name": "West St. Louis County Chamber of Commerce",
+  "has_june_paid": true,
+  "paid_spend": 14.72,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 60.0,
+    "spend": 14.72,
+    "impr": 14943.0,
+    "reach": 4610.0,
+    "clicks": 131.0,
+    "ctr": "3.86",
+    "active": "False"
+   },
+   {
+    "platform": "Email Newsletters",
+    "budget": 1569.0,
+    "spend": 579.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 6901.0,
+    "spend": 186338.0,
+    "impr": 1268.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2508001": {
+  "name": "Duers",
+  "has_june_paid": false,
+  "paid_spend": 0.0,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 100.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2603003": {
+  "name": "Cube Storage",
+  "has_june_paid": true,
+  "paid_spend": 894.18,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 250.0,
+    "spend": 156.95,
+    "impr": 13900.0,
+    "reach": 6535.0,
+    "clicks": 266.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Google Search",
+    "budget": 600.0,
+    "spend": 594.0,
+    "impr": 1280.0,
+    "reach": 0.0,
+    "clicks": 121.0,
+    "ctr": "9.46",
+    "active": "False"
+   },
+   {
+    "platform": "GeoFencing",
+    "budget": 150.0,
+    "spend": 143.23,
+    "impr": 15961.0,
+    "reach": 0.0,
+    "clicks": 15.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 5.0,
+    "spend": 12797.0,
+    "impr": 5.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 708.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2407004": {
+  "name": "Just Pilates",
+  "has_june_paid": true,
+  "paid_spend": 1378.45,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 300.0,
+    "spend": 298.45,
+    "impr": 14247.0,
+    "reach": 11039.0,
+    "clicks": 571.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Google Search",
+    "budget": 500.0,
+    "spend": 1080.0,
+    "impr": 668.0,
+    "reach": 0.0,
+    "clicks": 124.0,
+    "ctr": "18.56",
+    "active": "False"
+   }
+  ]
+ },
+ "2205001": {
+  "name": "Leathers Interiors",
+  "has_june_paid": true,
+  "paid_spend": 13.97,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 0.0,
+    "spend": 13.97,
+    "impr": 1764.0,
+    "reach": 1531.0,
+    "clicks": 23.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 71.0,
+    "spend": 1080.0,
+    "impr": 6.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 263.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2601002": {
+  "name": "Jeff Baker & Sons Landscaping",
+  "has_june_paid": true,
+  "paid_spend": 131.49,
+  "rows": [
+   {
+    "platform": "Facebook Ads",
+    "budget": 300.0,
+    "spend": 131.49,
+    "impr": 6379.0,
+    "reach": 2729.0,
+    "clicks": 102.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Google Search",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 585.0,
+    "spend": 4600.0,
+    "impr": 11.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2009003": {
+  "name": "Med Search",
+  "has_june_paid": false,
+  "paid_spend": 0.0,
+  "rows": [
+   {
+    "platform": "LinkedIn Ads",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 641.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2510002": {
+  "name": "Whitewater Freight",
+  "has_june_paid": true,
+  "paid_spend": 295.02,
+  "rows": [
+   {
+    "platform": "LinkedIn Ads",
+    "budget": 300.0,
+    "spend": 295.02,
+    "impr": 425913.0,
+    "reach": 0.0,
+    "clicks": 151.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 54.0,
+    "spend": 400917.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 4763.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2412001": {
+  "name": "Visipak",
+  "has_june_paid": true,
+  "paid_spend": 445.48,
+  "rows": [
+   {
+    "platform": "LinkedIn Ads",
+    "budget": 450.0,
+    "spend": 445.48,
+    "impr": 704.0,
+    "reach": 0.0,
+    "clicks": 1.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2604003": {
+  "name": "AB Advisory Dynamics",
+  "has_june_paid": true,
+  "paid_spend": 290.92,
+  "rows": [
+   {
+    "platform": "LinkedIn Ads",
+    "budget": 300.0,
+    "spend": 290.92,
+    "impr": 1574.0,
+    "reach": 0.0,
+    "clicks": 6.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 28.0,
+    "spend": 2422.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1907001": {
+  "name": "Patriot",
+  "has_june_paid": true,
+  "paid_spend": 881.0,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 500.0,
+    "spend": 442.0,
+    "impr": 3730.0,
+    "reach": 0.0,
+    "clicks": 234.0,
+    "ctr": "6.27",
+    "active": "False"
+   },
+   {
+    "platform": "YouTube Ads",
+    "budget": 450.0,
+    "spend": 439.0,
+    "impr": 94000.0,
+    "reach": 52900.0,
+    "clicks": 55.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 1507.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1808004": {
+  "name": "Pumps and Parts",
+  "has_june_paid": true,
+  "paid_spend": 737.0,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 2000.0,
+    "spend": 603.0,
+    "impr": 71200.0,
+    "reach": 0.0,
+    "clicks": 1180.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Google P-Max",
+    "budget": 478.0,
+    "spend": 134.0,
+    "impr": 1280.0,
+    "reach": 0.0,
+    "clicks": 64.0,
+    "ctr": "4.99",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 6705.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2508005": {
+  "name": "Lift Station Depot",
+  "has_june_paid": true,
+  "paid_spend": 578.0,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 900.0,
+    "spend": 578.0,
+    "impr": 12200.0,
+    "reach": 0.0,
+    "clicks": 481.0,
+    "ctr": "3.94",
+    "active": "False"
+   }
+  ]
+ },
+ "2301001": {
+  "name": "Ranson & Associates (AMFam)",
+  "has_june_paid": true,
+  "paid_spend": 404.92,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 150.0,
+    "spend": 174.0,
+    "impr": 370.0,
+    "reach": 0.0,
+    "clicks": 30.0,
+    "ctr": "8.11",
+    "active": "False"
+   },
+   {
+    "platform": "GeoFencing",
+    "budget": 300.0,
+    "spend": 230.92,
+    "impr": 16526.0,
+    "reach": 0.0,
+    "clicks": 4.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2407003": {
+  "name": "Just Dancing",
+  "has_june_paid": true,
+  "paid_spend": 1210.0,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 1250.0,
+    "spend": 1210.0,
+    "impr": 11800.0,
+    "reach": 0.0,
+    "clicks": 871.0,
+    "ctr": "7.4",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 1468.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1910002": {
+  "name": "Beam",
+  "has_june_paid": true,
+  "paid_spend": 93.27,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 300.0,
+    "spend": 93.27,
+    "impr": 497.0,
+    "reach": 0.0,
+    "clicks": 112.0,
+    "ctr": "22.54",
+    "active": "False"
+   },
+   {
+    "platform": "Email Newsletters",
+    "budget": 8579.0,
+    "spend": 794.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 113.0,
+    "spend": 90.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 627.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2412002": {
+  "name": "VisiPak",
+  "has_june_paid": true,
+  "paid_spend": 4495.33,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 1000.0,
+    "spend": 1290.0,
+    "impr": 4280.0,
+    "reach": 0.0,
+    "clicks": 259.0,
+    "ctr": "6.06",
+    "active": "False"
+   },
+   {
+    "platform": "Google Shopping",
+    "budget": 400.0,
+    "spend": 410.0,
+    "impr": 15000.0,
+    "reach": 0.0,
+    "clicks": 155.0,
+    "ctr": "1.03",
+    "active": "False"
+   },
+   {
+    "platform": "Google P-Max",
+    "budget": 500.0,
+    "spend": 293.0,
+    "impr": 27600.0,
+    "reach": 0.0,
+    "clicks": 594.0,
+    "ctr": "2.16",
+    "active": "False"
+   },
+   {
+    "platform": "Google Remarketing",
+    "budget": 600.0,
+    "spend": 580.0,
+    "impr": 7910.0,
+    "reach": 0.0,
+    "clicks": 1610.0,
+    "ctr": "20.29",
+    "active": "False"
+   },
+   {
+    "platform": "Microsoft Ads",
+    "budget": 1700.0,
+    "spend": 1922.33,
+    "impr": 318666.0,
+    "reach": 0.0,
+    "clicks": 3347.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 45.0,
+    "spend": 932.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 10854.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2412003": {
+  "name": "Indepak",
+  "has_june_paid": true,
+  "paid_spend": 4729.19,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 1900.0,
+    "spend": 2810.0,
+    "impr": 5740.0,
+    "reach": 0.0,
+    "clicks": 157.0,
+    "ctr": "2.73",
+    "active": "False"
+   },
+   {
+    "platform": "Microsoft Ads",
+    "budget": 1100.0,
+    "spend": 1919.19,
+    "impr": 30558.0,
+    "reach": 0.0,
+    "clicks": 614.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 18.0,
+    "spend": 824.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 2014.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2509003": {
+  "name": "Midalloy SM",
+  "has_june_paid": true,
+  "paid_spend": 3450.0,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 3750.0,
+    "spend": 3450.0,
+    "impr": 891.0,
+    "reach": 0.0,
+    "clicks": 108.0,
+    "ctr": "12.12",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 21.0,
+    "spend": 501.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 477.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2405002": {
+  "name": "Whack A Mole",
+  "has_june_paid": true,
+  "paid_spend": 227.0,
+  "rows": [
+   {
+    "platform": "Google P-Max",
+    "budget": 300.0,
+    "spend": 227.0,
+    "impr": 11100.0,
+    "reach": 0.0,
+    "clicks": 672.0,
+    "ctr": "6.04",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 489.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2601004": {
+  "name": "The Tile and Grout Project",
+  "has_june_paid": true,
+  "paid_spend": 392.0,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 400.0,
+    "spend": 392.0,
+    "impr": 1770.0,
+    "reach": 0.0,
+    "clicks": 93.0,
+    "ctr": "5.26",
+    "active": "False"
+   }
+  ]
+ },
+ "2605001": {
+  "name": "Home Helpers Home Care STL",
+  "has_june_paid": true,
+  "paid_spend": 193.0,
+  "rows": [
+   {
+    "platform": "Google Search",
+    "budget": 300.0,
+    "spend": 193.0,
+    "impr": 570.0,
+    "reach": 0.0,
+    "clicks": 37.0,
+    "ctr": "6.49",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 2.0,
+    "spend": 112.0,
+    "impr": 2.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2604004": {
+  "name": "Dapper Can",
+  "has_june_paid": true,
+  "paid_spend": 88.29,
+  "rows": [
+   {
+    "platform": "GeoFencing",
+    "budget": 1000.0,
+    "spend": 88.29,
+    "impr": 14742.0,
+    "reach": 0.0,
+    "clicks": 15.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Remarketing",
+    "budget": 75.0,
+    "spend": 62.19,
+    "impr": 4241.0,
+    "reach": 0.0,
+    "clicks": 1.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2106002": {
+  "name": "Brown and Brown",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "TikTok Ads",
+    "budget": 500.0,
+    "spend": 546.41,
+    "impr": 81114.0,
+    "reach": 0.0,
+    "clicks": 818.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 6.0,
+    "spend": 1143.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2203005": {
+  "name": "City of Ellisville",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Email Newsletters",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Social Media Posts",
+    "budget": 280.0,
+    "spend": 55036.0,
+    "impr": 340.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1903001": {
+  "name": "Captifi Wealth Solutions",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Email Newsletters",
+    "budget": 142.0,
+    "spend": 11.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2404003": {
+  "name": "ALO Construction",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Social Media Posts",
+    "budget": 0.0,
+    "spend": 336.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 27.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2509002": {
+  "name": "BP Texas",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Social Media Posts",
+    "budget": 19.0,
+    "spend": 264.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 304.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2504002": {
+  "name": "Indepak",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Social Media Posts",
+    "budget": 10.0,
+    "spend": 107.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2602002": {
+  "name": "GRN Dublin",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Social Media Posts",
+    "budget": 7.0,
+    "spend": 868.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2308001": {
+  "name": "Jones Family Law Group",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Social Media Posts",
+    "budget": 201.0,
+    "spend": 773.0,
+    "impr": 31.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 1020.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1801001": {
+  "name": "NWO",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Social Media Posts",
+    "budget": 210.0,
+    "spend": 9626.0,
+    "impr": 226.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 432.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2401006": {
+  "name": "Partners In Medicine",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Social Media Posts",
+    "budget": 16.0,
+    "spend": 400.0,
+    "impr": 17.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Website Traffic",
+    "budget": 662.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2604001": {
+  "name": "The National Museum of Transportation",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Social Media Posts",
+    "budget": 1172.0,
+    "spend": 270580.0,
+    "impr": 1976.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2001002": {
+  "name": "Holy Cross",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Social Media Posts",
+    "budget": 32.0,
+    "spend": 2491.0,
+    "impr": 37.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1808002": {
+  "name": "DP Pumps",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 505.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2010001": {
+  "name": "Epoxy Stone",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 374.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2103001": {
+  "name": "Mentors 4 College",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 296.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2205004": {
+  "name": "Squeak Stoppers",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 207.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2208001": {
+  "name": "Energy View",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 384.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2312002": {
+  "name": "Jordan Search Consultants",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 935.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2312004": {
+  "name": "Top Tier Outdoors",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2412004": {
+  "name": "Clamshell Packaging",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 788.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2504004": {
+  "name": "Auctus Search Partners",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 436.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2505002": {
+  "name": "Jobsprk",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 2779.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   },
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2509004": {
+  "name": "Luna Builds STL",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2602001": {
+  "name": "The Law Office of Andi Grace Davis",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2009002": {
+  "name": "Control Co.",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2305002": {
+  "name": "Little Bit Trashy",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2604002": {
+  "name": "Paraben",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Website Traffic",
+    "budget": 92.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2505003": {
+  "name": "The Resume Collective",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2201001": {
+  "name": "Iron Horse Energy Services",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2201003": {
+  "name": "Petra Masonry",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2312005": {
+  "name": "ArrowUp Global",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2201002": {
+  "name": "Bavarian Enterprises",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2207001": {
+  "name": "Honest Junk",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2105002": {
+  "name": "ITCG",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2105003": {
+  "name": "Kay-Bee Electric",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2206001": {
+  "name": "Whistling Oaks Therapeautic Ranch",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2012001": {
+  "name": "Lighting Service, Inc. (LSI)",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1801002": {
+  "name": "Mungos Italian Eatery",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2108001": {
+  "name": "Uncle Leo's Pizza",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2501001": {
+  "name": "UtilliCo",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2203003": {
+  "name": "Prevailing Wage Consulting",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1910003": {
+  "name": "Pro Basement Finishers",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "1712001": {
+  "name": "Advantage Air",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2311001": {
+  "name": "St. Josephs Parish Imperial",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2505001": {
+  "name": "Firethorn Holdings",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ },
+ "2411002": {
+  "name": "Grasslands Acquisitons",
+  "has_june_paid": false,
+  "paid_spend": 0,
+  "rows": [
+   {
+    "platform": "Hosting Only",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "active": "False"
+   }
+  ]
+ }
+}
