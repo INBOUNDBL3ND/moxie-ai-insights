@@ -39,8 +39,14 @@ export default async function(req, context) {
     if (content?.meta?.dropboxLink) dropboxLink = String(content.meta.dropboxLink);
   } catch (_) {}
 
+  // Discover which monthly report files exist for this client so the
+  // dashboard lists them. Report files are committed static HTML at
+  // /clients/NNNNNNN/<month>-<year>.html — auto-detected here so every
+  // future month shows up with no per-client data to maintain.
+  const reports = await discoverReports(url.origin, num);
+
   const escaped = escapeHtml(client.name);
-  const html = buildDashboardHtml(num, escaped, dropboxLink);
+  const html = buildDashboardHtml(num, escaped, dropboxLink, reports);
   return new Response(html, {
     status: 200,
     headers: {
@@ -62,7 +68,70 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
-function buildDashboardHtml(num, name, dropboxLink) {
+const MONTH_SLUGS = [
+  "january", "february", "march", "april", "may", "june",
+  "july", "august", "september", "october", "november", "december",
+];
+const MONTH_LABELS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+// How many months back to look for report files. Kickoff/dynamic clients
+// are recent, so a rolling window comfortably covers their full history.
+const REPORT_LOOKBACK_MONTHS = 24;
+
+// Probe the committed static report files for this client and return the
+// months that exist, newest-first. Each candidate URL re-enters this edge
+// function once: an existing file passes through as 200 (line ~19), a
+// missing one 404s (the path doesn't match the dashboard route) — so there
+// is no recursion beyond depth 1.
+async function discoverReports(origin, num) {
+  const now = new Date();
+  let year = now.getUTCFullYear();
+  let mo = now.getUTCMonth(); // 0-11
+
+  const candidates = [];
+  for (let i = 0; i < REPORT_LOOKBACK_MONTHS; i++) {
+    candidates.push({
+      slug: `${MONTH_SLUGS[mo]}-${year}`,
+      month: MONTH_LABELS[mo],
+      year,
+    });
+    mo -= 1;
+    if (mo < 0) { mo = 11; year -= 1; }
+  }
+
+  const checked = await Promise.all(
+    candidates.map(async (c) => {
+      try {
+        const r = await fetch(`${origin}/clients/${num}/${c.slug}.html`, { method: "HEAD" });
+        return r.ok ? c : null;
+      } catch (_) {
+        return null;
+      }
+    })
+  );
+
+  return checked.filter(Boolean); // already newest-first (candidates built that way)
+}
+
+function reportsGridHtml(num, reports) {
+  if (!reports || reports.length === 0) {
+    return `<p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:24px 0;">Your monthly reports will appear here once generated.</p>`;
+  }
+  return reports
+    .map(
+      (r) => `<div class="report-card">
+        <div class="month">${escapeHtml(r.month)}</div>
+        <div class="year-badge">${escapeHtml(String(r.year))}</div>
+        <a href='/clients/${num}/${escapeHtml(r.slug)}'>View Report &rarr;</a>
+      </div>`
+    )
+    .join("\n      ");
+}
+
+function buildDashboardHtml(num, name, dropboxLink, reports) {
   const dropboxBtn = dropboxLink
     ? `<a href="${escapeHtml(dropboxLink)}" target="_blank" rel="noopener" style="background:#fff;color:#1D80DE;padding:12px 22px;border-radius:10px;font-size:1rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:10px;width:100%;justify-content:center;box-sizing:border-box;border:2px solid #1D80DE;"><svg width="32" height="32" viewBox="0 0 43 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 0L0 8.1l8.7 7 12.8-8.1L12.5 0zM0 22.1l12.5 8.1 9-7-12.8-8.1L0 22.1zM21.5 23.2l9 7 12.5-8.1-8.7-7-12.8 8.1zM43 8.1L30.5 0l-9 7 12.8 8.1L43 8.1zM21.5 25l-9 7.1-3.5-2.3v2.6l12.5 7.5 12.5-7.5v-2.6l-3.5 2.3-9-7.1z" fill="#1D80DE"/></svg> Dropbox</a>`
     : "";
@@ -104,7 +173,7 @@ function buildDashboardHtml(num, name, dropboxLink) {
 
     <h2 class="section-label" style="margin-top:24px;">Your Monthly Reports</h2>
     <div class="reports-grid">
-      <p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:24px 0;">Your monthly reports will appear here once generated.</p>
+      ${reportsGridHtml(num, reports)}
     </div>
 
     <div class="report-footer">
