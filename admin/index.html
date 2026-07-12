@@ -790,6 +790,11 @@
             <input class="edit-select" id="edit-dropbox-link" type="url" placeholder="https://..." style="width:100%;box-sizing:border-box;" oninput="editState.meta.dropboxLink = this.value">
           </div>
           <div class="edit-field-group">
+            <label class="edit-field-label">Dashboard PIN (4 digits)</label>
+            <input class="edit-select" id="edit-client-pin" type="text" inputmode="numeric" maxlength="4" placeholder="8675" style="width:130px;box-sizing:border-box;letter-spacing:4px;font-weight:700;" oninput="this.value = this.value.replace(/\D/g, ''); editState.meta.pin = this.value">
+            <p class="hint" style="margin-top:4px;">Access code the client enters to view their dashboard and reports. Default is 8675 — set any other 4 digits to give this client their own PIN. Changing it re-locks their pages until they enter the new PIN.</p>
+          </div>
+          <div class="edit-field-group">
             <label class="edit-field-label">Audience</label>
             <select class="edit-select" id="edit-audience-type" style="width:100%;box-sizing:border-box;" onchange="editState.meta.audienceType = this.value">
               <option value="">Not set</option>
@@ -1270,7 +1275,7 @@
       editState.pills = [];
       editState.currentWork = [];
       editState.projects = [];
-      editState.meta = { slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false, audienceType: '' };
+      editState.meta = { slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false, audienceType: '', pin: '' };
 
       document.getElementById('edit-modal-title').textContent = 'Edit: ' + editState.name;
       document.getElementById('edit-modal-subtitle').textContent = '#' + num;
@@ -1285,7 +1290,7 @@
           editState.pills = Array.isArray(data.pills) ? data.pills.slice() : [];
           editState.currentWork = Array.isArray(data.currentWork) ? data.currentWork.slice() : [];
           editState.projects = Array.isArray(data.projects) ? JSON.parse(JSON.stringify(data.projects)) : [];
-          editState.meta = Object.assign({ slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false, audienceType: '' }, data.meta || {});
+          editState.meta = Object.assign({ slackChannel: '', dropboxLink: '', legacyReportingLink: '', notes: '', hidePlatformBreakdown: false, audienceType: '', pin: '' }, data.meta || {});
           // If no pills override saved, seed the editor with the current HTML-baked pills
           if (editState.pills.length === 0) {
             return fetchBakedPills(num).then(function(pills) { editState.pills = pills; });
@@ -1338,6 +1343,8 @@
 
       var dbInput = document.getElementById('edit-dropbox-link');
       if (dbInput) dbInput.value = (editState.meta && editState.meta.dropboxLink) || '';
+      var pinInput = document.getElementById('edit-client-pin');
+      if (pinInput) pinInput.value = (editState.meta && editState.meta.pin) || '8675';
       var audInput = document.getElementById('edit-audience-type');
       if (audInput) audInput.value = (editState.meta && editState.meta.audienceType) || '';
       var hpbInput = document.getElementById('edit-hide-platform-breakdown');
@@ -1464,6 +1471,11 @@
     }
 
     function saveContent() {
+      var pinVal = String((editState.meta && editState.meta.pin) || '');
+      if (pinVal && !/^\d{4}$/.test(pinVal)) {
+        setEditStatus('Dashboard PIN must be exactly 4 digits', 'error');
+        return;
+      }
       var payload = {
         status: editState.status,
         logoMediaId: editState.logoMediaId,

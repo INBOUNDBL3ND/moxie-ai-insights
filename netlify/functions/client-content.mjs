@@ -39,7 +39,7 @@ function emptyContent() {
     pills: null,
     currentWork: [],
     projects: [],
-    meta: { slackChannel: "", dropboxLink: "", legacyReportingLink: "", notes: "", hidePlatformBreakdown: false, audienceType: "" },
+    meta: { slackChannel: "", dropboxLink: "", legacyReportingLink: "", notes: "", hidePlatformBreakdown: false, audienceType: "", pin: "" },
   };
 }
 
@@ -122,6 +122,7 @@ const VALID_AUDIENCE_TYPES = new Set(["", "B2C", "B2B", "Both"]);
 function sanitizeMeta(m) {
   if (!m || typeof m !== "object") return emptyContent().meta;
   const audience = String(m.audienceType || "").trim();
+  const pin = String(m.pin || "").trim();
   return {
     slackChannel: String(m.slackChannel || "").slice(0, 200),
     dropboxLink: String(m.dropboxLink || "").slice(0, 500),
@@ -129,6 +130,8 @@ function sanitizeMeta(m) {
     notes: String(m.notes || "").slice(0, 2000),
     hidePlatformBreakdown: Boolean(m.hidePlatformBreakdown),
     audienceType: VALID_AUDIENCE_TYPES.has(audience) ? audience : "",
+    // "" = site default (8675); storing the default explicitly is normalized away
+    pin: /^\d{4}$/.test(pin) && pin !== "8675" ? pin : "",
   };
 }
 
@@ -230,6 +233,16 @@ export default async (req) => {
       // meta
       if (body.meta !== undefined) {
         out.meta = sanitizeMeta(body.meta);
+      }
+
+      // Preserve an existing custom PIN when the caller doesn't send one
+      // (older admin pages / helper scripts that predate the pin field).
+      if (!body.meta || body.meta.pin === undefined) {
+        try {
+          const existing = await s.get(client, { type: "json" });
+          const prev = existing && existing.meta && existing.meta.pin;
+          if (typeof prev === "string" && /^\d{4}$/.test(prev)) out.meta.pin = prev;
+        } catch (_) {}
       }
 
       await s.setJSON(client, out);
