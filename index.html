@@ -87,17 +87,31 @@
               return;
             }
 
-            // Client path
+            // Client path — PIN is per-client (custom pins live in client-content,
+            // set from the admin panel; default is 8675)
             if (clients[num]) {
-              if (btoa(code) === CLIENT_HASH) {
-                localStorage.setItem('moxie_auth', CLIENT_HASH);
-                window.location.href = '/clients/' + num + '/';
-              } else {
-                err.textContent = 'Incorrect access code.';
-                err.style.display = 'block';
-                codeInput.value = '';
-                codeInput.focus();
-              }
+              btn.disabled = true;
+              fetch('/.netlify/functions/client-content?client=' + encodeURIComponent(num) + '&cb=' + Date.now())
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                  var p = d && d.meta && d.meta.pin;
+                  return (typeof p === 'string' && /^\d{4}$/.test(p)) ? p : '8675';
+                })
+                .catch(function () { return '8675'; })
+                .then(function (pin) {
+                  btn.disabled = false;
+                  if (code === pin) {
+                    localStorage.setItem('moxie_auth_' + num, btoa(pin));
+                    // Keep the legacy site-wide key for default-pin clients only
+                    if (pin === '8675') localStorage.setItem('moxie_auth', CLIENT_HASH);
+                    window.location.href = '/clients/' + num + '/';
+                  } else {
+                    err.textContent = 'Incorrect access code.';
+                    err.style.display = 'block';
+                    codeInput.value = '';
+                    codeInput.focus();
+                  }
+                });
             } else {
               err.textContent = 'Client number not found. Please check and try again.';
               err.style.display = 'block';
