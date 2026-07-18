@@ -112,6 +112,13 @@
       '.mm-send:hover{background:#C4531F;}',
       '.mm-send:disabled{opacity:.6;cursor:default;}',
       '.mm-status{font-size:0.78rem;font-weight:600;color:#27AE60;}',
+      '.mm-thread{max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;padding:2px;}',
+      '.mm-msg{max-width:85%;padding:8px 12px;border-radius:12px;font-size:0.85rem;line-height:1.45;word-break:break-word;white-space:pre-wrap;}',
+      '.mm-msg.client{align-self:flex-end;background:#DF6229;color:#fff;border-bottom-right-radius:4px;}',
+      '.mm-msg.team{align-self:flex-start;background:#F1F5F9;color:#1A1A2E;border-bottom-left-radius:4px;}',
+      '.mm-msg .mm-when{display:block;font-size:0.65rem;opacity:0.7;margin-top:3px;}',
+      '.mm-msg .mm-who{display:block;font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;opacity:0.8;}',
+      '.mm-thread-empty{text-align:center;color:#9CA3AF;font-size:0.82rem;padding:10px 0;}',
 
       /* Satisfaction rating card */
       '.csat-section{margin-top:32px;background:linear-gradient(135deg,#F8FAFF 0%,#FFF7F2 100%);border:1px solid rgba(29,128,222,0.15);border-radius:14px;padding:22px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}',
@@ -507,6 +514,58 @@
 
   // ─────────────────── Message Meg (header button + modal) ───────────────────
   var mmModal = null;
+  var feedbackMessages = []; // persistent thread, loaded in init()
+
+  function fmtWhen(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    try {
+      return d.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    } catch (e) {
+      return d.toLocaleDateString();
+    }
+  }
+
+  function markThreadSeen() {
+    try { localStorage.setItem('moxie_mm_seen_' + clientNum, String(feedbackMessages.length)); } catch (e) {}
+  }
+
+  // Red dot on the Message Meg button when the last message is an unseen team reply
+  function updateMegBadge() {
+    var btn = document.querySelector('[data-message-meg]');
+    if (!btn) return;
+    var dot = btn.querySelector('.mm-dot');
+    var seen = 0;
+    try { seen = parseInt(localStorage.getItem('moxie_mm_seen_' + clientNum) || '0', 10) || 0; } catch (e) {}
+    var last = feedbackMessages[feedbackMessages.length - 1];
+    var unseen = feedbackMessages.length > seen && last && last.from === 'team';
+    if (unseen && !dot) {
+      dot = document.createElement('span');
+      dot.className = 'mm-dot';
+      dot.style.cssText = 'width:10px;height:10px;border-radius:50%;background:#E74C3C;display:inline-block;flex-shrink:0;';
+      btn.appendChild(dot);
+    } else if (!unseen && dot) {
+      dot.remove();
+    }
+  }
+
+  function renderMegThread() {
+    if (!mmModal) return;
+    var thread = mmModal.querySelector('.mm-thread');
+    if (!thread) return;
+    if (!feedbackMessages.length) {
+      thread.innerHTML = '<div class="mm-thread-empty">No messages yet — say hello!</div>';
+      return;
+    }
+    thread.innerHTML = feedbackMessages.map(function (m) {
+      var who = m.from === 'team' ? '<span class="mm-who">Meg &amp; the Team</span>' : '';
+      return '<div class="mm-msg ' + (m.from === 'team' ? 'team' : 'client') + '">' + who +
+        escapeHtml(m.text) +
+        (m.at ? '<span class="mm-when">' + escapeHtml(fmtWhen(m.at)) + '</span>' : '') +
+        '</div>';
+    }).join('');
+    thread.scrollTop = thread.scrollHeight;
+  }
 
   function closeMessageMeg() {
     if (!mmModal) return;
@@ -523,9 +582,10 @@
         '<div class="mm-box">' +
           '<h3>' + FB_CHAT_SVG + ' Message Meg</h3>' +
           '<p>Send a quick note to the team — it goes straight to us and we’ll follow up.</p>' +
+          '<div class="mm-thread"></div>' +
           '<textarea placeholder="What can we help with?"></textarea>' +
           '<div class="mm-row">' +
-            '<button type="button" class="mm-cancel">Cancel</button>' +
+            '<button type="button" class="mm-cancel">Close</button>' +
             '<button type="button" class="mm-send">Send Message</button>' +
             '<span class="mm-status"></span>' +
           '</div>' +
@@ -550,7 +610,10 @@
             sendBtn.disabled = false;
             ta.value = '';
             status.textContent = 'Sent! Meg will follow up soon ✓';
-            setTimeout(closeMessageMeg, 2000);
+            feedbackMessages.push({ from: 'client', text: text, at: new Date().toISOString() });
+            markThreadSeen();
+            renderMegThread();
+            setTimeout(function () { status.textContent = ''; }, 2500);
           })
           .catch(function () {
             sendBtn.disabled = false;
@@ -559,6 +622,9 @@
           });
       });
     }
+    renderMegThread();
+    markThreadSeen();
+    updateMegBadge();
     mmModal.classList.add('open');
     mmModal.querySelector('textarea').focus();
   }
@@ -1010,8 +1076,12 @@
         if (fb && fb.reactions && typeof fb.reactions === 'object') {
           feedbackReactions = fb.reactions;
         }
+        if (fb && Array.isArray(fb.messages)) {
+          feedbackMessages = fb.messages;
+        }
         // These render even when there's no admin-saved content yet
         applyMessageMegButton();
+        updateMegBadge();
         var ratingNode = buildRatingNode(fb && fb.rating);
         if (!data) {
           insertSections([ratingNode]);

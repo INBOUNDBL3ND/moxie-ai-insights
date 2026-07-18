@@ -710,6 +710,51 @@
       word-break: break-word;
     }
     .fb-event-time { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+    .fb-reply-link {
+      background: none;
+      border: none;
+      color: var(--blue);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 2px 0;
+      margin-top: 3px;
+      font-family: 'Barlow', sans-serif;
+      display: inline-block;
+    }
+    .fb-reply-link:hover { text-decoration: underline; }
+
+    /* Message thread modal (admin ↔ client) */
+    .at-thread { display: flex; flex-direction: column; gap: 8px; }
+    .at-msg {
+      max-width: 85%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 0.87rem;
+      line-height: 1.45;
+      word-break: break-word;
+      white-space: pre-wrap;
+      font-family: 'Barlow', sans-serif;
+    }
+    .at-msg.client { align-self: flex-start; background: #F1F5F9; color: var(--text); border-bottom-left-radius: 4px; }
+    .at-msg.team { align-self: flex-end; background: var(--blue); color: #fff; border-bottom-right-radius: 4px; }
+    .at-msg .at-when { display: block; font-size: 0.65rem; opacity: 0.7; margin-top: 3px; }
+    .at-msg .at-who { display: block; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; opacity: 0.8; }
+    .at-empty { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 24px 0; }
+    #thread-reply {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 64px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      resize: vertical;
+      color: var(--text);
+    }
+    #thread-reply:focus { outline: none; border-color: var(--blue); }
+
     .fb-event.low-rating {
       background: #FEF2F2;
       border: 1px solid #FECACA;
@@ -1224,6 +1269,30 @@
         <div class="edit-status" id="add-client-status">&nbsp;</div>
         <button class="edit-btn-cancel" onclick="closeAddClientModal()">Cancel</button>
         <button class="edit-btn-save" onclick="submitNewClient()">Create Client</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message thread modal (Message Meg replies) -->
+  <div id="thread-modal" class="edit-modal">
+    <div class="edit-modal-backdrop" onclick="closeThreadModal()"></div>
+    <div class="edit-modal-content" style="max-width:520px;" onclick="event.stopPropagation()">
+      <div class="edit-modal-header">
+        <div>
+          <h2 id="thread-title">Messages</h2>
+          <div class="client-sub" id="thread-sub">&nbsp;</div>
+        </div>
+        <button class="edit-close-btn" onclick="closeThreadModal()" title="Close">&times;</button>
+      </div>
+      <div class="edit-modal-body">
+        <div class="at-thread" id="thread-body"><div class="at-empty">Loading…</div></div>
+      </div>
+      <div class="edit-modal-footer" style="flex-direction:column;align-items:stretch;gap:8px;">
+        <textarea id="thread-reply" placeholder="Reply as Meg &amp; the Team…"></textarea>
+        <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;">
+          <span id="thread-status" class="edit-status" style="text-align:right;">&nbsp;</span>
+          <button class="edit-btn-save" onclick="sendThreadReply()">Send Reply</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2301,6 +2370,9 @@
     window.clearFeedbackEvent = clearFeedbackEvent;
     window.clearClientFeedback = clearClientFeedback;
     window.clearAllFeedback = clearAllFeedback;
+    window.openThreadModal = openThreadModal;
+    window.closeThreadModal = closeThreadModal;
+    window.sendThreadReply = sendThreadReply;
     window.uploadRowMedia = uploadRowMedia;
     window.uploadLogo = uploadLogo;
     window.removeLogo = removeLogo;
@@ -2415,6 +2487,7 @@
                 '<div class="fb-event-label">' + escapeHtml(label) + '</div>' +
                 (e.text ? '<div class="fb-event-text">' + escapeHtml(e.text) + '</div>' : '') +
                 '<div class="fb-event-time">' + timeAgo(e.at) + '</div>' +
+                (e.kind === 'message' ? '<button class="fb-reply-link" onclick="openThreadModal(\'' + num + '\')">💬 View thread &amp; reply</button>' : '') +
               '</div>' +
               '<button class="fb-event-x" title="Clear this alert" onclick="clearFeedbackEvent(\'' + num + '\', \'' + escapeHtml(e.id) + '\')">&times;</button>' +
             '</div>';
@@ -2510,6 +2583,84 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'clearAll' })
       }).catch(function() {});
+    }
+
+    // ─── Message thread modal (reply to Message Meg) ─────────────────
+    var threadClient = null;
+    var threadMessages = [];
+
+    function renderThreadBody() {
+      var body = document.getElementById('thread-body');
+      if (!body) return;
+      if (!threadMessages.length) {
+        body.innerHTML = '<div class="at-empty">No messages yet.</div>';
+        return;
+      }
+      body.innerHTML = threadMessages.map(function(m) {
+        var who = m.from === 'team' ? '<span class="at-who">Meg &amp; the Team</span>' : '';
+        return '<div class="at-msg ' + (m.from === 'team' ? 'team' : 'client') + '">' + who +
+          escapeHtml(m.text) +
+          (m.at ? '<span class="at-when">' + timeAgo(m.at) + '</span>' : '') +
+          '</div>';
+      }).join('');
+      var scroller = body.closest('.edit-modal-body');
+      if (scroller) scroller.scrollTop = scroller.scrollHeight;
+    }
+
+    function setThreadStatus(msg, kind) {
+      var el = document.getElementById('thread-status');
+      if (!el) return;
+      el.textContent = msg || ' ';
+      el.className = 'edit-status' + (kind ? ' ' + kind : '');
+    }
+
+    function openThreadModal(num) {
+      threadClient = num;
+      threadMessages = [];
+      document.getElementById('thread-title').textContent = 'Messages — ' + (clientNames[num] || ('Client ' + num));
+      document.getElementById('thread-sub').textContent = '#' + num;
+      document.getElementById('thread-body').innerHTML = '<div class="at-empty">Loading…</div>';
+      document.getElementById('thread-reply').value = '';
+      setThreadStatus('');
+      document.getElementById('thread-modal').classList.add('open');
+      fetch('/.netlify/functions/feedback?client=' + encodeURIComponent(num) + '&cb=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (threadClient !== num) return;
+          threadMessages = (d && d.messages) || [];
+          renderThreadBody();
+        })
+        .catch(function() { setThreadStatus('Could not load thread', 'error'); });
+    }
+
+    function closeThreadModal() {
+      document.getElementById('thread-modal').classList.remove('open');
+      threadClient = null;
+      threadMessages = [];
+    }
+
+    function sendThreadReply() {
+      var ta = document.getElementById('thread-reply');
+      var text = ta.value.replace(/^\s+|\s+$/g, '');
+      if (!text || !threadClient) { ta.focus(); return; }
+      var num = threadClient;
+      setThreadStatus('Sending…');
+      fetch('/.netlify/functions/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reply', client: num, text: text })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d && d.error) { setThreadStatus('Send failed: ' + d.error, 'error'); return; }
+          if (threadClient === num) {
+            threadMessages.push((d && d.message) || { from: 'team', text: text, at: new Date().toISOString() });
+            ta.value = '';
+            renderThreadBody();
+            setThreadStatus('Reply sent ✓', 'success');
+          }
+        })
+        .catch(function(e) { setThreadStatus('Send failed: ' + e.message, 'error'); });
     }
 
     loadFeedback(true);

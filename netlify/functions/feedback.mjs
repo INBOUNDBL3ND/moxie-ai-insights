@@ -5,6 +5,7 @@
 //   {
 //     reactions: { [itemId]: { vote: "up"|"down", at, label } },  // current state
 //     rating:    { stars: 1-5, at } | null,                        // current satisfaction
+//     messages:  [ { id, from: "client"|"team", text, at } ],      // Message Meg thread (persistent)
 //     events:    [ { id, kind: "vote"|"comment"|"message"|"rating",
 //                    itemId, itemLabel, vote?, stars?, text?, at } ] // uncleared alerts
 //   }
@@ -17,9 +18,10 @@
 // GET  ?admin=1         → { clients: { num: { count, events } }, ratings }
 // POST ?client=NNNNNN   → { action:"vote", itemId, itemLabel, vote:"up"|"down"|null }
 //                       → { action:"comment", itemId, itemLabel, text }
-//                       → { action:"message", text }              // Message Meg
+//                       → { action:"message", text }              // Message Meg (client)
 //                       → { action:"rating", stars, text? }       // How are we doing?
-// POST                  → { action:"clear", client, eventId }
+// POST                  → { action:"reply", client, text }        // team reply to thread
+//                       → { action:"clear", client, eventId }
 //                       → { action:"clearClient", client }
 //                       → { action:"clearAll" }
 
@@ -29,6 +31,7 @@ const STORE_NAME = "client-feedback";
 const INDEX_KEY = "_index";
 const RATINGS_KEY = "_ratings";
 const MAX_EVENTS = 200;
+const MAX_MESSAGES = 300;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -42,7 +45,7 @@ function store() {
 }
 
 function emptyFeedback() {
-  return { reactions: {}, rating: null, events: [] };
+  return { reactions: {}, rating: null, messages: [], events: [] };
 }
 
 function newEventId() {
@@ -54,6 +57,7 @@ async function readClient(s, client) {
   if (!raw || typeof raw !== "object") return emptyFeedback();
   if (!raw.reactions || typeof raw.reactions !== "object") raw.reactions = {};
   if (!raw.rating || typeof raw.rating !== "object" || !raw.rating.stars) raw.rating = null;
+  if (!Array.isArray(raw.messages)) raw.messages = [];
   if (!Array.isArray(raw.events)) raw.events = [];
   return raw;
 }
@@ -64,6 +68,7 @@ async function readIndex(s) {
 
 async function writeClient(s, client, data) {
   if (data.events.length > MAX_EVENTS) data.events = data.events.slice(-MAX_EVENTS);
+  if (data.messages.length > MAX_MESSAGES) data.messages = data.messages.slice(-MAX_MESSAGES);
   await s.setJSON(client, data);
   try {
     const idx = await readIndex(s);
@@ -139,6 +144,18 @@ export default async (req) => {
       return Response.json({ ok: true }, { headers: corsHeaders });
     }
 
+    if (action === "reply") {
+      const client = String(body.client || "");
+      if (!/^\d+$/.test(client)) return badRequest("Invalid client");
+      const text = String(body.text || "").trim().slice(0, 2000);
+      if (!text) return badRequest("Empty reply");
+      const d = await readClient(s, client);
+      const msg = { id: newEventId(), from: "team", text, at: new Date().toISOString() };
+      d.messages.push(msg);
+      await writeClient(s, client, d);
+      return Response.json({ ok: true, message: msg }, { headers: corsHeaders });
+    }
+
     if (action === "clear" || action === "clearClient") {
       const client = String(body.client || "");
       if (!/^\d+$/.test(client)) return badRequest("Invalid client");
@@ -167,9 +184,11 @@ export default async (req) => {
     if (action === "message") {
       const text = String(body.text || "").trim().slice(0, 2000);
       if (!text) return badRequest("Empty message");
+      const msg = { id: newEventId(), from: "client", text, at: now };
+      d.messages.push(msg);
       d.events.push({ id: newEventId(), kind: "message", itemId: "", itemLabel: "Message for Meg", text, at: now });
       await writeClient(s, client, d);
-      return Response.json({ ok: true }, { headers: corsHeaders });
+      return Response.json({ ok: true, message: msg }, { headers: corsHeaders });
     }
 
     if (action === "rating") {
