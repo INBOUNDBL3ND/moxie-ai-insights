@@ -10,6 +10,7 @@
 //     currentWork: [
 //       { type: "content", id, mediaId, mediaType, note, linkUrl, linkLabel }
 //       { type: "heading", id, label }
+//       { type: "subheading", id, html }               // rich text, indented under a heading
 //     ],
 //     projects: [
 //       { id, name, enabled, steps:[{label,status,note}], previewUrl, markupUrl, teamNotes }
@@ -135,6 +136,15 @@ function sanitizeMeta(m) {
   };
 }
 
+// Strip anything executable from admin-authored rich text (subheadings).
+function sanitizeRichHtml(html) {
+  return String(html || "")
+    .replace(/<\s*(script|style|iframe|object|embed|link|meta)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, "")
+    .replace(/<\s*(script|style|iframe|object|embed|link|meta)[^>]*\/?>/gi, "")
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/(href|src)\s*=\s*(["']?)\s*javascript:[^"'\s>]*\2/gi, "");
+}
+
 function sanitizeCurrentWorkItem(r, i) {
   if (!r || typeof r !== "object") return null;
   if (r.type === "heading") {
@@ -142,6 +152,13 @@ function sanitizeCurrentWorkItem(r, i) {
       type: "heading",
       id: String(r.id || `h-${Date.now()}-${i}`),
       label: String(r.label || "").slice(0, 200),
+    };
+  }
+  if (r.type === "subheading") {
+    return {
+      type: "subheading",
+      id: String(r.id || `sh-${Date.now()}-${i}`),
+      html: sanitizeRichHtml(r.html).slice(0, 8000),
     };
   }
   return {

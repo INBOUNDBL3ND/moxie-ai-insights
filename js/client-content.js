@@ -6,7 +6,10 @@
  *     admin has saved an override
  *   - Injects one or more project tracker sections (when enabled)
  *   - Injects a "Current Work" section containing rows from the admin,
- *     with optional heading labels that group content cards
+ *     with optional heading labels (and rich-text subheadings) that
+ *     group content cards
+ *   - Adds a thumbs up/down + comment feedback bar to each content card
+ *     (persisted via /.netlify/functions/feedback, alerts the admin)
  *   - Replaces MOXIE mascot images with the client logo when provided
  *
  * Insertion order (top to bottom):
@@ -68,6 +71,32 @@
       /* Current Work heading labels */
       '.cw-heading{font-family:"Barlow Condensed",sans-serif;font-size:1.15rem;font-weight:700;color:var(--text,#1A1A2E);border-left:4px solid var(--blue,#1D80DE);padding-left:12px;margin:28px 0 14px;}',
       '.cw-heading:first-child{margin-top:0;}',
+
+      /* Rich-text subheadings (indented under a heading) */
+      '.cw-subheading{font-family:var(--font,Barlow,sans-serif);font-size:0.95rem;color:#4B5563;margin:-4px 0 16px 16px;padding-left:12px;border-left:3px solid #DBEAFE;line-height:1.55;max-width:820px;}',
+      '.cw-subheading p{margin:0 0 8px;}',
+      '.cw-subheading p:last-child{margin-bottom:0;}',
+      '.cw-subheading ul,.cw-subheading ol{margin:6px 0;padding-left:20px;}',
+      '.cw-subheading a{color:var(--blue,#1D80DE);}',
+
+      /* Card feedback bar (thumbs + comment) */
+      '.cw-feedback{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid #EEF2F6;}',
+      '.cw-fb-btn{width:36px;height:30px;border-radius:7px;border:1.5px solid #E5E7EB;background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#9CA3AF;transition:all .15s;padding:0;}',
+      '.cw-fb-btn svg{pointer-events:none;}',
+      '.cw-fb-btn:hover{border-color:#9CA3AF;color:#6B7280;transform:translateY(-1px);}',
+      '.cw-fb-btn.cw-fb-up.active{background:#27AE60;border-color:#27AE60;color:#fff;}',
+      '.cw-fb-btn.cw-fb-down.active{background:#E74C3C;border-color:#E74C3C;color:#fff;}',
+      '.cw-fb-comment-toggle{margin-left:auto;background:none;border:none;color:var(--blue,#1D80DE);font-family:var(--font,Barlow,sans-serif);font-size:0.8rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:4px 6px;border-radius:6px;}',
+      '.cw-fb-comment-toggle:hover{background:rgba(29,128,222,0.08);}',
+      '.cw-fb-form{display:none;flex-direction:column;gap:8px;margin-top:2px;}',
+      '.cw-fb-form.open{display:flex;}',
+      '.cw-fb-form textarea{width:100%;box-sizing:border-box;min-height:64px;padding:9px 11px;border:1.5px solid #E5E7EB;border-radius:8px;font-family:var(--font,Barlow,sans-serif);font-size:0.85rem;resize:vertical;color:var(--text,#1A1A2E);}',
+      '.cw-fb-form textarea:focus{outline:none;border-color:var(--blue,#1D80DE);}',
+      '.cw-fb-form-row{display:flex;align-items:center;gap:10px;}',
+      '.cw-fb-send{background:var(--blue,#1D80DE);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-weight:700;font-size:0.8rem;cursor:pointer;font-family:var(--font,Barlow,sans-serif);}',
+      '.cw-fb-send:hover{background:#1668B8;}',
+      '.cw-fb-send:disabled{opacity:.6;cursor:default;}',
+      '.cw-fb-status{font-size:0.78rem;color:#27AE60;font-weight:600;font-family:var(--font,Barlow,sans-serif);}',
 
       /* Website Build / Project tracker section */
       '.website-build-section{position:relative;margin-top:32px;padding:26px 24px 24px;background:linear-gradient(140deg,#fbfcfe 0%,#eff6ff 60%,#fff7ed 100%);border-radius:16px;border:1px solid rgba(29,128,222,0.14);overflow:hidden;}',
@@ -334,6 +363,115 @@
   var lightboxItems = []; // [{ src, type, note, heading }]
   var lightboxIdx = 0;
 
+  // Feedback state — current reactions for this client, loaded in init()
+  var feedbackReactions = {}; // { [itemId]: { vote: 'up'|'down' } }
+
+  function postFeedback(payload) {
+    return fetch('/.netlify/functions/feedback?client=' + clientNum, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  var FB_UP_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h2V10H2v10zm20-9a2 2 0 0 0-2-2h-6.31l.95-4.57.03-.32a1.5 1.5 0 0 0-.44-1.06L13.17 2 7.59 7.59C7.22 7.95 7 8.45 7 9v10a2 2 0 0 0 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>';
+  var FB_DOWN_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22 4h-2v10h2V4zM2 13a2 2 0 0 0 2 2h6.31l-.95 4.57-.03.32c0 .4.17.77.44 1.06L10.83 22l5.58-5.59c.37-.36.59-.86.59-1.41V5a2 2 0 0 0-2-2H6c-.83 0-1.54.5-1.84 1.22L1.14 11.27c-.09.23-.14.47-.14.73v2z"/></svg>';
+  var FB_CHAT_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
+
+  // Thumbs + comment bar appended to each content card body.
+  function buildFeedbackBar(row, label) {
+    var bar = document.createElement('div');
+    bar.className = 'cw-feedback';
+
+    var upBtn = document.createElement('button');
+    upBtn.type = 'button';
+    upBtn.className = 'cw-fb-btn cw-fb-up';
+    upBtn.title = 'I like this';
+    upBtn.innerHTML = FB_UP_SVG;
+
+    var downBtn = document.createElement('button');
+    downBtn.type = 'button';
+    downBtn.className = 'cw-fb-btn cw-fb-down';
+    downBtn.title = 'Not for me';
+    downBtn.innerHTML = FB_DOWN_SVG;
+
+    function paintVotes() {
+      var v = feedbackReactions[row.id] && feedbackReactions[row.id].vote;
+      upBtn.classList.toggle('active', v === 'up');
+      downBtn.classList.toggle('active', v === 'down');
+    }
+
+    function castVote(vote) {
+      var cur = feedbackReactions[row.id] && feedbackReactions[row.id].vote;
+      var next = cur === vote ? null : vote; // clicking the active thumb un-votes
+      if (next) feedbackReactions[row.id] = { vote: next };
+      else delete feedbackReactions[row.id];
+      paintVotes();
+      postFeedback({ action: 'vote', itemId: row.id, itemLabel: label, vote: next })
+        .catch(function () {});
+    }
+
+    upBtn.addEventListener('click', function () { castVote('up'); });
+    downBtn.addEventListener('click', function () { castVote('down'); });
+
+    var commentBtn = document.createElement('button');
+    commentBtn.type = 'button';
+    commentBtn.className = 'cw-fb-comment-toggle';
+    commentBtn.innerHTML = FB_CHAT_SVG + ' Comment';
+
+    var form = document.createElement('div');
+    form.className = 'cw-fb-form';
+    var ta = document.createElement('textarea');
+    ta.placeholder = 'Tell us what you think about this one…';
+    var formRow = document.createElement('div');
+    formRow.className = 'cw-fb-form-row';
+    var sendBtn = document.createElement('button');
+    sendBtn.type = 'button';
+    sendBtn.className = 'cw-fb-send';
+    sendBtn.textContent = 'Send to the Team';
+    var statusEl = document.createElement('span');
+    statusEl.className = 'cw-fb-status';
+    formRow.appendChild(sendBtn);
+    formRow.appendChild(statusEl);
+    form.appendChild(ta);
+    form.appendChild(formRow);
+
+    commentBtn.addEventListener('click', function () {
+      form.classList.toggle('open');
+      if (form.classList.contains('open')) ta.focus();
+    });
+
+    sendBtn.addEventListener('click', function () {
+      var text = ta.value.replace(/^\s+|\s+$/g, '');
+      if (!text) { ta.focus(); return; }
+      sendBtn.disabled = true;
+      statusEl.style.color = '';
+      statusEl.textContent = 'Sending…';
+      postFeedback({ action: 'comment', itemId: row.id, itemLabel: label, text: text })
+        .then(function (r) { if (!r.ok) throw new Error('send failed'); })
+        .then(function () {
+          sendBtn.disabled = false;
+          ta.value = '';
+          statusEl.textContent = 'Thanks! Sent to the team ✓';
+          setTimeout(function () {
+            statusEl.textContent = '';
+            form.classList.remove('open');
+          }, 2500);
+        })
+        .catch(function () {
+          sendBtn.disabled = false;
+          statusEl.style.color = '#E74C3C';
+          statusEl.textContent = 'Could not send — please try again';
+        });
+    });
+
+    paintVotes();
+    bar.appendChild(upBtn);
+    bar.appendChild(downBtn);
+    bar.appendChild(commentBtn);
+    return { bar: bar, form: form };
+  }
+
   function buildContentCard(row, lightboxContext) {
     var card = document.createElement('div');
     card.className = 'cw-card';
@@ -394,6 +532,14 @@
       a.textContent = row.linkLabel || 'View';
       body.appendChild(a);
     }
+
+    // Feedback bar — only for saved rows (they always carry an id)
+    if (row.id) {
+      var label = String(row.note || (lightboxContext && lightboxContext.currentHeading) || 'Creative item').slice(0, 140);
+      var fb = buildFeedbackBar(row, label);
+      body.appendChild(fb.bar);
+      body.appendChild(fb.form);
+    }
     card.appendChild(body);
 
     return card;
@@ -414,10 +560,10 @@
     heading.textContent = 'Current Work';
     section.appendChild(heading);
 
-    // Check whether any item has type "heading"
+    // Check whether any item has type "heading" or "subheading"
     var hasHeadings = false;
     for (var k = 0; k < rows.length; k++) {
-      if (rows[k].type === 'heading') { hasHeadings = true; break; }
+      if (rows[k].type === 'heading' || rows[k].type === 'subheading') { hasHeadings = true; break; }
     }
 
     if (!hasHeadings) {
@@ -449,6 +595,17 @@
           h3.className = 'cw-heading';
           h3.textContent = headingText;
           container.appendChild(h3);
+        } else if (itemType === 'subheading') {
+          // Rich-text subheading — indented block, closes any open grid.
+          // HTML is sanitized server-side on save (admin-authored only).
+          if (currentGrid) {
+            container.appendChild(currentGrid);
+            currentGrid = null;
+          }
+          var sub = document.createElement('div');
+          sub.className = 'cw-subheading';
+          sub.innerHTML = row.html || '';
+          container.appendChild(sub);
         } else {
           // Content card — add to current grid, create one if needed
           if (!currentGrid) {
@@ -614,9 +771,19 @@
   // ─────────────────── init ───────────────────
   function init() {
     injectStyles();
-    fetch('/.netlify/functions/client-content?client=' + clientNum + '&cb=' + Date.now())
+    var contentP = fetch('/.netlify/functions/client-content?client=' + clientNum + '&cb=' + Date.now())
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (data) {
+      .catch(function () { return null; });
+    var feedbackP = fetch('/.netlify/functions/feedback?client=' + clientNum + '&cb=' + Date.now())
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+    Promise.all([contentP, feedbackP])
+      .then(function (results) {
+        var data = results[0];
+        var fb = results[1];
+        if (fb && fb.reactions && typeof fb.reactions === 'object') {
+          feedbackReactions = fb.reactions;
+        }
         if (!data) return;
         applyPillsOverride(data.pills);
         applyClientLogo(data.logoMediaId);

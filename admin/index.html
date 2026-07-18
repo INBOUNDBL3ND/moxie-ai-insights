@@ -451,6 +451,300 @@
     }
     .cw-btn-row .edit-btn-add { flex: 1; margin-top: 0; }
 
+    /* Drag & drop reordering (Current Work rows) */
+    .dnd-item { position: relative; padding-left: 38px; }
+    .drag-handle {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: grab;
+      color: #B6BEC9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 40px;
+      border-radius: 6px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .drag-handle:hover { color: var(--blue); background: rgba(29, 128, 222, 0.08); }
+    .drag-handle:active { cursor: grabbing; }
+    .dnd-item.dragging { opacity: 0.45; }
+    .dnd-item.drag-over-top::before,
+    .dnd-item.drag-over-bottom::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--blue);
+      border-radius: 2px;
+      z-index: 5;
+    }
+    .dnd-item.drag-over-top::before { top: -8px; }
+    .dnd-item.drag-over-bottom::after { bottom: -8px; }
+
+    /* Subheading row in Current Work (rich text) */
+    .subheading-editor {
+      border: 1.5px solid rgba(29, 128, 222, 0.18);
+      border-radius: 10px;
+      padding: 12px 14px 12px 38px; /* left gutter for the drag handle */
+      margin-bottom: 12px;
+      margin-left: 22px;
+      background: #F8FAFF;
+    }
+    .she-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .she-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+    .she-toolbar { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
+    .she-toolbar button {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      min-width: 28px;
+      height: 26px;
+      padding: 0 8px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      color: var(--text);
+      font-family: var(--font);
+    }
+    .she-toolbar button:hover { border-color: var(--blue); color: var(--blue); }
+    .she-head button.mini {
+      background: var(--white);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+    }
+    .she-head button.mini:hover { border-color: var(--blue); color: var(--blue); }
+    .she-head button.del {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+    .she-head button.del:hover { background: #fca5a5; }
+    .she-editor {
+      min-height: 64px;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      padding: 10px 12px;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .she-editor:focus { outline: none; border-color: var(--blue); }
+    .she-editor:empty::before { content: attr(data-placeholder); color: #9CA3AF; pointer-events: none; }
+    .she-editor ul, .she-editor ol { margin: 6px 0; padding-left: 20px; }
+    .she-editor a { color: var(--blue); }
+
+    /* Feedback bell (header) */
+    .bell-wrap { position: relative; }
+    .bell-btn {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .bell-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .bell-btn.has-alerts { color: #DF6229; border-color: #F4C7AE; background: #FFF7F2; }
+    .bell-btn.has-alerts:hover { border-color: #DF6229; }
+    .bell-badge {
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      background: #E74C3C;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+      box-sizing: border-box;
+      font-family: 'Barlow', sans-serif;
+      box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4);
+    }
+    .bell-panel {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 390px;
+      max-width: calc(100vw - 40px);
+      max-height: 480px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+      z-index: 9400;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .bell-panel.open { display: flex; }
+    .bell-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .bell-clear-all {
+      font-size: 0.72rem;
+      color: #b91c1c;
+      font-weight: 700;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+    }
+    .bell-clear-all:hover { text-decoration: underline; }
+    .bell-panel-body { overflow-y: auto; padding: 4px 0 8px; }
+    .bell-empty {
+      padding: 28px 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    .fb-client { padding: 8px 16px 4px; }
+    .fb-client-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .fb-client-head .fb-num { color: var(--text-muted); font-weight: 500; font-size: 0.75rem; }
+    .fb-clear-client {
+      margin-left: auto;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Barlow', sans-serif;
+    }
+    .fb-clear-client:hover { color: #b91c1c; }
+    .fb-event {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 7px 0 7px 4px;
+      border-top: 1px dashed var(--border);
+      font-size: 0.8rem;
+    }
+    .fb-event-icon { flex-shrink: 0; margin-top: 1px; }
+    .fb-event-main { flex: 1; min-width: 0; }
+    .fb-event-label {
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .fb-event-text {
+      color: var(--text);
+      background: var(--bg-card);
+      border-radius: 6px;
+      padding: 6px 9px;
+      margin-top: 3px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .fb-event-time { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+    .fb-event-x {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .fb-event-x:hover { background: #fee2e2; color: #b91c1c; }
+
+    /* Feedback badge on client tiles */
+    .tile-fb-badge {
+      position: absolute;
+      top: 10px;
+      right: 44px;
+      background: #DF6229;
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      z-index: 2;
+      box-shadow: 0 2px 8px rgba(223, 98, 41, 0.35);
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+    }
+    .tile-fb-badge:hover { background: #C4531F; }
+
+    /* Feedback indicator inside edit-modal rows */
+    .row-fb-ind {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-right: auto;
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+    .row-fb-ind span { display: inline-flex; align-items: center; gap: 4px; }
+
     /* Website Build / Projects section */
     .wb-toggle {
       display: inline-flex;
@@ -716,6 +1010,21 @@
         <h1>Admin Dashboard</h1>
         <p>Inbound Blend — All Clients</p>
       </div>
+      <div class="bell-wrap" id="bell-wrap">
+        <button class="bell-btn" id="bell-btn" onclick="toggleBellPanel()" title="Client feedback alerts">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="bell-badge" id="bell-badge" style="display:none;">0</span>
+        </button>
+        <div class="bell-panel" id="bell-panel">
+          <div class="bell-panel-head">
+            <span>🔔 Client Feedback</span>
+            <button class="bell-clear-all" onclick="clearAllFeedback()">Clear All</button>
+          </div>
+          <div class="bell-panel-body" id="bell-panel-body">
+            <div class="bell-empty">Loading…</div>
+          </div>
+        </div>
+      </div>
       <a href="/" style="font-size:0.85rem;color:var(--blue);text-decoration:none;font-weight:600;">← Back to Home</a>
     </div>
 
@@ -826,7 +1135,9 @@
           <div class="cw-btn-row">
             <button class="edit-btn-add" onclick="addRow()">+ Add Row</button>
             <button class="edit-btn-add" onclick="addHeading()">+ Add Heading</button>
+            <button class="edit-btn-add" onclick="addSubheading()">+ Add Subheading</button>
           </div>
+          <p class="hint" style="margin-top:8px;">Tip: grab the <strong>⠿ handle</strong> on any row to drag it into a new position.</p>
         </div>
         <div class="edit-section">
           <h3>Projects</h3>
@@ -899,6 +1210,9 @@
     var clientAudience = {}; // num -> '' | 'B2C' | 'B2B' | 'Both'
     var clientInvited = {};
     var pendingInvites = {}; // client#s with an in-flight POST — skipped during poll sync
+    var clientNames = {};    // num -> display name (for the feedback bell)
+    var feedbackState = { clients: {} }; // num -> { count, events } (uncleared alerts)
+    var lastFeedbackTotal = null;
 
     Promise.all([
       fetch('/data/clients.json').then(function(r){ return r.json(); }),
@@ -914,6 +1228,7 @@
         var keys = Object.keys(clients).sort(function (a, b) {
           return clients[a].name.localeCompare(clients[b].name);
         });
+        keys.forEach(function (n) { clientNames[n] = clients[n].name; });
 
         // Stats — load service data and build filters
         var statsEl = document.getElementById('admin-stats');
@@ -1156,6 +1471,8 @@
 
         // Apply initial filter (default is 'active') now that tiles + statuses are loaded
         applyFilter();
+        // Feedback may have loaded before the tiles existed — paint badges now
+        renderBellUI();
         }); // end healthPromise.then
       });
 
@@ -1237,13 +1554,14 @@
     }
 
     function pollAdminState() {
+      if (document.hidden) return; // no polling while the tab is backgrounded
       fetch('/.netlify/functions/invites', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
         .then(applyInviteState)
         .catch(function() {});
     }
 
-    setInterval(pollAdminState, 8000);
+    setInterval(pollAdminState, 30000);
     // Also re-sync as soon as the tab regains focus — faster feedback than waiting for the next tick
     document.addEventListener('visibilitychange', function() {
       if (!document.hidden) pollAdminState();
@@ -1251,6 +1569,7 @@
 
     // ─── Edit modal (Client Content) ───────────────────────────────────────
     var editState = { client: null, name: '', status: 'active', logoMediaId: null, pills: [], currentWork: [], projects: [], meta: {} };
+    var editFeedback = { reactions: {}, commentCounts: {} }; // per-open-client feedback shown on rows
 
     function escapeHtml(s) {
       return String(s == null ? '' : s)
@@ -1281,6 +1600,23 @@
       document.getElementById('edit-modal-subtitle').textContent = '#' + num;
       document.getElementById('edit-modal').classList.add('open');
       setEditStatus('Loading…');
+
+      // Pull this client's feedback so rows can show 👍/👎 + comment counts
+      editFeedback = { reactions: {}, commentCounts: {} };
+      fetch('/.netlify/functions/feedback?client=' + encodeURIComponent(num) + '&cb=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (editState.client !== num) return; // modal moved on
+          editFeedback.reactions = (d && d.reactions) || {};
+          editFeedback.commentCounts = {};
+          ((d && d.events) || []).forEach(function(e) {
+            if (e.kind === 'comment') {
+              editFeedback.commentCounts[e.itemId] = (editFeedback.commentCounts[e.itemId] || 0) + 1;
+            }
+          });
+          renderEditModal();
+        })
+        .catch(function() {});
 
       fetch('/.netlify/functions/client-content?client=' + encodeURIComponent(num) + '&cb=' + Date.now())
         .then(function(r) { return r.json(); })
@@ -1360,15 +1696,38 @@
       }).join('');
       document.getElementById('edit-pills-list').innerHTML = pillsHtml;
 
-      // Current Work (content rows + heading rows)
+      // Current Work (content rows + heading/subheading rows)
+      var dragHandle = '<span class="drag-handle" title="Drag to reorder">' +
+        '<svg width="12" height="18" viewBox="0 0 10 16" fill="currentColor"><circle cx="2.5" cy="2" r="1.6"/><circle cx="7.5" cy="2" r="1.6"/><circle cx="2.5" cy="8" r="1.6"/><circle cx="7.5" cy="8" r="1.6"/><circle cx="2.5" cy="14" r="1.6"/><circle cx="7.5" cy="14" r="1.6"/></svg>' +
+        '</span>';
       var rowsHtml = editState.currentWork.map(function(row, i) {
         if (row.type === 'heading') {
-          return '<div class="heading-editor">' +
+          return '<div class="heading-editor dnd-item" data-idx="' + i + '">' + dragHandle +
             '<input type="text" value="' + escapeHtml(row.label) + '" placeholder="Heading label" ' +
             'oninput="editState.currentWork[' + i + '].label = this.value">' +
             '<button onclick="moveRow(' + i + ', -1)" title="Move up" style="background:var(--white);color:var(--text);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;">&uarr;</button>' +
             '<button onclick="moveRow(' + i + ', 1)" title="Move down" style="background:var(--white);color:var(--text);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;">&darr;</button>' +
             '<button onclick="removeRow(' + i + ')" title="Delete">&times;</button>' +
+            '</div>';
+        }
+        if (row.type === 'subheading') {
+          return '<div class="subheading-editor dnd-item" data-idx="' + i + '">' + dragHandle +
+            '<div class="she-head">' +
+              '<span class="she-tag">Subheading</span>' +
+              '<div class="she-toolbar">' +
+                '<button onmousedown="event.preventDefault()" onclick="shCmd(\'bold\',' + i + ')" title="Bold"><b>B</b></button>' +
+                '<button onmousedown="event.preventDefault()" onclick="shCmd(\'italic\',' + i + ')" title="Italic"><i>I</i></button>' +
+                '<button onmousedown="event.preventDefault()" onclick="shCmd(\'underline\',' + i + ')" title="Underline"><u>U</u></button>' +
+                '<button onmousedown="event.preventDefault()" onclick="shCmd(\'insertUnorderedList\',' + i + ')" title="Bullet list">&bull; List</button>' +
+                '<button onmousedown="event.preventDefault()" onclick="shCmd(\'createLink\',' + i + ')" title="Add link">Link</button>' +
+                '<button onmousedown="event.preventDefault()" onclick="shCmd(\'removeFormat\',' + i + ')" title="Clear formatting">Clear</button>' +
+              '</div>' +
+              '<button class="mini" onclick="moveRow(' + i + ', -1)" title="Move up">&uarr;</button>' +
+              '<button class="mini" onclick="moveRow(' + i + ', 1)" title="Move down">&darr;</button>' +
+              '<button class="del" onclick="removeRow(' + i + ')" title="Delete">&times;</button>' +
+            '</div>' +
+            '<div class="she-editor" contenteditable="true" data-idx="' + i + '" data-placeholder="Add supporting details — bold, lists, links…" ' +
+            'oninput="editState.currentWork[' + i + '].html = this.innerHTML">' + (row.html || '') + '</div>' +
             '</div>';
         }
         var mediaInner;
@@ -1381,7 +1740,7 @@
         } else {
           mediaInner = '<span class="upload-hint">Click to upload<br>image or video</span>';
         }
-        return '<div class="row-editor">' +
+        return '<div class="row-editor dnd-item" data-idx="' + i + '">' + dragHandle +
           '<label class="row-media">' +
             mediaInner +
             '<input type="file" accept="image/*,video/*" onchange="uploadRowMedia(' + i + ', this.files[0])">' +
@@ -1392,6 +1751,7 @@
             '<input type="text" placeholder="Button label (e.g. View Landing Page)" value="' + escapeHtml(row.linkLabel) + '" oninput="editState.currentWork[' + i + '].linkLabel = this.value">' +
           '</div>' +
           '<div class="row-actions">' +
+            rowFbIndicator(row) +
             '<button onclick="moveRow(' + i + ', -1)" title="Move up">&uarr;</button>' +
             '<button onclick="moveRow(' + i + ', 1)" title="Move down">&darr;</button>' +
             '<button class="del-btn" onclick="removeRow(' + i + ')">Delete</button>' +
@@ -1439,6 +1799,31 @@
       var inputs = document.querySelectorAll('.heading-editor input');
       if (inputs.length) inputs[inputs.length - 1].focus();
     }
+    function addSubheading() {
+      editState.currentWork.push({
+        type: 'subheading',
+        id: 'sh-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+        html: ''
+      });
+      renderEditModal();
+      var eds = document.querySelectorAll('.she-editor');
+      if (eds.length) eds[eds.length - 1].focus();
+    }
+    // WYSIWYG toolbar for subheading editors
+    function shCmd(cmd, i) {
+      var ed = document.querySelector('.she-editor[data-idx="' + i + '"]');
+      if (!ed) return;
+      ed.focus();
+      if (cmd === 'createLink') {
+        var u = prompt('Link URL (https://…)');
+        if (!u) return;
+        if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+        document.execCommand('createLink', false, u);
+      } else {
+        document.execCommand(cmd, false, null);
+      }
+      editState.currentWork[i].html = ed.innerHTML;
+    }
     function removeRow(i) {
       if (!confirm('Delete this row?')) return;
       editState.currentWork.splice(i, 1);
@@ -1452,6 +1837,84 @@
       editState.currentWork[j] = tmp;
       renderEditModal();
     }
+
+    // Client feedback shown next to a row's actions in the edit modal
+    function rowFbIndicator(row) {
+      var html = '';
+      var r = editFeedback.reactions[row.id];
+      if (r && r.vote === 'up') {
+        html += '<span style="color:#27AE60;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h2V10H2v10zm20-9a2 2 0 0 0-2-2h-6.31l.95-4.57.03-.32a1.5 1.5 0 0 0-.44-1.06L13.17 2 7.59 7.59C7.22 7.95 7 8.45 7 9v10a2 2 0 0 0 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg> Client liked</span>';
+      } else if (r && r.vote === 'down') {
+        html += '<span style="color:#E74C3C;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 4h-2v10h2V4zM2 13a2 2 0 0 0 2 2h6.31l-.95 4.57-.03.32c0 .4.17.77.44 1.06L10.83 22l5.58-5.59c.37-.36.59-.86.59-1.41V5a2 2 0 0 0-2-2H6c-.83 0-1.54.5-1.84 1.22L1.14 11.27c-.09.23-.14.47-.14.73v2z"/></svg> Client disliked</span>';
+      }
+      var cc = editFeedback.commentCounts[row.id] || 0;
+      if (cc) html += '<span style="color:#DF6229;">💬 ' + cc + ' comment' + (cc > 1 ? 's' : '') + '</span>';
+      return html ? '<span class="row-fb-ind">' + html + '</span>' : '';
+    }
+
+    // ─── Drag & drop reordering (Current Work rows) ────────────────────
+    var dragIdx = null;
+    function clearDragMarkers() {
+      document.querySelectorAll('#edit-rows-list .drag-over-top, #edit-rows-list .drag-over-bottom')
+        .forEach(function(el) { el.classList.remove('drag-over-top', 'drag-over-bottom'); });
+    }
+    (function initRowsDnD() {
+      var list = document.getElementById('edit-rows-list');
+      if (!list) return;
+      // Rows only become draggable while the handle is pressed, so text
+      // selection in the inputs keeps working.
+      list.addEventListener('mousedown', function(e) {
+        var h = e.target.closest('.drag-handle');
+        if (!h) return;
+        var item = h.closest('.dnd-item');
+        if (item) item.setAttribute('draggable', 'true');
+      });
+      list.addEventListener('dragstart', function(e) {
+        var item = e.target.closest('.dnd-item');
+        if (!item || item.getAttribute('draggable') !== 'true') { e.preventDefault(); return; }
+        dragIdx = parseInt(item.getAttribute('data-idx'), 10);
+        item.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', String(dragIdx)); } catch (err) {}
+      });
+      list.addEventListener('dragover', function(e) {
+        if (dragIdx === null) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        clearDragMarkers();
+        var item = e.target.closest('.dnd-item');
+        if (!item || parseInt(item.getAttribute('data-idx'), 10) === dragIdx) return;
+        var rect = item.getBoundingClientRect();
+        var before = (e.clientY - rect.top) < rect.height / 2;
+        item.classList.add(before ? 'drag-over-top' : 'drag-over-bottom');
+      });
+      list.addEventListener('drop', function(e) {
+        if (dragIdx === null) return;
+        e.preventDefault();
+        var from = dragIdx;
+        dragIdx = null;
+        clearDragMarkers();
+        var item = e.target.closest('.dnd-item');
+        if (!item) { renderEditModal(); return; }
+        var to = parseInt(item.getAttribute('data-idx'), 10);
+        var rect = item.getBoundingClientRect();
+        var before = (e.clientY - rect.top) < rect.height / 2;
+        var target = to + (before ? 0 : 1);
+        if (from < target) target--;
+        if (target === from) { renderEditModal(); return; }
+        var moved = editState.currentWork.splice(from, 1)[0];
+        editState.currentWork.splice(target, 0, moved);
+        renderEditModal();
+      });
+      list.addEventListener('dragend', function() {
+        dragIdx = null;
+        clearDragMarkers();
+        list.querySelectorAll('.dnd-item').forEach(function(el) {
+          el.classList.remove('dragging');
+          el.removeAttribute('draggable');
+        });
+      });
+    })();
 
     function uploadRowMedia(i, file) {
       if (!file) return;
@@ -1526,6 +1989,7 @@
 
     // ─── Live status polling (every 30s for other sessions' changes) ───
     function pollClientStatuses() {
+      if (document.hidden) return; // no polling while the tab is backgrounded
       fetch('/.netlify/functions/meta-index', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
         .then(function(idx) {
@@ -1555,7 +2019,7 @@
         })
         .catch(function() {});
     }
-    setInterval(pollClientStatuses, 30000);
+    setInterval(pollClientStatuses, 60000);
     document.addEventListener('visibilitychange', function() {
       if (!document.hidden) pollClientStatuses();
     });
@@ -1563,6 +2027,7 @@
     function closeEditModal() {
       document.getElementById('edit-modal').classList.remove('open');
       editState = { client: null, name: '', status: 'active', logoMediaId: null, pills: [], currentWork: [], projects: [], meta: {} };
+      editFeedback = { reactions: {}, commentCounts: {} };
       setEditStatus('');
     }
 
@@ -1798,8 +2263,14 @@
     window.removePill = removePill;
     window.addRow = addRow;
     window.addHeading = addHeading;
+    window.addSubheading = addSubheading;
+    window.shCmd = shCmd;
     window.removeRow = removeRow;
     window.moveRow = moveRow;
+    window.toggleBellPanel = toggleBellPanel;
+    window.clearFeedbackEvent = clearFeedbackEvent;
+    window.clearClientFeedback = clearClientFeedback;
+    window.clearAllFeedback = clearAllFeedback;
     window.uploadRowMedia = uploadRowMedia;
     window.uploadLogo = uploadLogo;
     window.removeLogo = removeLogo;
@@ -1816,6 +2287,175 @@
     window.submitNewClient = submitNewClient;
     window.toggleStatusFilter = toggleStatusFilter;
     window.renderProjects = renderProjects;
+
+    // ─── Client feedback bell ─────────────────────────────────────────
+    function feedbackTotal() {
+      var t = 0;
+      Object.keys(feedbackState.clients).forEach(function(n) {
+        t += (feedbackState.clients[n].events || []).length;
+      });
+      return t;
+    }
+
+    function timeAgo(iso) {
+      var d = new Date(iso).getTime();
+      if (!d) return '';
+      var s = Math.floor((Date.now() - d) / 1000);
+      if (s < 60) return 'just now';
+      var m = Math.floor(s / 60);
+      if (m < 60) return m + 'm ago';
+      var h = Math.floor(m / 60);
+      if (h < 24) return h + 'h ago';
+      var days = Math.floor(h / 24);
+      if (days < 7) return days + 'd ago';
+      return new Date(iso).toLocaleDateString();
+    }
+
+    function loadFeedback(force) {
+      if (document.hidden && !force) return; // no polling while the tab is backgrounded
+      fetch('/.netlify/functions/feedback?admin=1&cb=' + Date.now(), { cache: 'no-store' })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          feedbackState.clients = (d && d.clients) || {};
+          var total = feedbackTotal();
+          if (lastFeedbackTotal !== null && total > lastFeedbackTotal) {
+            showToast('🔔 New client feedback received');
+          }
+          lastFeedbackTotal = total;
+          renderBellUI();
+        })
+        .catch(function() {});
+    }
+
+    function renderBellUI() {
+      var total = feedbackTotal();
+      var badge = document.getElementById('bell-badge');
+      var btn = document.getElementById('bell-btn');
+      if (badge) {
+        badge.textContent = total > 99 ? '99+' : String(total);
+        badge.style.display = total > 0 ? 'flex' : 'none';
+      }
+      if (btn) btn.classList.toggle('has-alerts', total > 0);
+      renderBellPanel();
+      renderTileFeedbackBadges();
+    }
+
+    function latestEventAt(num) {
+      var evs = feedbackState.clients[num].events || [];
+      var latest = '';
+      evs.forEach(function(e) { if ((e.at || '') > latest) latest = e.at || ''; });
+      return latest;
+    }
+
+    function renderBellPanel() {
+      var body = document.getElementById('bell-panel-body');
+      if (!body) return;
+      var nums = Object.keys(feedbackState.clients).filter(function(n) {
+        return (feedbackState.clients[n].events || []).length > 0;
+      });
+      if (nums.length === 0) {
+        body.innerHTML = '<div class="bell-empty">No client feedback right now.<br>👍 👎 votes and 💬 comments from client dashboards will show up here.</div>';
+        return;
+      }
+      nums.sort(function(a, b) { return latestEventAt(b).localeCompare(latestEventAt(a)); });
+      body.innerHTML = nums.map(function(num) {
+        var evs = (feedbackState.clients[num].events || []).slice().sort(function(a, b) {
+          return (b.at || '').localeCompare(a.at || '');
+        });
+        var name = clientNames[num] || ('Client ' + num);
+        return '<div class="fb-client">' +
+          '<div class="fb-client-head">' + escapeHtml(name) + ' <span class="fb-num">#' + num + '</span>' +
+          '<button class="fb-clear-client" onclick="clearClientFeedback(\'' + num + '\')">Clear all</button></div>' +
+          evs.map(function(e) {
+            var icon = e.kind === 'comment' ? '💬' : (e.vote === 'up' ? '👍' : '👎');
+            return '<div class="fb-event">' +
+              '<span class="fb-event-icon">' + icon + '</span>' +
+              '<div class="fb-event-main">' +
+                '<div class="fb-event-label">' + escapeHtml(e.itemLabel || 'Dashboard item') + '</div>' +
+                (e.kind === 'comment' && e.text ? '<div class="fb-event-text">' + escapeHtml(e.text) + '</div>' : '') +
+                '<div class="fb-event-time">' + timeAgo(e.at) + '</div>' +
+              '</div>' +
+              '<button class="fb-event-x" title="Clear this alert" onclick="clearFeedbackEvent(\'' + num + '\', \'' + escapeHtml(e.id) + '\')">&times;</button>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      }).join('');
+    }
+
+    function renderTileFeedbackBadges() {
+      document.querySelectorAll('.client-tile').forEach(function(tile) {
+        var num = tile.getAttribute('data-num');
+        var badge = tile.querySelector('.tile-fb-badge');
+        var count = feedbackState.clients[num] ? (feedbackState.clients[num].events || []).length : 0;
+        if (count > 0) {
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'tile-fb-badge';
+            badge.title = 'Client feedback — click to review';
+            badge.setAttribute('onclick', 'event.preventDefault();event.stopPropagation();openEditModalFromTile(this)');
+            tile.appendChild(badge);
+          }
+          badge.innerHTML = '🔔 ' + count;
+        } else if (badge) {
+          badge.remove();
+        }
+      });
+    }
+
+    function toggleBellPanel() {
+      var p = document.getElementById('bell-panel');
+      if (p) p.classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      var p = document.getElementById('bell-panel');
+      if (p && p.classList.contains('open') && !e.target.closest('#bell-wrap')) {
+        p.classList.remove('open');
+      }
+    });
+
+    function clearFeedbackEvent(num, evId) {
+      var c = feedbackState.clients[num];
+      if (c) {
+        c.events = (c.events || []).filter(function(e) { return e.id !== evId; });
+        if (c.events.length === 0) delete feedbackState.clients[num];
+      }
+      lastFeedbackTotal = feedbackTotal();
+      renderBellUI();
+      fetch('/.netlify/functions/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'clear', client: num, eventId: evId })
+      }).catch(function() {});
+    }
+
+    function clearClientFeedback(num) {
+      delete feedbackState.clients[num];
+      lastFeedbackTotal = feedbackTotal();
+      renderBellUI();
+      fetch('/.netlify/functions/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'clearClient', client: num })
+      }).catch(function() {});
+    }
+
+    function clearAllFeedback() {
+      if (!confirm('Clear all client feedback alerts?')) return;
+      feedbackState.clients = {};
+      lastFeedbackTotal = 0;
+      renderBellUI();
+      fetch('/.netlify/functions/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'clearAll' })
+      }).catch(function() {});
+    }
+
+    loadFeedback(true);
+    setInterval(function() { loadFeedback(); }, 30000);
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) loadFeedback();
+    });
 
     function dismissHealth(num, checkbox) {
       // Hide immediately
