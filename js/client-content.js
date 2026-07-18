@@ -128,6 +128,8 @@
       '.csat-followup textarea{width:100%;box-sizing:border-box;min-height:70px;padding:9px 11px;border:1.5px solid #E5E7EB;border-radius:8px;font-family:var(--font,Barlow,sans-serif);font-size:0.85rem;resize:vertical;color:var(--text,#1A1A2E);}',
       '.csat-followup textarea:focus{outline:none;border-color:var(--blue,#1D80DE);}',
       '@media (max-width:640px){.csat-stars{margin-left:0;}}',
+      '.csat-section.csat-pulse{animation:csat-glow 1.5s ease 2;}',
+      '@keyframes csat-glow{0%,100%{box-shadow:0 0 0 0 rgba(245,179,1,0);}50%{box-shadow:0 0 0 6px rgba(245,179,1,0.35);}}',
 
       /* Website Build / Project tracker section */
       '.website-build-section{position:relative;margin-top:32px;padding:26px 24px 24px;background:linear-gradient(140deg,#fbfcfe 0%,#eff6ff 60%,#fff7ed 100%);border-radius:16px;border:1px solid rgba(29,128,222,0.14);overflow:hidden;}',
@@ -673,6 +675,29 @@
     return section;
   }
 
+  // Header button that scrolls to (and briefly highlights) the rating card
+  function applyRatingButton() {
+    var headerStack = document.querySelector('.dashboard-header > div[style*="position:absolute"]');
+    if (!headerStack) return;
+    if (headerStack.querySelector('[data-csat-btn]')) return;
+    if (!document.querySelector('.csat-section')) return; // card not on this page
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.setAttribute('data-csat-btn', '1');
+    btn.style.cssText = 'background:#fff;color:#1A1A2E;padding:12px 22px;border-radius:10px;font-size:1rem;font-weight:600;font-family:Barlow,sans-serif;display:inline-flex;align-items:center;gap:10px;width:100%;justify-content:center;box-sizing:border-box;border:2px solid #F5B301;cursor:pointer;';
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#F5B301"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg> How Are We Doing?';
+    btn.addEventListener('click', function () {
+      var card = document.querySelector('.csat-section');
+      if (!card) return;
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.remove('csat-pulse');
+      void card.offsetWidth; // restart the animation on repeat clicks
+      card.classList.add('csat-pulse');
+      setTimeout(function () { card.classList.remove('csat-pulse'); }, 3200);
+    });
+    headerStack.appendChild(btn);
+  }
+
   function buildContentCard(row, lightboxContext) {
     var card = document.createElement('div');
     card.className = 'cw-card';
@@ -990,6 +1015,7 @@
         var ratingNode = buildRatingNode(fb && fb.rating);
         if (!data) {
           insertSections([ratingNode]);
+          applyRatingButton();
           return;
         }
         applyPillsOverride(data.pills);
@@ -1001,6 +1027,7 @@
         var projectNodes = buildProjectNodes(data);
         var currentWorkNode = buildCurrentWorkNode(data.currentWork);
         insertSections(projectNodes.concat([currentWorkNode, ratingNode]));
+        applyRatingButton(); // after the card exists in the DOM
       })
       .catch(function () {});
   }
