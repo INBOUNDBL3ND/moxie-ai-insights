@@ -98,6 +98,37 @@
       '.cw-fb-send:disabled{opacity:.6;cursor:default;}',
       '.cw-fb-status{font-size:0.78rem;color:#27AE60;font-weight:600;font-family:var(--font,Barlow,sans-serif);}',
 
+      /* Message Meg modal */
+      '.mm-modal{position:fixed;inset:0;z-index:100001;background:rgba(10,20,40,0.55);display:none;align-items:center;justify-content:center;padding:20px;}',
+      '.mm-modal.open{display:flex;}',
+      '.mm-box{background:#fff;border-radius:14px;max-width:460px;width:100%;padding:22px 24px;box-shadow:0 30px 80px rgba(0,0,0,0.25);font-family:var(--font,Barlow,sans-serif);}',
+      '.mm-box h3{margin:0 0 4px;font-family:"Barlow Condensed",sans-serif;font-size:1.35rem;color:var(--text,#1A1A2E);}',
+      '.mm-box p{margin:0 0 12px;font-size:0.85rem;color:#6B7280;}',
+      '.mm-box textarea{width:100%;box-sizing:border-box;min-height:110px;padding:10px 12px;border:1.5px solid #E5E7EB;border-radius:8px;font-family:inherit;font-size:0.9rem;resize:vertical;color:var(--text,#1A1A2E);}',
+      '.mm-box textarea:focus{outline:none;border-color:var(--blue,#1D80DE);}',
+      '.mm-row{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;}',
+      '.mm-cancel{background:#fff;border:1.5px solid #E5E7EB;border-radius:8px;padding:9px 16px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text,#1A1A2E);}',
+      '.mm-send{background:#DF6229;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer;font-family:inherit;}',
+      '.mm-send:hover{background:#C4531F;}',
+      '.mm-send:disabled{opacity:.6;cursor:default;}',
+      '.mm-status{font-size:0.78rem;font-weight:600;color:#27AE60;}',
+
+      /* Satisfaction rating card */
+      '.csat-section{margin-top:32px;background:linear-gradient(135deg,#F8FAFF 0%,#FFF7F2 100%);border:1px solid rgba(29,128,222,0.15);border-radius:14px;padding:22px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}',
+      '.csat-text h3{margin:0 0 3px;font-family:"Barlow Condensed",sans-serif;font-size:1.3rem;color:var(--text,#1A1A2E);text-transform:uppercase;letter-spacing:0.5px;}',
+      '.csat-text p{margin:0;font-size:0.85rem;color:#6B7280;font-family:var(--font,Barlow,sans-serif);}',
+      '.csat-stars{display:flex;gap:6px;margin-left:auto;}',
+      '.csat-star{background:none;border:none;cursor:pointer;padding:2px;color:#D1D5DB;transition:transform .12s,color .12s;line-height:0;}',
+      '.csat-star:hover{transform:scale(1.18);}',
+      '.csat-star.lit{color:#F5B301;}',
+      '.csat-thanks{flex-basis:100%;display:none;font-size:0.85rem;font-weight:700;color:#27AE60;font-family:var(--font,Barlow,sans-serif);}',
+      '.csat-thanks.show{display:block;}',
+      '.csat-followup{flex-basis:100%;display:none;flex-direction:column;gap:8px;}',
+      '.csat-followup.open{display:flex;}',
+      '.csat-followup textarea{width:100%;box-sizing:border-box;min-height:70px;padding:9px 11px;border:1.5px solid #E5E7EB;border-radius:8px;font-family:var(--font,Barlow,sans-serif);font-size:0.85rem;resize:vertical;color:var(--text,#1A1A2E);}',
+      '.csat-followup textarea:focus{outline:none;border-color:var(--blue,#1D80DE);}',
+      '@media (max-width:640px){.csat-stars{margin-left:0;}}',
+
       /* Website Build / Project tracker section */
       '.website-build-section{position:relative;margin-top:32px;padding:26px 24px 24px;background:linear-gradient(140deg,#fbfcfe 0%,#eff6ff 60%,#fff7ed 100%);border-radius:16px;border:1px solid rgba(29,128,222,0.14);overflow:hidden;}',
       '.website-build-section::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#27AE60 0%,#1D80DE 50%,#DF6229 100%);}',
@@ -472,6 +503,176 @@
     return { bar: bar, form: form };
   }
 
+  // ─────────────────── Message Meg (header button + modal) ───────────────────
+  var mmModal = null;
+
+  function closeMessageMeg() {
+    if (!mmModal) return;
+    mmModal.classList.remove('open');
+    var st = mmModal.querySelector('.mm-status');
+    if (st) st.textContent = '';
+  }
+
+  function openMessageMeg() {
+    if (!mmModal) {
+      mmModal = document.createElement('div');
+      mmModal.className = 'mm-modal';
+      mmModal.innerHTML =
+        '<div class="mm-box">' +
+          '<h3>' + FB_CHAT_SVG + ' Message Meg</h3>' +
+          '<p>Send a quick note to the team — it goes straight to us and we’ll follow up.</p>' +
+          '<textarea placeholder="What can we help with?"></textarea>' +
+          '<div class="mm-row">' +
+            '<button type="button" class="mm-cancel">Cancel</button>' +
+            '<button type="button" class="mm-send">Send Message</button>' +
+            '<span class="mm-status"></span>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(mmModal);
+      mmModal.addEventListener('click', function (e) {
+        if (e.target === mmModal) closeMessageMeg();
+      });
+      mmModal.querySelector('.mm-cancel').addEventListener('click', closeMessageMeg);
+      var sendBtn = mmModal.querySelector('.mm-send');
+      sendBtn.addEventListener('click', function () {
+        var ta = mmModal.querySelector('textarea');
+        var status = mmModal.querySelector('.mm-status');
+        var text = ta.value.replace(/^\s+|\s+$/g, '');
+        if (!text) { ta.focus(); return; }
+        sendBtn.disabled = true;
+        status.style.color = '';
+        status.textContent = 'Sending…';
+        postFeedback({ action: 'message', text: text })
+          .then(function (r) { if (!r.ok) throw new Error('send failed'); })
+          .then(function () {
+            sendBtn.disabled = false;
+            ta.value = '';
+            status.textContent = 'Sent! Meg will follow up soon ✓';
+            setTimeout(closeMessageMeg, 2000);
+          })
+          .catch(function () {
+            sendBtn.disabled = false;
+            status.style.color = '#E74C3C';
+            status.textContent = 'Could not send — please try again';
+          });
+      });
+    }
+    mmModal.classList.add('open');
+    mmModal.querySelector('textarea').focus();
+  }
+
+  // Injects a "Message Meg" button into the dashboard header button stack
+  // (same stack as Meet w/ Meg / Dropbox — dashboard index pages only).
+  function applyMessageMegButton() {
+    var headerStack = document.querySelector('.dashboard-header > div[style*="position:absolute"]');
+    if (!headerStack) return;
+    if (headerStack.querySelector('[data-message-meg]')) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.setAttribute('data-message-meg', '1');
+    btn.style.cssText = 'background:#fff;color:#DF6229;padding:12px 22px;border-radius:10px;font-size:1rem;font-weight:600;font-family:Barlow,sans-serif;display:inline-flex;align-items:center;gap:10px;width:100%;justify-content:center;box-sizing:border-box;border:2px solid #DF6229;cursor:pointer;';
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> Message Meg';
+    btn.addEventListener('click', openMessageMeg);
+    headerStack.appendChild(btn);
+  }
+
+  // ─────────────────── Satisfaction rating ("How are we doing?") ───────────────────
+  var CSAT_STAR_SVG = '<svg width="27" height="27" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+
+  function buildRatingNode(rating) {
+    // Dashboard index only — monthly reports stay clean
+    if (!document.querySelector('.reports-grid')) return null;
+    var selected = (rating && rating.stars) || 0;
+
+    var section = document.createElement('div');
+    section.className = 'csat-section';
+
+    var textDiv = document.createElement('div');
+    textDiv.className = 'csat-text';
+    textDiv.innerHTML = '<h3>How Are We Doing?</h3><p>Tap a star to rate your experience with our team — it goes straight to us.</p>';
+    section.appendChild(textDiv);
+
+    var starsWrap = document.createElement('div');
+    starsWrap.className = 'csat-stars';
+    var starBtns = [];
+
+    var thanks = document.createElement('div');
+    thanks.className = 'csat-thanks';
+
+    var followup = document.createElement('div');
+    followup.className = 'csat-followup';
+    var fuTa = document.createElement('textarea');
+    var fuRow = document.createElement('div');
+    fuRow.className = 'cw-fb-form-row';
+    var fuSend = document.createElement('button');
+    fuSend.type = 'button';
+    fuSend.className = 'cw-fb-send';
+    fuSend.textContent = 'Send';
+    var fuStatus = document.createElement('span');
+    fuStatus.className = 'cw-fb-status';
+    fuRow.appendChild(fuSend);
+    fuRow.appendChild(fuStatus);
+    followup.appendChild(fuTa);
+    followup.appendChild(fuRow);
+
+    function paint(n) {
+      for (var i = 0; i < 5; i++) starBtns[i].classList.toggle('lit', i < n);
+    }
+
+    for (var i = 0; i < 5; i++) {
+      (function (idx) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'csat-star';
+        b.title = (idx + 1) + ' out of 5';
+        b.innerHTML = CSAT_STAR_SVG;
+        b.addEventListener('mouseenter', function () { paint(idx + 1); });
+        b.addEventListener('click', function () {
+          selected = idx + 1;
+          paint(selected);
+          thanks.textContent = 'Thanks — your rating has been shared with the team ✓';
+          thanks.classList.add('show');
+          fuTa.placeholder = selected <= 3
+            ? 'Sorry we’re not hitting the mark — what could we do better?'
+            : 'Anything you’d like us to know? (optional)';
+          followup.classList.add('open');
+          fuStatus.textContent = '';
+          postFeedback({ action: 'rating', stars: selected }).catch(function () {});
+        });
+        starBtns.push(b);
+        starsWrap.appendChild(b);
+      })(i);
+    }
+    starsWrap.addEventListener('mouseleave', function () { paint(selected); });
+    paint(selected);
+
+    fuSend.addEventListener('click', function () {
+      var text = fuTa.value.replace(/^\s+|\s+$/g, '');
+      if (!text) { fuTa.focus(); return; }
+      fuSend.disabled = true;
+      fuStatus.style.color = '';
+      fuStatus.textContent = 'Sending…';
+      postFeedback({ action: 'rating', stars: selected, text: text })
+        .then(function (r) { if (!r.ok) throw new Error('send failed'); })
+        .then(function () {
+          fuSend.disabled = false;
+          fuTa.value = '';
+          fuStatus.textContent = 'Sent — thank you! ✓';
+          setTimeout(function () { followup.classList.remove('open'); }, 2500);
+        })
+        .catch(function () {
+          fuSend.disabled = false;
+          fuStatus.style.color = '#E74C3C';
+          fuStatus.textContent = 'Could not send — please try again';
+        });
+    });
+
+    section.appendChild(starsWrap);
+    section.appendChild(thanks);
+    section.appendChild(followup);
+    return section;
+  }
+
   function buildContentCard(row, lightboxContext) {
     var card = document.createElement('div');
     card.className = 'cw-card';
@@ -784,16 +985,22 @@
         if (fb && fb.reactions && typeof fb.reactions === 'object') {
           feedbackReactions = fb.reactions;
         }
-        if (!data) return;
+        // These render even when there's no admin-saved content yet
+        applyMessageMegButton();
+        var ratingNode = buildRatingNode(fb && fb.rating);
+        if (!data) {
+          insertSections([ratingNode]);
+          return;
+        }
         applyPillsOverride(data.pills);
         applyClientLogo(data.logoMediaId);
         var meta = data.meta || {};
         applyDropboxButton(meta.dropboxLink);
         applyPlatformBreakdownToggle(meta.hidePlatformBreakdown);
-        // Order: Project trackers (if any), then Current Work
+        // Order: Project trackers (if any), then Current Work, then the rating card
         var projectNodes = buildProjectNodes(data);
         var currentWorkNode = buildCurrentWorkNode(data.currentWork);
-        insertSections(projectNodes.concat([currentWorkNode]));
+        insertSections(projectNodes.concat([currentWorkNode, ratingNode]));
       })
       .catch(function () {});
   }

@@ -4,16 +4,21 @@
 // Per-client key (client number) schema:
 //   {
 //     reactions: { [itemId]: { vote: "up"|"down", at, label } },  // current state
-//     events:    [ { id, kind: "vote"|"comment", itemId, itemLabel,
-//                    vote?, text?, at } ]                          // uncleared alerts
+//     rating:    { stars: 1-5, at } | null,                        // current satisfaction
+//     events:    [ { id, kind: "vote"|"comment"|"message"|"rating",
+//                    itemId, itemLabel, vote?, stars?, text?, at } ] // uncleared alerts
 //   }
 // Index key "_index": { [client]: unclearedEventCount } — lets the admin
 // bell poll without listing every blob.
+// Index key "_ratings": { [client]: { stars, at } } — persistent satisfaction
+// per client for the admin tiles (survives alert clearing).
 //
-// GET  ?client=NNNNNN   → { reactions, events }        (public — dashboards)
-// GET  ?admin=1         → { clients: { num: { count, events } } }
+// GET  ?client=NNNNNN   → { reactions, rating, events } (public — dashboards)
+// GET  ?admin=1         → { clients: { num: { count, events } }, ratings }
 // POST ?client=NNNNNN   → { action:"vote", itemId, itemLabel, vote:"up"|"down"|null }
 //                       → { action:"comment", itemId, itemLabel, text }
+//                       → { action:"message", text }              // Message Meg
+//                       → { action:"rating", stars, text? }       // How are we doing?
 // POST                  → { action:"clear", client, eventId }
 //                       → { action:"clearClient", client }
 //                       → { action:"clearAll" }
@@ -22,6 +27,7 @@ import { getStore } from "@netlify/blobs";
 
 const STORE_NAME = "client-feedback";
 const INDEX_KEY = "_index";
+const RATINGS_KEY = "_ratings";
 const MAX_EVENTS = 200;
 
 const corsHeaders = {
@@ -36,7 +42,7 @@ function store() {
 }
 
 function emptyFeedback() {
-  return { reactions: {}, events: [] };
+  return { reactions: {}, rating: null, events: [] };
 }
 
 function newEventId() {
@@ -47,6 +53,7 @@ async function readClient(s, client) {
   const raw = (await s.get(client, { type: "json" })) || null;
   if (!raw || typeof raw !== "object") return emptyFeedback();
   if (!raw.reactions || typeof raw.reactions !== "object") raw.reactions = {};
+  if (!raw.rating || typeof raw.rating !== "object" || !raw.rating.stars) raw.rating = null;
   if (!Array.isArray(raw.events)) raw.events = [];
   return raw;
 }
@@ -92,7 +99,11 @@ export default async (req) => {
           } catch (_) {}
         })
       );
-      return Response.json({ clients }, { headers: corsHeaders });
+      let ratings = {};
+      try {
+        ratings = (await s.get(RATINGS_KEY, { type: "json" })) || {};
+      } catch (_) {}
+      return Response.json({ clients, ratings }, { headers: corsHeaders });
     }
 
     const client = url.searchParams.get("client");
@@ -149,10 +160,36 @@ export default async (req) => {
     }
     const itemId = String(body.itemId || "").slice(0, 120);
     const itemLabel = String(body.itemLabel || "").slice(0, 300);
-    if (!itemId) return badRequest("Missing itemId");
 
     const d = await readClient(s, client);
     const now = new Date().toISOString();
+
+    if (action === "message") {
+      const text = String(body.text || "").trim().slice(0, 2000);
+      if (!text) return badRequest("Empty message");
+      d.events.push({ id: newEventId(), kind: "message", itemId: "", itemLabel: "Message for Meg", text, at: now });
+      await writeClient(s, client, d);
+      return Response.json({ ok: true }, { headers: corsHeaders });
+    }
+
+    if (action === "rating") {
+      const stars = parseInt(body.stars, 10);
+      if (!(stars >= 1 && stars <= 5)) return badRequest("Invalid stars");
+      const text = String(body.text || "").trim().slice(0, 2000);
+      d.rating = { stars, at: now };
+      // A new rating replaces any previous uncleared rating alert
+      d.events = d.events.filter((e) => e.kind !== "rating");
+      d.events.push({ id: newEventId(), kind: "rating", itemId: "", itemLabel: "Satisfaction rating", stars, text, at: now });
+      await writeClient(s, client, d);
+      try {
+        const ratings = (await s.get(RATINGS_KEY, { type: "json" })) || {};
+        ratings[client] = { stars, at: now };
+        await s.setJSON(RATINGS_KEY, ratings);
+      } catch (_) {}
+      return Response.json({ ok: true }, { headers: corsHeaders });
+    }
+
+    if (!itemId) return badRequest("Missing itemId");
 
     if (action === "vote") {
       const vote = body.vote === "up" || body.vote === "down" ? body.vote : null;

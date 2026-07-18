@@ -661,6 +661,16 @@
       margin-bottom: 4px;
     }
     .fb-client-head .fb-num { color: var(--text-muted); font-weight: 500; font-size: 0.75rem; }
+    .fb-client-link {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .fb-client-link:hover { color: var(--blue); }
+    .fb-client-link .fb-open-arrow { font-size: 0.7rem; color: var(--blue); }
     .fb-clear-client {
       margin-left: auto;
       font-size: 0.7rem;
@@ -700,6 +710,26 @@
       word-break: break-word;
     }
     .fb-event-time { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+    .fb-event.low-rating {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: 8px;
+      padding: 8px;
+      margin: 4px 0;
+    }
+
+    /* Satisfaction star pill on client tiles */
+    .tile-csat {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 9px;
+      border: 1px solid;
+      margin-left: 2px;
+      letter-spacing: 0.04em;
+      font-family: 'Barlow', sans-serif;
+    }
     .fb-event-x {
       background: none;
       border: none;
@@ -1211,7 +1241,7 @@
     var clientInvited = {};
     var pendingInvites = {}; // client#s with an in-flight POST — skipped during poll sync
     var clientNames = {};    // num -> display name (for the feedback bell)
-    var feedbackState = { clients: {} }; // num -> { count, events } (uncleared alerts)
+    var feedbackState = { clients: {}, ratings: {} }; // num -> { count, events }; num -> { stars, at }
     var lastFeedbackTotal = null;
 
     Promise.all([
@@ -2317,6 +2347,7 @@
         .then(function(r) { return r.json(); })
         .then(function(d) {
           feedbackState.clients = (d && d.clients) || {};
+          feedbackState.ratings = (d && d.ratings) || {};
           var total = feedbackTotal();
           if (lastFeedbackTotal !== null && total > lastFeedbackTotal) {
             showToast('🔔 New client feedback received');
@@ -2364,15 +2395,25 @@
         });
         var name = clientNames[num] || ('Client ' + num);
         return '<div class="fb-client">' +
-          '<div class="fb-client-head">' + escapeHtml(name) + ' <span class="fb-num">#' + num + '</span>' +
+          '<div class="fb-client-head">' +
+          '<a class="fb-client-link" href="/clients/' + num + '/" target="_blank" rel="noopener noreferrer" title="Open client dashboard">' +
+            escapeHtml(name) + ' <span class="fb-num">#' + num + '</span> <span class="fb-open-arrow">↗</span></a>' +
           '<button class="fb-clear-client" onclick="clearClientFeedback(\'' + num + '\')">Clear all</button></div>' +
           evs.map(function(e) {
-            var icon = e.kind === 'comment' ? '💬' : (e.vote === 'up' ? '👍' : '👎');
-            return '<div class="fb-event">' +
+            var icon, label = e.itemLabel || 'Dashboard item', evCls = '';
+            if (e.kind === 'comment') { icon = '💬'; }
+            else if (e.kind === 'message') { icon = '✉️'; label = 'Message for Meg'; }
+            else if (e.kind === 'rating') {
+              icon = '⭐';
+              label = 'Satisfaction rating: ' + e.stars + '/5';
+              if (e.stars <= 2) evCls = ' low-rating';
+            }
+            else { icon = e.vote === 'up' ? '👍' : '👎'; }
+            return '<div class="fb-event' + evCls + '">' +
               '<span class="fb-event-icon">' + icon + '</span>' +
               '<div class="fb-event-main">' +
-                '<div class="fb-event-label">' + escapeHtml(e.itemLabel || 'Dashboard item') + '</div>' +
-                (e.kind === 'comment' && e.text ? '<div class="fb-event-text">' + escapeHtml(e.text) + '</div>' : '') +
+                '<div class="fb-event-label">' + escapeHtml(label) + '</div>' +
+                (e.text ? '<div class="fb-event-text">' + escapeHtml(e.text) + '</div>' : '') +
                 '<div class="fb-event-time">' + timeAgo(e.at) + '</div>' +
               '</div>' +
               '<button class="fb-event-x" title="Clear this alert" onclick="clearFeedbackEvent(\'' + num + '\', \'' + escapeHtml(e.id) + '\')">&times;</button>' +
@@ -2398,6 +2439,26 @@
           badge.innerHTML = '🔔 ' + count;
         } else if (badge) {
           badge.remove();
+        }
+
+        // Persistent satisfaction star pill (survives alert clearing)
+        var starEl = tile.querySelector('.tile-csat');
+        var rt = feedbackState.ratings[num];
+        if (rt && rt.stars) {
+          if (!starEl) {
+            var numLine = tile.querySelector('.tile-number');
+            if (!numLine) return;
+            starEl = document.createElement('span');
+            starEl.className = 'tile-csat';
+            numLine.appendChild(starEl);
+          }
+          var color = rt.stars >= 4 ? '#27AE60' : rt.stars === 3 ? '#DF6229' : '#E74C3C';
+          starEl.style.color = color;
+          starEl.style.borderColor = color;
+          starEl.textContent = '★ ' + rt.stars;
+          starEl.title = 'Client satisfaction: ' + rt.stars + '/5 (' + timeAgo(rt.at) + ')';
+        } else if (starEl) {
+          starEl.remove();
         }
       });
     }
