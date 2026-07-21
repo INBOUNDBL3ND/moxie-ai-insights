@@ -252,16 +252,14 @@
     }
   }
 
-  // ─────────────────── Key Trends removal ───────────────────
-  // The old "Key Trends" hero box (predecessor of "Highlights") is
-  // retired — remove it anywhere it still appears.
+  // ─────────────────── Hero stats box removal ───────────────────
+  // The hero stats box — "Key Trends" on legacy pages, "Highlights" on
+  // newer ones — is retired everywhere (2026-07-20). moxie.css hides it
+  // instantly; this removes it from the DOM.
   function removeKeyTrends() {
-    var titles = document.querySelectorAll('.trends-summary .trends-title');
-    for (var i = 0; i < titles.length; i++) {
-      if (/key trends/i.test(titles[i].textContent || '')) {
-        var box = titles[i].closest('.trends-summary');
-        if (box) box.remove();
-      }
+    var boxes = document.querySelectorAll('.dashboard-hero .trends-summary');
+    for (var i = 0; i < boxes.length; i++) {
+      boxes[i].remove();
     }
   }
 
