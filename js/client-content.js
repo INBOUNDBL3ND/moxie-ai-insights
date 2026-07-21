@@ -97,6 +97,9 @@
       '.cw-fb-send:hover{background:#1668B8;}',
       '.cw-fb-send:disabled{opacity:.6;cursor:default;}',
       '.cw-fb-status{font-size:0.78rem;color:#27AE60;font-weight:600;font-family:var(--font,Barlow,sans-serif);}',
+      '.cw-fb-comments{display:flex;flex-direction:column;gap:6px;margin-top:8px;}',
+      '.cw-fb-comment{align-self:flex-end;max-width:92%;background:#F1F5F9;border-radius:10px;border-bottom-right-radius:3px;padding:8px 12px;font-family:var(--font,Barlow,sans-serif);font-size:0.83rem;color:var(--text,#1A1A2E);line-height:1.4;word-break:break-word;white-space:pre-wrap;}',
+      '.cw-fb-comment .cw-fbc-meta{display:block;font-size:0.65rem;color:#94A3B8;font-weight:700;margin-top:3px;text-align:right;}',
 
       /* Message Meg modal */
       '.mm-modal{position:fixed;inset:0;z-index:100001;background:rgba(10,20,40,0.55);display:none;align-items:center;justify-content:center;padding:20px;}',
@@ -245,6 +248,19 @@
         if (sib && sib.classList.contains('platforms-grid')) {
           sib.style.display = 'none';
         }
+      }
+    }
+  }
+
+  // ─────────────────── Key Trends removal ───────────────────
+  // The old "Key Trends" hero box (predecessor of "Highlights") is
+  // retired — remove it anywhere it still appears.
+  function removeKeyTrends() {
+    var titles = document.querySelectorAll('.trends-summary .trends-title');
+    for (var i = 0; i < titles.length; i++) {
+      if (/key trends/i.test(titles[i].textContent || '')) {
+        var box = titles[i].closest('.trends-summary');
+        if (box) box.remove();
       }
     }
   }
@@ -405,6 +421,7 @@
 
   // Feedback state — current reactions for this client, loaded in init()
   var feedbackReactions = {}; // { [itemId]: { vote: 'up'|'down' } }
+  var feedbackItemComments = {}; // { [itemId]: [ { text, at } ] } — client's own sent comments
 
   function postFeedback(payload) {
     return fetch('/.netlify/functions/feedback?client=' + clientNum, {
@@ -459,6 +476,25 @@
     commentBtn.className = 'cw-fb-comment-toggle';
     commentBtn.innerHTML = FB_CHAT_SVG + ' Comment';
 
+    // The client's previously sent comments stay visible under the card
+    var commentsList = document.createElement('div');
+    commentsList.className = 'cw-fb-comments';
+    function renderComments() {
+      var list = feedbackItemComments[row.id] || [];
+      commentsList.innerHTML = '';
+      commentsList.style.display = list.length ? 'flex' : 'none';
+      list.forEach(function (c) {
+        var el = document.createElement('div');
+        el.className = 'cw-fb-comment';
+        el.textContent = c.text;
+        var meta = document.createElement('span');
+        meta.className = 'cw-fbc-meta';
+        meta.textContent = 'You · ' + (c.at ? fmtWhen(c.at) : 'sent');
+        el.appendChild(meta);
+        commentsList.appendChild(el);
+      });
+    }
+
     var form = document.createElement('div');
     form.className = 'cw-fb-form';
     var ta = document.createElement('textarea');
@@ -493,6 +529,10 @@
           sendBtn.disabled = false;
           ta.value = '';
           statusEl.textContent = 'Thanks! Sent to the team ✓';
+          // Keep their comment visible under the card
+          if (!feedbackItemComments[row.id]) feedbackItemComments[row.id] = [];
+          feedbackItemComments[row.id].push({ text: text, at: new Date().toISOString() });
+          renderComments();
           setTimeout(function () {
             statusEl.textContent = '';
             form.classList.remove('open');
@@ -506,10 +546,11 @@
     });
 
     paintVotes();
+    renderComments();
     bar.appendChild(upBtn);
     bar.appendChild(downBtn);
     bar.appendChild(commentBtn);
-    return { bar: bar, form: form };
+    return { bar: bar, form: form, comments: commentsList };
   }
 
   // ─────────────────── Message Meg (header button + modal) ───────────────────
@@ -830,6 +871,7 @@
       var label = String(row.note || (lightboxContext && lightboxContext.currentHeading) || 'Creative item').slice(0, 140);
       var fb = buildFeedbackBar(row, label);
       body.appendChild(fb.bar);
+      body.appendChild(fb.comments);
       body.appendChild(fb.form);
     }
     card.appendChild(body);
@@ -1079,7 +1121,11 @@
         if (fb && Array.isArray(fb.messages)) {
           feedbackMessages = fb.messages;
         }
+        if (fb && fb.itemComments && typeof fb.itemComments === 'object') {
+          feedbackItemComments = fb.itemComments;
+        }
         // These render even when there's no admin-saved content yet
+        removeKeyTrends();
         applyMessageMegButton();
         updateMegBadge();
         var ratingNode = buildRatingNode(fb && fb.rating);

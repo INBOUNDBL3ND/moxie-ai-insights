@@ -723,6 +723,8 @@
       display: inline-block;
     }
     .fb-reply-link:hover { text-decoration: underline; }
+    /* project cards need the same left gutter as rows when draggable */
+    .project-card.dnd-item { padding-left: 38px; }
 
     /* Message thread modal (admin ↔ client) */
     .at-thread { display: flex; flex-direction: column; gap: 8px; }
@@ -1216,9 +1218,17 @@
         </div>
         <div class="edit-section">
           <h3>Projects</h3>
-          <p class="hint">Project trackers shown on the client dashboard. Toggle visibility per project.</p>
+          <p class="hint">Project trackers shown on the client dashboard. Toggle visibility per project. Drag the ⠿ handle to reorder.</p>
           <div id="edit-projects-list"></div>
           <button class="edit-btn-add" onclick="addProject()">+ Add Project</button>
+        </div>
+        <div class="edit-section">
+          <h3>Message Meg Chat</h3>
+          <p class="hint">The client's message thread with the team. <strong id="edit-mm-count">&nbsp;</strong></p>
+          <div style="display:flex;gap:8px;">
+            <button class="edit-btn-add" style="flex:1;" onclick="openThreadModal(editState.client)">View Thread / Reply</button>
+            <button class="edit-btn-add" style="flex:1;color:#b91c1c;border-color:#fca5a5;background:#fef2f2;" onclick="clearChatHistory()">Clear Chat History</button>
+          </div>
         </div>
       </div>
       <div class="edit-modal-footer">
@@ -1707,6 +1717,7 @@
         .then(function(d) {
           if (editState.client !== num) return; // modal moved on
           editFeedback.reactions = (d && d.reactions) || {};
+          editFeedback.messageCount = ((d && d.messages) || []).length;
           editFeedback.commentCounts = {};
           ((d && d.events) || []).forEach(function(e) {
             if (e.kind === 'comment') {
@@ -1861,6 +1872,13 @@
 
       // Projects
       renderProjects();
+
+      // Message Meg thread count
+      var mmCount = document.getElementById('edit-mm-count');
+      if (mmCount) {
+        var n = editFeedback.messageCount || 0;
+        mmCount.textContent = n + ' message' + (n === 1 ? '' : 's') + ' in thread';
+      }
     }
 
     function addPill() {
@@ -1951,17 +1969,20 @@
       return html ? '<span class="row-fb-ind">' + html + '</span>' : '';
     }
 
-    // ─── Drag & drop reordering (Current Work rows) ────────────────────
-    var dragIdx = null;
-    function clearDragMarkers() {
-      document.querySelectorAll('#edit-rows-list .drag-over-top, #edit-rows-list .drag-over-bottom')
-        .forEach(function(el) { el.classList.remove('drag-over-top', 'drag-over-bottom'); });
-    }
-    (function initRowsDnD() {
-      var list = document.getElementById('edit-rows-list');
+    // ─── Drag & drop reordering (Current Work rows + Projects) ─────────
+    // Generic: items in listEl need class "dnd-item", a ".drag-handle",
+    // and data-idx. getArray() returns the backing array; rerender()
+    // repaints after a reorder. Items only become draggable while the
+    // handle is pressed, so text selection in inputs keeps working.
+    function makeDnD(listId, getArray, rerender) {
+      var list = document.getElementById(listId);
       if (!list) return;
-      // Rows only become draggable while the handle is pressed, so text
-      // selection in the inputs keeps working.
+      var dragIdx = null;
+      function clearMarkers() {
+        list.querySelectorAll('.drag-over-top, .drag-over-bottom').forEach(function(el) {
+          el.classList.remove('drag-over-top', 'drag-over-bottom');
+        });
+      }
       list.addEventListener('mousedown', function(e) {
         var h = e.target.closest('.drag-handle');
         if (!h) return;
@@ -1980,7 +2001,7 @@
         if (dragIdx === null) return;
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
-        clearDragMarkers();
+        clearMarkers();
         var item = e.target.closest('.dnd-item');
         if (!item || parseInt(item.getAttribute('data-idx'), 10) === dragIdx) return;
         var rect = item.getBoundingClientRect();
@@ -1992,28 +2013,31 @@
         e.preventDefault();
         var from = dragIdx;
         dragIdx = null;
-        clearDragMarkers();
+        clearMarkers();
         var item = e.target.closest('.dnd-item');
-        if (!item) { renderEditModal(); return; }
+        if (!item) { rerender(); return; }
+        var arr = getArray();
         var to = parseInt(item.getAttribute('data-idx'), 10);
         var rect = item.getBoundingClientRect();
         var before = (e.clientY - rect.top) < rect.height / 2;
         var target = to + (before ? 0 : 1);
         if (from < target) target--;
-        if (target === from) { renderEditModal(); return; }
-        var moved = editState.currentWork.splice(from, 1)[0];
-        editState.currentWork.splice(target, 0, moved);
-        renderEditModal();
+        if (target === from) { rerender(); return; }
+        var moved = arr.splice(from, 1)[0];
+        arr.splice(target, 0, moved);
+        rerender();
       });
       list.addEventListener('dragend', function() {
         dragIdx = null;
-        clearDragMarkers();
+        clearMarkers();
         list.querySelectorAll('.dnd-item').forEach(function(el) {
           el.classList.remove('dragging');
           el.removeAttribute('draggable');
         });
       });
-    })();
+    }
+    makeDnD('edit-rows-list', function() { return editState.currentWork; }, function() { renderEditModal(); });
+    makeDnD('edit-projects-list', function() { return editState.projects; }, function() { renderProjects(); });
 
     function uploadRowMedia(i, file) {
       if (!file) return;
@@ -2166,6 +2190,9 @@
         container.innerHTML = '<p class="hint" style="text-align:center;padding:20px 0;">No projects yet. Click + below to add one.</p>';
         return;
       }
+      var projDragHandle = '<span class="drag-handle" title="Drag to reorder" onclick="event.stopPropagation()">' +
+        '<svg width="12" height="18" viewBox="0 0 10 16" fill="currentColor"><circle cx="2.5" cy="2" r="1.6"/><circle cx="7.5" cy="2" r="1.6"/><circle cx="2.5" cy="8" r="1.6"/><circle cx="7.5" cy="8" r="1.6"/><circle cx="2.5" cy="14" r="1.6"/><circle cx="7.5" cy="14" r="1.6"/></svg>' +
+        '</span>';
       container.innerHTML = editState.projects.map(function(proj, pi) {
         var collapsed = proj._collapsed ? ' collapsed' : '';
         var toggleClass = proj.enabled ? 'wb-toggle on' : 'wb-toggle';
@@ -2186,7 +2213,7 @@
           '</div>';
         }).join('');
 
-        return '<div class="project-card' + collapsed + '">' +
+        return '<div class="project-card dnd-item' + collapsed + '" data-idx="' + pi + '">' + projDragHandle +
           '<div class="project-card-head" onclick="toggleProjectCollapse(' + pi + ')">' +
             '<span class="project-name">' + escapeHtml(proj.name || 'Untitled Project') + '</span>' +
             '<span class="project-collapse-icon">&#9660;</span>' +
@@ -2373,6 +2400,7 @@
     window.openThreadModal = openThreadModal;
     window.closeThreadModal = closeThreadModal;
     window.sendThreadReply = sendThreadReply;
+    window.clearChatHistory = clearChatHistory;
     window.uploadRowMedia = uploadRowMedia;
     window.uploadLogo = uploadLogo;
     window.removeLogo = removeLogo;
@@ -2637,6 +2665,31 @@
       document.getElementById('thread-modal').classList.remove('open');
       threadClient = null;
       threadMessages = [];
+    }
+
+    function clearChatHistory() {
+      if (!editState.client) return;
+      if (!confirm('Clear the entire Message Meg chat history for this client? This cannot be undone.')) return;
+      var num = editState.client;
+      fetch('/.netlify/functions/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'clearMessages', client: num })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d && d.error) { showToast('Clear failed: ' + d.error); return; }
+          if (editState.client === num) {
+            editFeedback.messageCount = 0;
+            renderEditModal();
+          }
+          if (threadClient === num) {
+            threadMessages = [];
+            renderThreadBody();
+          }
+          showToast('Message Meg chat history cleared');
+        })
+        .catch(function() { showToast('Clear failed — network error'); });
     }
 
     function sendThreadReply() {

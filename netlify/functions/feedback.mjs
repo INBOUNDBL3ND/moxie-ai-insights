@@ -5,6 +5,7 @@
 //   {
 //     reactions: { [itemId]: { vote: "up"|"down", at, label } },  // current state
 //     rating:    { stars: 1-5, at } | null,                        // current satisfaction
+//     itemComments: { [itemId]: [ { text, at } ] },                // client's sent comments (persistent, shown back to them)
 //     messages:  [ { id, from: "client"|"team", text, at } ],      // Message Meg thread (persistent)
 //     events:    [ { id, kind: "vote"|"comment"|"message"|"rating",
 //                    itemId, itemLabel, vote?, stars?, text?, at } ] // uncleared alerts
@@ -21,6 +22,7 @@
 //                       → { action:"message", text }              // Message Meg (client)
 //                       → { action:"rating", stars, text? }       // How are we doing?
 // POST                  → { action:"reply", client, text }        // team reply to thread
+//                       → { action:"clearMessages", client }      // wipe Message Meg thread
 //                       → { action:"clear", client, eventId }
 //                       → { action:"clearClient", client }
 //                       → { action:"clearAll" }
@@ -45,7 +47,7 @@ function store() {
 }
 
 function emptyFeedback() {
-  return { reactions: {}, rating: null, messages: [], events: [] };
+  return { reactions: {}, rating: null, itemComments: {}, messages: [], events: [] };
 }
 
 function newEventId() {
@@ -57,6 +59,7 @@ async function readClient(s, client) {
   if (!raw || typeof raw !== "object") return emptyFeedback();
   if (!raw.reactions || typeof raw.reactions !== "object") raw.reactions = {};
   if (!raw.rating || typeof raw.rating !== "object" || !raw.rating.stars) raw.rating = null;
+  if (!raw.itemComments || typeof raw.itemComments !== "object") raw.itemComments = {};
   if (!Array.isArray(raw.messages)) raw.messages = [];
   if (!Array.isArray(raw.events)) raw.events = [];
   return raw;
@@ -144,6 +147,15 @@ export default async (req) => {
       return Response.json({ ok: true }, { headers: corsHeaders });
     }
 
+    if (action === "clearMessages") {
+      const client = String(body.client || "");
+      if (!/^\d+$/.test(client)) return badRequest("Invalid client");
+      const d = await readClient(s, client);
+      d.messages = [];
+      await writeClient(s, client, d);
+      return Response.json({ ok: true }, { headers: corsHeaders });
+    }
+
     if (action === "reply") {
       const client = String(body.client || "");
       if (!/^\d+$/.test(client)) return badRequest("Invalid client");
@@ -228,6 +240,10 @@ export default async (req) => {
       const text = String(body.text || "").trim().slice(0, 2000);
       if (!text) return badRequest("Empty comment");
       d.events.push({ id: newEventId(), kind: "comment", itemId, itemLabel, text, at: now });
+      // Persistent copy shown back to the client under the card
+      if (!Array.isArray(d.itemComments[itemId])) d.itemComments[itemId] = [];
+      d.itemComments[itemId].push({ text, at: now });
+      if (d.itemComments[itemId].length > 50) d.itemComments[itemId] = d.itemComments[itemId].slice(-50);
       await writeClient(s, client, d);
       return Response.json({ ok: true }, { headers: corsHeaders });
     }
