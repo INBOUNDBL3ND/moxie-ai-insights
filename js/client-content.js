@@ -282,11 +282,16 @@
   function applyClientLogo(logoMediaId) {
     if (!logoMediaId) return;
     var logoSrc = '/.netlify/functions/client-media?id=' + encodeURIComponent(logoMediaId);
-    // Target only the hero mascot (dashboard index pages)
+    // Target only the hero mascot (dashboard index pages).
+    // Client logos get a larger, wider box than the default 120px
+    // mascot square — most logos are landscape and were rendering tiny.
     var heroImg = document.querySelector('.dashboard-hero .hero-mascot');
     if (heroImg) {
       heroImg.src = logoSrc;
       heroImg.style.objectFit = 'contain';
+      heroImg.style.width = '240px';
+      heroImg.style.height = '150px';
+      heroImg.style.maxWidth = '100%';
     }
     // Target only the report-header mascot (monthly report pages)
     var reportHeader = document.querySelector('.report-header');
@@ -296,6 +301,9 @@
         if (headerImgs[i].src && headerImgs[i].src.indexOf('moxie-mascot') !== -1) {
           headerImgs[i].src = logoSrc;
           headerImgs[i].style.objectFit = 'contain';
+          headerImgs[i].style.width = '260px';
+          headerImgs[i].style.height = '180px';
+          headerImgs[i].style.maxWidth = '100%';
         }
       }
     }
