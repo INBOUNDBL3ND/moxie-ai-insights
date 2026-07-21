@@ -1176,6 +1176,11 @@
             <input class="edit-select" id="edit-dropbox-link" type="url" placeholder="https://..." style="width:100%;box-sizing:border-box;" oninput="editState.meta.dropboxLink = this.value">
           </div>
           <div class="edit-field-group">
+            <label class="edit-field-label">Slack Channel</label>
+            <input class="edit-select" id="edit-slack-channel" type="text" placeholder="#channel-name" style="width:100%;box-sizing:border-box;" oninput="editState.meta.slackChannel = this.value">
+            <p class="hint" style="margin-top:4px;">Portal alerts (Message Meg + card comments) post here. Accepts #channel-name, a channel ID, or a Slack channel URL. The alert bot must be invited to private channels.</p>
+          </div>
+          <div class="edit-field-group">
             <label class="edit-field-label">Dashboard PIN (4 digits)</label>
             <input class="edit-select" id="edit-client-pin" type="text" inputmode="numeric" maxlength="4" placeholder="8675" style="width:130px;box-sizing:border-box;letter-spacing:4px;font-weight:700;" oninput="this.value = this.value.replace(/\D/g, ''); editState.meta.pin = this.value">
             <p class="hint" style="margin-top:4px;">Access code the client enters to view their dashboard and reports. Default is 8675 — set any other 4 digits to give this client their own PIN. Changing it re-locks their pages until they enter the new PIN.</p>
@@ -1789,6 +1794,8 @@
 
       var dbInput = document.getElementById('edit-dropbox-link');
       if (dbInput) dbInput.value = (editState.meta && editState.meta.dropboxLink) || '';
+      var slackInput = document.getElementById('edit-slack-channel');
+      if (slackInput) slackInput.value = (editState.meta && editState.meta.slackChannel) || '';
       var pinInput = document.getElementById('edit-client-pin');
       if (pinInput) pinInput.value = (editState.meta && editState.meta.pin) || '8675';
       var audInput = document.getElementById('edit-audience-type');

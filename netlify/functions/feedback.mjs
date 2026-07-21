@@ -85,6 +85,64 @@ function badRequest(msg) {
   return Response.json({ error: msg }, { status: 400, headers: corsHeaders });
 }
 
+// ── Slack notification (best-effort, never blocks the client) ──────
+// Posts Message Meg messages and card comments to the client's own
+// Slack channel (meta.slackChannel in the client-content blob), or
+// SLACK_FALLBACK_CHANNEL when the client has none set.
+// Requires env var SLACK_BOT_TOKEN (bot scope: chat:write; invite the
+// bot to private channels).
+async function notifySlack(client, kind, payload, origin) {
+  const token = process.env.SLACK_BOT_TOKEN;
+  if (!token) return;
+
+  let channel = "";
+  try {
+    const cc = getStore({ name: "client-content", consistency: "strong" });
+    const data = (await cc.get(client, { type: "json" })) || {};
+    channel = String((data.meta && data.meta.slackChannel) || "").trim();
+  } catch (_) {}
+  if (!channel) channel = String(process.env.SLACK_FALLBACK_CHANNEL || "").trim();
+  if (!channel) return;
+
+  // Accept a #name, bare name, channel ID, or a Slack channel URL
+  const urlMatch = channel.match(/archives\/([A-Z0-9]+)/i);
+  if (urlMatch) channel = urlMatch[1];
+  else if (!/^[CGD][A-Z0-9]{6,}$/.test(channel)) channel = "#" + channel.replace(/^#/, "");
+
+  let name = "Client " + client;
+  try {
+    const r = await fetch(origin + "/data/clients.json");
+    if (r.ok) {
+      const j = await r.json();
+      if (j[client] && j[client].name) name = j[client].name;
+    }
+  } catch (_) {}
+
+  const quoted = String(payload.text || "").split("\n").map((l) => "> " + l).join("\n");
+  let text;
+  if (kind === "comment") {
+    text = `💬 *New portal comment* from *${name}* (#${client})\n${quoted}\n_On:_ ${payload.itemLabel || "a Current Work item"}`;
+  } else {
+    text = `✉️ *New Message Meg* from *${name}* (#${client})\n${quoted}`;
+  }
+  text += `\n<${origin}/admin/|Open Admin Dashboard →>`;
+
+  try {
+    const res = await fetch("https://slack.com/api/chat.postMessage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({ channel, text, unfurl_links: false, unfurl_media: false }),
+    });
+    const out = await res.json();
+    if (!out.ok) console.log("Slack notify failed for", client, ":", out.error);
+  } catch (e) {
+    console.log("Slack notify error for", client, ":", e.message);
+  }
+}
+
 export default async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("", { status: 200, headers: corsHeaders });
@@ -200,6 +258,7 @@ export default async (req) => {
       d.messages.push(msg);
       d.events.push({ id: newEventId(), kind: "message", itemId: "", itemLabel: "Message for Meg", text, at: now });
       await writeClient(s, client, d);
+      await notifySlack(client, "message", { text }, url.origin);
       return Response.json({ ok: true, message: msg }, { headers: corsHeaders });
     }
 
@@ -245,6 +304,7 @@ export default async (req) => {
       d.itemComments[itemId].push({ text, at: now });
       if (d.itemComments[itemId].length > 50) d.itemComments[itemId] = d.itemComments[itemId].slice(-50);
       await writeClient(s, client, d);
+      await notifySlack(client, "comment", { text, itemLabel }, url.origin);
       return Response.json({ ok: true }, { headers: corsHeaders });
     }
 
