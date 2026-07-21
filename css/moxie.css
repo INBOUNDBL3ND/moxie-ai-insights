@@ -6,6 +6,22 @@
    hidden globally; client-content.js also removes it from the DOM. */
 .dashboard-hero .trends-summary { display: none !important; }
 
+/* Mobile: the dashboard header button stack (Meet w/ Meg, Dropbox,
+   Message Meg, …) is inline-styled position:absolute top-right, which
+   overlaps the title on phones. Flow it below the header content
+   instead, full width. */
+@media (max-width: 768px) {
+  .dashboard-header { display: flex; flex-direction: column; }
+  .dashboard-header > div[style*="position:absolute"] {
+    position: static !important;
+    order: 99;
+    width: 100%;
+    max-width: 420px;
+    margin: 18px auto 0;
+    align-items: stretch !important;
+  }
+}
+
 /* ── Tokens ── */
 :root {
   --blue: #1D80DE;
