@@ -14,7 +14,7 @@ Usage:
 Exit code 0 = clean, 1 = at least one failure. --strict also fails on warnings.
 
 Inputs (committed alongside reports):
-    data/june_inputs.json   per-client {name,status,audience,pills,has_june_paid,contextNotes}
+    data/july_inputs.json   per-client {name,status,audience,pills,has_july_paid,contextNotes}
     data/forward_look_overrides.json   forward_look + scope overrides
 """
 import json, os, re, sys, glob
@@ -67,7 +67,7 @@ def client_type(num, info, ov):
     if num in ov.get("forward_look", {}) and ov["forward_look"][num].get("angle") == "kickoff":
         return "kickoff"
     hosting_set = {"hosting", "website hosting", "website management", "website maintenance"}
-    if pills and all(p in hosting_set for p in pills) and not info.get("has_june_paid"):
+    if pills and all(p in hosting_set for p in pills) and not info.get("has_july_paid"):
         return "hosting"
     return "full"
 
@@ -80,7 +80,11 @@ def main():
         if a == "--month" and i + 1 < len(sys.argv):
             month = sys.argv[i + 1]
 
-    inputs = json.load(open(os.path.join(ROOT, "data", "june_inputs.json")))
+    month_prefix = month.split("-")[0]
+    inputs_path = os.path.join(ROOT, "data", f"{month_prefix}_inputs.json")
+    if not os.path.exists(inputs_path):
+        inputs_path = os.path.join(ROOT, "data", "june_inputs.json")
+    inputs = json.load(open(inputs_path))
     ov = json.load(open(os.path.join(ROOT, "data", "forward_look_overrides.json")))
 
     reports = sorted(glob.glob(os.path.join(ROOT, "clients", "*", f"{month}.html")))
@@ -114,7 +118,7 @@ def main():
         # 4. PAID_FRAMING_LEAK (organic clients only) - ANALYSIS prose only.
         #    The MOXIE Recommends card is ALLOWED to name a paid service (recommending one
         #    is the point); that path is gated by RECOMMENDS_OVERLAP, not here.
-        paid_ok = info.get("has_june_paid") or (num in ov.get("scope", {}) and ov["scope"][num].get("allow_paid_framing"))
+        paid_ok = info.get("has_june_paid") or info.get("has_july_paid") or (num in ov.get("scope", {}) and ov["scope"][num].get("allow_paid_framing"))
         scope = ov.get("scope", {}).get(num)
         if scope and scope.get("allow_paid_framing") is False:
             paid_ok = False

@@ -1,26 +1,61 @@
 {
-  "_doc": "Per-client overrides for the MOXIE monthly report generator. Re-derived 2026-06-30 from the May 2026 reports + Slack/sheet ground truth. forward_look: replace the MOXIE Recommends opportunity-card with a forward-look note (h4 + p) instead of an 'Add X' recommendation. scope: hard constraint on what framing the report may use this month, overriding stale service pills.",
+  "_doc": "Per-client overrides for the MOXIE monthly report generator. Re-derived 2026-08-03 from the July 2026 sheet + Slack ground truth. forward_look: replace the MOXIE Recommends opportunity-card with a forward-look note (h4 + p) instead of an 'Add X' recommendation. scope: hard constraint on what framing the report may use this month, overriding stale service pills. angle drives the validate.py word band (kickoff 120-170w).",
   "forward_look": {
     "2604002": {
-      "title": "Watching the foundation settle",
-      "reason": "Kickoff-stage client (~139 sessions). Honest reco is to let the new work produce data before layering more, not to pitch a service.",
-      "angle": "kickoff"
+      "title": "Building on what's working",
+      "reason": "Paraben pill is AEO & SEO only, which we already run, so an honest 'Add X' does not exist. July was heavy technical/AEO work (resolved a site-wide video-embed CSP block). Forward-look = keep sharpening the existing program.",
+      "angle": "full"
     },
     "2605001": {
       "title": "Watching the foundation settle",
-      "reason": "New client onboarding (NCO), first reporting month. Let the launched search ads gather signal before recommending additions.",
+      "reason": "New client onboarding, first full paid month (Facebook + Google Search live). Let the launched ads gather signal before recommending additions.",
       "angle": "kickoff"
     },
     "2604004": {
       "title": "Watching the foundation settle",
-      "reason": "New client (Dapper Can), early-stage GeoFencing launch. Forward-look kickoff framing.",
+      "reason": "Dapper Can, month two of GeoFencing + remarketing. Still early; let delivery mature before layering on more.",
       "angle": "kickoff"
+    },
+    "2602001": {
+      "title": "Watching the foundation settle",
+      "reason": "The Law Office of Andi Grace Davis, kickoff. Website went live in July with full SEO/GA4/Search Console/llms.txt setup. Let the new site gather traffic before pitching paid.",
+      "angle": "kickoff"
+    },
+    "2606005": {
+      "title": "Watching the foundation settle",
+      "reason": "Lemon Sweet Sugaring, kickoff. New WordPress site in final review, not yet live. Focus is finishing the build.",
+      "angle": "kickoff"
+    },
+    "2606006": {
+      "title": "Watching the foundation settle",
+      "reason": "Vistage STL, kickoff. New WordPress site draft in review with an Aug 17 go-live target. Finish the launch first.",
+      "angle": "kickoff"
+    },
+    "2606007": {
+      "title": "Watching the foundation settle",
+      "reason": "End Zone Eddie, kickoff. First explainer video in revision rounds and brand kit being finalized. Foundation work.",
+      "angle": "kickoff"
+    },
+    "2601003": {
+      "title": "Ready to launch the moment the domain clears",
+      "reason": "iQ Supply Solutions. New site is built and hosting is set in-house; go-live is blocked only on recovering the domain from a deceased account holder's GoDaddy. Honest forward-look, not a service pitch.",
+      "angle": "full"
+    },
+    "2603001": {
+      "title": "Building on what's working",
+      "reason": "Boland Energy, Marketing Services, quiet July with no channel activity. No honest 'Add X' fits.",
+      "angle": "full"
+    },
+    "1602401": {
+      "title": "Building on what's working",
+      "reason": "CMW Inc., quiet July, not in the ad sheet. Forward-look rather than a manufactured recommendation.",
+      "angle": "full"
     }
   },
   "scope": {
     "2010001": {
       "mode": "website-only",
-      "reason": "Per Gary's May direction, June scope scaled down to website-only due to client workload and weather delays. Paid pills (Facebook Ads, Google Search/Display, Remarketing) are PAUSED this month and must NOT drive paid framing, Performance Overview ad cards, or ad Platform Breakdown cards. Report body = website management + hosting only. Confirmed: no June paid spend/impressions in sheet.",
+      "reason": "Per Gary's earlier direction, scope remains website-only. Paid pills (Facebook Ads, Google Ad Management Search/Display, Remarketing) are PAUSED and must NOT drive paid framing, Performance Overview ad cards, or ad Platform Breakdown cards. Report body = website management + hosting only. Confirmed: no July paid spend/impressions in the sheet (269 sessions only); no July Slack contradicting.",
       "allow_paid_framing": false
     }
   }

@@ -1,0 +1,1208 @@
+{
+ "1908001": {
+  "name": "Bart Inman Air",
+  "has_july_paid": true,
+  "paid_spend": 4801.18,
+  "sessions": 6950,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 100.0,
+    "spend": 126.42,
+    "impr": 88866.0,
+    "reach": 8765.0,
+    "clicks": 467.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 100.0,
+    "spend": 107.0,
+    "impr": 64500.0,
+    "reach": 0.0,
+    "clicks": 1460.0,
+    "ctr": "2.27",
+    "platform": "Google Display Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 4500.0,
+    "spend": 4490.0,
+    "impr": 39000.0,
+    "reach": 0.0,
+    "clicks": 3970.0,
+    "ctr": "10.18",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 75.0,
+    "spend": 77.76,
+    "impr": 66821.0,
+    "reach": 0.0,
+    "clicks": 48.0,
+    "ctr": "",
+    "platform": "Website Remarketing",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 6950.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2306001": {
+  "name": "Elite Testosterone",
+  "has_july_paid": true,
+  "paid_spend": 189.83,
+  "sessions": 364,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 100.0,
+    "spend": 99.89,
+    "impr": 11851.0,
+    "reach": 5274.0,
+    "clicks": 114.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 150.0,
+    "spend": 89.94,
+    "impr": 26700.0,
+    "reach": 0.0,
+    "clicks": 1310.0,
+    "ctr": "2",
+    "platform": "Digital Billboards",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 364.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2404002": {
+  "name": "U Store It OFallon",
+  "has_july_paid": true,
+  "paid_spend": 208.39,
+  "sessions": 191,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 100.0,
+    "spend": 60.66,
+    "impr": 44568.0,
+    "reach": 5622.0,
+    "clicks": 188.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 100.0,
+    "spend": 147.73,
+    "impr": 29900.0,
+    "reach": 0.0,
+    "clicks": 4180.0,
+    "ctr": "3",
+    "platform": "Digital Billboards",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 191.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2408002": {
+  "name": "Organized to Thrive",
+  "has_july_paid": true,
+  "paid_spend": 273.72,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 273.72,
+    "impr": 295212.0,
+    "reach": 17938.0,
+    "clicks": 1130.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "",
+    "improv": "Facebook Ads paused per Della's meeting with Meg on July 28, 2026"
+   }
+  ]
+ },
+ "1708001": {
+  "name": "Inbound Blend",
+  "has_july_paid": true,
+  "paid_spend": 75.14,
+  "sessions": 1194,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 150.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "LinkedIn Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 75.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Google Display Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 390.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Google P-Max",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Google Video/CTV",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "YouTube Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Microsoft Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 75.0,
+    "spend": 75.14,
+    "impr": 19117.0,
+    "reach": 0.0,
+    "clicks": 5.0,
+    "ctr": "",
+    "platform": "Website Remarketing",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 150.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Digital Billboards",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 1194.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2601001": {
+  "name": "West St. Louis County Chamber of Commerce",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 60.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "Event Attendees Camapaign",
+    "improv": "Lowered budget from $5 to $2 per day to keep pace with the clients budget"
+   },
+   {
+    "active": "False",
+    "budget": 60.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "Vendors Campaign",
+    "improv": "Lowered budget from $5 to $2 per day to keep pace with the clients budget"
+   }
+  ]
+ },
+ "2603003": {
+  "name": "Cube Storage",
+  "has_july_paid": true,
+  "paid_spend": 1033.46,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 250.0,
+    "spend": 275.39,
+    "impr": 24631.0,
+    "reach": 8582.0,
+    "clicks": 493.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "",
+    "improv": "Credit Card billing issue"
+   },
+   {
+    "active": "False",
+    "budget": 600.0,
+    "spend": 608.0,
+    "impr": 1060.0,
+    "reach": 0.0,
+    "clicks": 124.0,
+    "ctr": "11.74",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 150.0,
+    "spend": 150.07,
+    "impr": 16711.0,
+    "reach": 0.0,
+    "clicks": 26.0,
+    "ctr": "",
+    "platform": "GeoFencing",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2205001": {
+  "name": "Leathers Interiors",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 341,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "",
+    "improv": "need an ad budget and sale or offer to restart."
+   },
+   {
+    "active": "False",
+    "budget": 341.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2601002": {
+  "name": "Jeff Baker & Sons Landscaping",
+  "has_july_paid": true,
+  "paid_spend": 622.44,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 309.44,
+    "impr": 19877.0,
+    "reach": 5534.0,
+    "clicks": 265.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "2601002 \\",
+    "improv": "JB&S \\"
+   },
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 313.0,
+    "impr": 6790.0,
+    "reach": 0.0,
+    "clicks": 154.0,
+    "ctr": "",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": "having problems with the google ads, made several adjustments, will continue to monitor or need to reach out to Jeff."
+   }
+  ]
+ },
+ "2605001": {
+  "name": "Home Helpers Home Care STL",
+  "has_july_paid": true,
+  "paid_spend": 432.13,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 150.0,
+    "spend": 130.13,
+    "impr": 7101.0,
+    "reach": 3315.0,
+    "clicks": 107.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 302.0,
+    "impr": 1300.0,
+    "reach": 0.0,
+    "clicks": 59.0,
+    "ctr": "4.53",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2407003": {
+  "name": "Just Dancing",
+  "has_july_paid": true,
+  "paid_spend": 1250.0,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 0.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Facebook Ads",
+    "campaign": "",
+    "improv": "Waiting on ad budget"
+   },
+   {
+    "active": "False",
+    "budget": 1250.0,
+    "spend": 1250.0,
+    "impr": 13200.0,
+    "reach": 0.0,
+    "clicks": 857.0,
+    "ctr": "6.51",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2009003": {
+  "name": "MedSearch",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 805,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "LinkedIn Ads",
+    "campaign": "",
+    "improv": "Paused per Tim"
+   },
+   {
+    "active": "False",
+    "budget": 805.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2510002": {
+  "name": "Whitewater Freight",
+  "has_july_paid": true,
+  "paid_spend": 293.84,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 293.84,
+    "impr": 386724.0,
+    "reach": 0.0,
+    "clicks": 113.0,
+    "ctr": "",
+    "platform": "LinkedIn Ads",
+    "campaign": "",
+    "improv": "Changed the landing page to https://whitewaterfreight.com/freight-shipping-services/"
+   }
+  ]
+ },
+ "2412001": {
+  "name": "Sinclair and Rush",
+  "has_july_paid": true,
+  "paid_spend": 434.25,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 450.0,
+    "spend": 434.25,
+    "impr": 1104.0,
+    "reach": 0.0,
+    "clicks": 8.0,
+    "ctr": "0.72",
+    "platform": "LinkedIn Ads",
+    "campaign": "",
+    "improv": "we suggest adding more emails to linkedin custom audience from their oracle crm"
+   }
+  ]
+ },
+ "2604003": {
+  "name": "AB Advisory Dynamics",
+  "has_july_paid": true,
+  "paid_spend": 311.06,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 311.06,
+    "impr": 1837.0,
+    "reach": 0.0,
+    "clicks": 8.0,
+    "ctr": "",
+    "platform": "LinkedIn Ads",
+    "campaign": "",
+    "improv": "Ads paused at the end of July per Adrian will revisit later in August."
+   }
+  ]
+ },
+ "2509003": {
+  "name": "Midalloy SM",
+  "has_july_paid": true,
+  "paid_spend": 4028.37,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 1000.0,
+    "spend": 428.37,
+    "impr": 7185.0,
+    "reach": 0.0,
+    "clicks": 239.0,
+    "ctr": "3.33",
+    "platform": "LinkedIn Ads",
+    "campaign": "",
+    "improv": "started but need a few things added to the website"
+   },
+   {
+    "active": "False",
+    "budget": 3750.0,
+    "spend": 3600.0,
+    "impr": 819.0,
+    "reach": 0.0,
+    "clicks": 97.0,
+    "ctr": "11.84",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "1808004": {
+  "name": "Pumps and Parts",
+  "has_july_paid": true,
+  "paid_spend": 815.0,
+  "sessions": 4723,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 2000.0,
+    "spend": 646.0,
+    "impr": 102000.0,
+    "reach": 0.0,
+    "clicks": 1610.0,
+    "ctr": "",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 478.0,
+    "spend": 169.0,
+    "impr": 1470.0,
+    "reach": 0.0,
+    "clicks": 74.0,
+    "ctr": "5.04",
+    "platform": "Google P-Max",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 4723.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2508005": {
+  "name": "Lift Station Depot",
+  "has_july_paid": true,
+  "paid_spend": 606.0,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 900.0,
+    "spend": 606.0,
+    "impr": 14300.0,
+    "reach": 0.0,
+    "clicks": 458.0,
+    "ctr": "3.19",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": "Barmesa and Atlantis running, Franklin not on website yet so held off"
+   }
+  ]
+ },
+ "2301001": {
+  "name": "Ranson & Associates",
+  "has_july_paid": true,
+  "paid_spend": 405.93,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 150.0,
+    "spend": 189.0,
+    "impr": 270.0,
+    "reach": 0.0,
+    "clicks": 32.0,
+    "ctr": "11.85",
+    "platform": "Google Search",
+    "campaign": "Home and Auto",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 216.93,
+    "impr": 12751.0,
+    "reach": 0.0,
+    "clicks": 7.0,
+    "ctr": "",
+    "platform": "GeoFencing",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "1910002": {
+  "name": "BEAM",
+  "has_july_paid": true,
+  "paid_spend": 84.99,
+  "sessions": 677,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 84.99,
+    "impr": 531.0,
+    "reach": 0.0,
+    "clicks": 94.0,
+    "ctr": "17.7",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 677.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2412002": {
+  "name": "VisiPak",
+  "has_july_paid": true,
+  "paid_spend": 4698.66,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 1000.0,
+    "spend": 1350.0,
+    "impr": 3980.0,
+    "reach": 0.0,
+    "clicks": 271.0,
+    "ctr": "6.8",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 400.0,
+    "spend": 466.0,
+    "impr": 16200.0,
+    "reach": 0.0,
+    "clicks": 168.0,
+    "ctr": "",
+    "platform": "Google Shopping",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 1000.0,
+    "spend": 300.0,
+    "impr": 61200.0,
+    "reach": 0.0,
+    "clicks": 960.0,
+    "ctr": "",
+    "platform": "Google P-Max",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 610.0,
+    "impr": 11100.0,
+    "reach": 0.0,
+    "clicks": 1700.0,
+    "ctr": "15.4",
+    "platform": "Google Remarketing",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 1700.0,
+    "spend": 1972.66,
+    "impr": 395898.0,
+    "reach": 0.0,
+    "clicks": 3868.0,
+    "ctr": "",
+    "platform": "Microsoft Ads",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2412003": {
+  "name": "IndePak",
+  "has_july_paid": true,
+  "paid_spend": 4867.42,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 1900.0,
+    "spend": 2810.0,
+    "impr": 4900.0,
+    "reach": 0.0,
+    "clicks": 146.0,
+    "ctr": "2.98",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 1100.0,
+    "spend": 2057.42,
+    "impr": 29319.0,
+    "reach": 0.0,
+    "clicks": 753.0,
+    "ctr": "",
+    "platform": "Microsoft Ads",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2405002": {
+  "name": "Whack A Mole",
+  "has_july_paid": true,
+  "paid_spend": 304.0,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 300.0,
+    "spend": 304.0,
+    "impr": 19900.0,
+    "reach": 0.0,
+    "clicks": 796.0,
+    "ctr": "3.99",
+    "platform": "Google P-Max",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2604004": {
+  "name": "Dapper Can",
+  "has_july_paid": true,
+  "paid_spend": 1089.03,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 500.0,
+    "spend": 1000.21,
+    "impr": 66811.0,
+    "reach": 0.0,
+    "clicks": 54.0,
+    "ctr": "",
+    "platform": "GeoFencing",
+    "campaign": "",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 75.0,
+    "spend": 88.82,
+    "impr": 24403.0,
+    "reach": 0.0,
+    "clicks": 27.0,
+    "ctr": "",
+    "platform": "Website Remarketing",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2106002": {
+  "name": "Brown and Brown",
+  "has_july_paid": true,
+  "paid_spend": 1085.79,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 500.0,
+    "spend": 411.98,
+    "impr": 72977.0,
+    "reach": 0.0,
+    "clicks": 943.0,
+    "ctr": "1.29",
+    "platform": "TikTok Ads",
+    "campaign": "AI UGC Ads",
+    "improv": ""
+   },
+   {
+    "active": "False",
+    "budget": 500.0,
+    "spend": 673.81,
+    "impr": 126091.0,
+    "reach": 0.0,
+    "clicks": 2088.0,
+    "ctr": "1.66",
+    "platform": "TikTok Ads",
+    "campaign": "Human UGC Ads",
+    "improv": ""
+   }
+  ]
+ },
+ "2203005": {
+  "name": "City of Ellisville",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": null,
+  "rows": []
+ },
+ "1903001": {
+  "name": "Captifi Wealth Solutions",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": null,
+  "rows": []
+ },
+ "2404003": {
+  "name": "ALO Construction",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 20,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 20.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2509002": {
+  "name": "BP Texas",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": null,
+  "rows": []
+ },
+ "2602002": {
+  "name": "GRN Dublin",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": null,
+  "rows": []
+ },
+ "2308001": {
+  "name": "Jones Family Law Group",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 889,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 889.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "1801001": {
+  "name": "NWO",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 673,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 673.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2401006": {
+  "name": "Partners In Medicine",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 749,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 749.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2604001": {
+  "name": "The National Museum of Transportation",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": null,
+  "rows": []
+ },
+ "1808002": {
+  "name": "DP Pumps",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 704,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 704.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "1907001": {
+  "name": "Patriot",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 1318,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 1318.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2010001": {
+  "name": "Epoxy Stone",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 269,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 269.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2103001": {
+  "name": "Mentors 4 College",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 420,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 420.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2205004": {
+  "name": "Squeak Stoppers",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 201,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 201.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2208001": {
+  "name": "Energy View",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 381,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 381.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2312002": {
+  "name": "Jordan Search Consultants",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": 777,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 777.0,
+    "spend": 0.0,
+    "impr": 0.0,
+    "reach": 0.0,
+    "clicks": 0.0,
+    "ctr": "",
+    "platform": "Website Traffic",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
+ },
+ "2312004": {
+  "name": "Top Tier Outdoors",
+  "has_july_paid": false,
+  "paid_spend": 0.0,
+  "sessions": null,
+  "rows": []
+ }
+}
