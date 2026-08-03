@@ -1204,5 +1204,45 @@
   "paid_spend": 0.0,
   "sessions": null,
   "rows": []
+ },
+ "2508001": {
+  "name": "Duer's Rackhouse",
+  "has_july_paid": true,
+  "paid_spend": 212.85,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 250.0,
+    "spend": 212.85,
+    "impr": 40071.0,
+    "reach": 21713.0,
+    "clicks": 2920.0,
+    "ctr": "7.57",
+    "platform": "Facebook Ads",
+    "campaign": "Duers Rackhouse Ads",
+    "improv": ""
+   }
+  ]
+ },
+ "2601004": {
+  "name": "The Tile and Grout Project",
+  "has_july_paid": true,
+  "paid_spend": 394.0,
+  "sessions": null,
+  "rows": [
+   {
+    "active": "False",
+    "budget": 400.0,
+    "spend": 394.0,
+    "impr": 2210.0,
+    "reach": 0.0,
+    "clicks": 104.0,
+    "ctr": "4.71",
+    "platform": "Google Search",
+    "campaign": "",
+    "improv": ""
+   }
+  ]
  }
 }

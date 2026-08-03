@@ -1203,5 +1203,35 @@
   "sessions": null,
   "has_dir": false,
   "in_sheet": false
+ },
+ "2508001": {
+  "name": "Duer's Rackhouse",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Website Management",
+   "Facebook Ads",
+   "Social Media Posts"
+  ],
+  "contextNotes": "",
+  "has_july_paid": true,
+  "paid_spend": 212.85,
+  "sessions": null,
+  "has_dir": true,
+  "in_sheet": true
+ },
+ "2601004": {
+  "name": "The Tile and Grout Project",
+  "status": "active",
+  "audience": "B2C",
+  "pills": [
+   "Google Search Ads"
+  ],
+  "contextNotes": "",
+  "has_july_paid": true,
+  "paid_spend": 394.0,
+  "sessions": null,
+  "has_dir": true,
+  "in_sheet": true
  }
 }
