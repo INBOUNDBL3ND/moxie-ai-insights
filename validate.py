@@ -67,7 +67,8 @@ def client_type(num, info, ov):
     if num in ov.get("forward_look", {}) and ov["forward_look"][num].get("angle") == "kickoff":
         return "kickoff"
     hosting_set = {"hosting", "website hosting", "website management", "website maintenance"}
-    if pills and all(p in hosting_set for p in pills) and not info.get("has_july_paid"):
+    paid_any = any(k.startswith("has_") and k.endswith("_paid") and v for k, v in info.items())
+    if pills and all(p in hosting_set for p in pills) and not paid_any:
         return "hosting"
     return "full"
 
@@ -85,6 +86,10 @@ def main():
     if not os.path.exists(inputs_path):
         inputs_path = os.path.join(ROOT, "data", "june_inputs.json")
     inputs = json.load(open(inputs_path))
+    # month-generic paid flag: accept has_<anymonth>_paid on each client record
+    def has_paid(info):
+        return any(k.startswith("has_") and k.endswith("_paid") and v
+                   for k, v in info.items())
     ov = json.load(open(os.path.join(ROOT, "data", "forward_look_overrides.json")))
 
     reports = sorted(glob.glob(os.path.join(ROOT, "clients", "*", f"{month}.html")))
@@ -93,7 +98,7 @@ def main():
 
     for path in reports:
         num = path.split(os.sep)[-2]
-        info = inputs.get(num, {"pills": [], "audience": "", "has_june_paid": False, "status": ""})
+        info = inputs.get(num, {"pills": [], "audience": "", "status": ""})
         html = open(path).read()
         analysis, rec = prose_blocks(html)
         if not analysis:
@@ -118,7 +123,7 @@ def main():
         # 4. PAID_FRAMING_LEAK (organic clients only) - ANALYSIS prose only.
         #    The MOXIE Recommends card is ALLOWED to name a paid service (recommending one
         #    is the point); that path is gated by RECOMMENDS_OVERLAP, not here.
-        paid_ok = info.get("has_june_paid") or info.get("has_july_paid") or (num in ov.get("scope", {}) and ov["scope"][num].get("allow_paid_framing"))
+        paid_ok = has_paid(info) or (num in ov.get("scope", {}) and ov["scope"][num].get("allow_paid_framing"))
         scope = ov.get("scope", {}).get(num)
         if scope and scope.get("allow_paid_framing") is False:
             paid_ok = False
@@ -147,6 +152,11 @@ def main():
             for w in B2B_FORBIDDEN:
                 if w in low:
                     warnings.append(f"{num}: B2B report uses '{w.strip()}'")
+        # 9. Digital Billboards card must never show CTR or Clicks (see billboard-sheet-fields)
+        for card in re.findall(r'<div class="platform-card".*?</div>\s*</div>', html, re.S):
+            if "Digital Billboards" in card:
+                if re.search(r">\s*CTR\s*<", card) or re.search(r">\s*Clicks\s*<", card):
+                    failures.append(f"{num}: Digital Billboards card renders CTR/Clicks (must be Blips/Billboards)")
         # 8. uniqueness registry
         s = sentences(analysis)
         if s:

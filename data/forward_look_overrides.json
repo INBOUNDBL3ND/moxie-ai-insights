@@ -1,61 +1,136 @@
 {
-  "_doc": "Per-client overrides for the MOXIE monthly report generator. Re-derived 2026-08-03 from the July 2026 sheet + Slack ground truth. forward_look: replace the MOXIE Recommends opportunity-card with a forward-look note (h4 + p) instead of an 'Add X' recommendation. scope: hard constraint on what framing the report may use this month, overriding stale service pills. angle drives the validate.py word band (kickoff 120-170w).",
+  "_doc": "Per-client overrides for the MOXIE monthly report generator. Re-derived 2026-09-01 from the August 2026 sheet block + August Slack ground truth. forward_look: replace the MOXIE Recommends opportunity-card with a forward-look note (h4 + p) instead of an 'Add X' recommendation. scope: hard constraint on what framing the report may use this month, overriding stale service pills. angle drives the validate.py word band (kickoff 120-170).",
   "forward_look": {
     "2604002": {
-      "title": "Building on what's working",
-      "reason": "Paraben pill is AEO & SEO only, which we already run, so an honest 'Add X' does not exist. July was heavy technical/AEO work (resolved a site-wide video-embed CSP block). Forward-look = keep sharpening the existing program.",
+      "title": "Sharpening what already ranks",
+      "reason": "Paraben pills are AEO & SEO only, which we already run, so an honest 'Add X' does not exist. August was a traffic review plus an inbound referral from the client. Forward-look, not a pitch.",
       "angle": "full"
     },
     "2605001": {
-      "title": "Watching the foundation settle",
-      "reason": "New client onboarding, first full paid month (Facebook + Google Search live). Let the launched ads gather signal before recommending additions.",
-      "angle": "kickoff"
+      "title": "Turning attention into phone calls",
+      "reason": "Home Helpers already has Google Search, Facebook, Social Posts and SEO. September plan is agreed in writing (GBP post program, website/SEO block). No honest 'Add X' fits; forward-look instead.",
+      "angle": "full"
     },
     "2604004": {
-      "title": "Watching the foundation settle",
-      "reason": "Dapper Can, month two of GeoFencing + remarketing. Still early; let delivery mature before layering on more.",
-      "angle": "kickoff"
-    },
-    "2602001": {
-      "title": "Watching the foundation settle",
-      "reason": "The Law Office of Andi Grace Davis, kickoff. Website went live in July with full SEO/GA4/Search Console/llms.txt setup. Let the new site gather traffic before pitching paid.",
-      "angle": "kickoff"
+      "title": "Letting the remarketing keep compounding",
+      "reason": "Dapper Can, month three of GeoFencing + website remarketing. Owner asked for a September hold; pitching a new service would be tone-deaf. Frame around the remarketing traction.",
+      "angle": "full"
     },
     "2606005": {
-      "title": "Watching the foundation settle",
-      "reason": "Lemon Sweet Sugaring, kickoff. New WordPress site in final review, not yet live. Focus is finishing the build.",
+      "title": "A launch worth building on",
+      "reason": "Lemon Sweet Sugaring. New site went live August 11 after a full DNS/SSL migration off Squarespace. Client is reviewing September scope with a financial planner, so no service pitch. Launch month framing.",
       "angle": "kickoff"
     },
     "2606006": {
-      "title": "Watching the foundation settle",
-      "reason": "Vistage STL, kickoff. New WordPress site draft in review with an Aug 17 go-live target. Finish the launch first.",
+      "title": "The plan is signed and the runway is clear",
+      "reason": "Vistage STL. Site went live August 5 and the Growth Plan was signed August 28 for a September 1 start. The next step is already agreed, so a recommendation would be redundant.",
       "angle": "kickoff"
     },
     "2606007": {
-      "title": "Watching the foundation settle",
-      "reason": "End Zone Eddie, kickoff. First explainer video in revision rounds and brand kit being finalized. Foundation work.",
+      "title": "One story, told two ways",
+      "reason": "End Zone Eddie. Explainer video delivered and ten branded social posts produced. September direction (continue social vs paid social) is an open client decision, so no pitch.",
       "angle": "kickoff"
     },
-    "2601003": {
-      "title": "Ready to launch the moment the domain clears",
-      "reason": "iQ Supply Solutions. New site is built and hosting is set in-house; go-live is blocked only on recovering the domain from a deceased account holder's GoDaddy. Honest forward-look, not a service pitch.",
-      "angle": "full"
+    "2607001": {
+      "title": "A live site is the starting line",
+      "reason": "Roger Perry Maintenance & Welding, first month. Site went live August 20 and Google Business Profile optimization just began. Let the new site and profile gather signal before layering anything on.",
+      "angle": "kickoff"
     },
     "2603001": {
-      "title": "Building on what's working",
-      "reason": "Boland Energy, Marketing Services, quiet July with no channel activity. No honest 'Add X' fits.",
+      "title": "Steady and ready when the work picks up",
+      "reason": "Boland Energy, Marketing Services, quiet August with no channel activity. No honest 'Add X' fits.",
       "angle": "full"
     },
     "1602401": {
-      "title": "Building on what's working",
-      "reason": "CMW Inc., quiet July, not in the ad sheet. Forward-look rather than a manufactured recommendation.",
+      "title": "Holding the ground we have taken",
+      "reason": "CMW Inc., quiet August, not in the ad sheet. Forward-look rather than a manufactured recommendation.",
+      "angle": "full"
+    },
+    "1910002": {
+      "title": "Everything handed over clean",
+      "reason": "BEAM. Final month of service under the new ownership transition; website, Google Ads, analytics and the Facebook Page were all transferred by August 31. Nothing to recommend.",
+      "angle": "full"
+    },
+    "2603002": {
+      "title": "Settling in after launch",
+      "reason": "Pro Scan Plus. Site was recently launched and August was quiet maintenance; a new-build client with no honest 'Add X' yet.",
+      "angle": "kickoff"
+    },
+    "2312004": {
+      "title": "Ready whenever the season turns",
+      "reason": "Top Tier Outdoors. Marketing Services pill, quiet August, no sheet data. Forward-look rather than a manufactured recommendation.",
+      "angle": "full"
+    },
+    "1708001": {
+      "title": "Practicing what we sell",
+      "reason": "Inbound Blend's own brand. Every service we offer is already in the pills, so there is no honest 'Add X'.",
+      "angle": "full"
+    },
+    "2509003": {
+      "title": "Two messages, told well",
+      "reason": "Midalloy SM. The August decision was already made with Tony (swap the blog block for a monthly Surplus Inventory Report email). Recommending it back would be redundant.",
+      "angle": "full"
+    },
+    "2602002": {
+      "title": "Getting the resource library over the line",
+      "reason": "GRN Dublin. Every service they buy is already in the pills or inside the flex block; the honest next step is finishing the Tier 1 and Tier 2 resource PDFs.",
+      "angle": "full"
+    },
+    "2601001": {
+      "title": "Story over sales sheet",
+      "reason": "West St. Louis County Chamber. The August strategy meeting already set the direction (candid story-led social, member spotlights, reels). A service pitch would cut across a decision just made.",
+      "angle": "full"
+    },
+    "2010001": {
+      "title": "A foundation kept ready",
+      "reason": "Epoxy Stone. Scope is website-only per Gary's direction and the contracted advertising pills are paused, so no 'Add X' would be honest this month.",
+      "angle": "full"
+    },
+    "2103001": {
+      "title": "A simpler site, doing more with less",
+      "reason": "Mentors 4 College. The organization deliberately removed calls to action in August and is narrowing scope; pitching an added service would run against the direction they just set.",
       "angle": "full"
     }
   },
   "scope": {
     "2010001": {
       "mode": "website-only",
-      "reason": "Per Gary's earlier direction, scope remains website-only. Paid pills (Facebook Ads, Google Ad Management Search/Display, Remarketing) are PAUSED and must NOT drive paid framing, Performance Overview ad cards, or ad Platform Breakdown cards. Report body = website management + hosting only. Confirmed: no July paid spend/impressions in the sheet (269 sessions only); no July Slack contradicting.",
+      "reason": "Per Gary's earlier direction, scope remains website-only. Paid pills (Facebook Ads, Google Ad Management Search/Display, Remarketing) are PAUSED and must NOT drive paid framing, Performance Overview ad cards, or ad Platform Breakdown cards. Report body = website management + hosting only. Confirmed: no August paid spend/impressions in the sheet (516 sessions only); no August Slack contradicting.",
+      "allow_paid_framing": false
+    },
+    "1910002": {
+      "mode": "website-only",
+      "reason": "BEAM. Google Ads campaigns were paused and the ad account, analytics, Google Business Profile and Facebook Page were transferred to the new owner during August. No August ad spend. Report is hosting + transition support only, framed positively as a clean handoff.",
+      "allow_paid_framing": false
+    },
+    "2604003": {
+      "mode": "organic-only",
+      "reason": "AB Advisory Dynamics. LinkedIn ads paused August 1 per Adrian; zero August spend. August was organic LinkedIn content only. No paid framing.",
+      "allow_paid_framing": false
+    },
+    "2009003": {
+      "mode": "organic-only",
+      "reason": "Med-Search. LinkedIn Ads paused per Tim, zero August spend. August work was the JobBoardly job board build plus organic LinkedIn job posts. No paid framing.",
+      "allow_paid_framing": false
+    },
+    "2601001": {
+      "mode": "organic-only",
+      "reason": "West St. Louis County Chamber. Both Facebook campaigns sat at zero spend in August (daily budget lowered to $2). August was organic social, email and video. No paid framing.",
+      "allow_paid_framing": false
+    },
+    "2205001": {
+      "mode": "organic-only",
+      "reason": "Leathers Interiors. Facebook budget and spend both zero in August, waiting on an ad budget and an offer. Report is website merchandising + organic social only.",
+      "allow_paid_framing": false
+    },
+    "2408002": {
+      "mode": "website-only",
+      "reason": "Organized to Thrive. Facebook paused per Della; the August charge was confirmed in writing to the client as website management + hosting only.",
+      "allow_paid_framing": false
+    },
+    "2103001": {
+      "mode": "website-only",
+      "reason": "Mentors 4 College. Social was dropped at the end of July; August was website management and hosting only. The organization is winding down (no new mentee matching after June 2027) - do NOT reference that in the report.",
       "allow_paid_framing": false
     }
   }
